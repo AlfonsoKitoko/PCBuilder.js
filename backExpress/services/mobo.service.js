@@ -1,4 +1,5 @@
 const moboModel = require("../models/mobo.model")
+// TODO: MOBO.SERVICE
 
 // R - Devuelve todas las motherboards
 exports.getAll = async () => await moboModel.find()

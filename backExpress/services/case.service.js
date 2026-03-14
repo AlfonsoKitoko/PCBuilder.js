@@ -1,5 +1,5 @@
 const caseModel = require("../models/case.model")
-
+// TODO: CASE.SERVICE
 // R - Devuelve todas las cases
 exports.getAll = async () => await caseModel.find()
 

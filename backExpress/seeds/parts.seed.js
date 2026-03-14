@@ -1,4 +1,5 @@
 const mongodbConfig = require("../utils/mongodb.config")
+// TODO: PARTS.SEED
 
 const partModel = require("../models/part.model")
 

@@ -9,9 +9,9 @@ const options = {
 		info: {
 			title: "PCBUILDER API",
 			version: "1.0.0",
-			description: "API for managing pc builds",
+			description: "API for managing PC Builds",
 			contact: {
-				name: "Alfonso Martinez Kitoko"
+				name: "Alfonso Martínez Kitoko"
 			},
 			servers: [
 				{

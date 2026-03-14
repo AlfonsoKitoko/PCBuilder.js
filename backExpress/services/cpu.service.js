@@ -1,5 +1,5 @@
 const cpuModel = require("../models/cpu.model")
-
+// TODO: CASE.SERVICE
 // R - Devuelve todas las cpus
 exports.getAll = async () => await cpuModel.find()
 
