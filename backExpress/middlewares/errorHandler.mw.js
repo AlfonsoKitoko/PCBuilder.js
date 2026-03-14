@@ -1,20 +1,28 @@
 const logger = require("../utils/logger")
+const apiResponse = require("../utils/apiResponse")
 
 exports.errorHandler = (err, req, res, next) => {
-  let { status = 500, message = "ERROR INSIDE SERVITOR" } = err
+  let status = err.status || 500
+  let message = err.message || "Internal Servitor Error"
+  let errors = null
+
   console.log("Dentro del Error Handler")
   console.log(err)
-  console.log(err.name)
-  console.log(err.code)
 
-  if (err.name == "ValidationError") status = 400
+  if (err.name == "ValidationError") {
+    status = 400
+    errors = err.errors
+  }
 
   if (err.name == "MongoServerError") {
     status = 400
     // Error de clave duplicada
-    if (err.code == 11000) status = 406
+    if (err.code == 11000) {
+      status = 409
+      message = "Duplicate key error: " + JSON.stringify(err.keyValue)
+    }
   }
 
-  logger.error.error(`Error Handler(${status}):${err}`)
-  res.status(status).json({ err: message })
+  logger.error.error(`Error Handler(${status}):${message}`)
+  return apiResponse.error(res, message, status, errors)
 }

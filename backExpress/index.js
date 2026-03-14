@@ -2,57 +2,81 @@
 
 // npm i dotenv express path method-override cors mongoose ejs
 
-const swaggerUI = require("swagger-ui-express")	// npm i swagger-jsdoc swagger-ui-express
-const specs = require("./swagger/swagger")
-
 require("dotenv").config()	// npm i dotenv
+
 const express = require("express")	// npm i express
 const path = require("path")	// npm i path
 const methodOverride = require("method-override")	// npm i method-override
 
-const port = process.env.PORT
-const swaggerPath = process.env.SWAGGER_DOCS
-const express = require("express")
-const mongodbConfig = require("./utils/mongodb.config")
+const swaggerUI = require("swagger-ui-express")	// npm i swagger-jsdoc swagger-ui-express
+const swaggerSpecs = require("./config/swagger.config")
+
+const { conexMongoDB } = require("./config/mongodb.config")
 
 const builderRoutes = require("./routes/builder.routes")
 
-app.use()
-app.set("views", path.join(__dirname, "views"))
-app.set("view engine", "ejs")
-app.use(express.static(path.join(__dirname, "public")))
+const app = express()
+
+const PORT = process.env.PORT
+const swaggerPath = process.env.SWAGGER_DOCS
+
+//////////////////////////////////////////////////////
+// ++ MIDDLEWARES ++
+//////////////////////////////////////////////////////
+
 app.use(express.json())
+
 app.use(methodOverride("_method"))
 
-// RUTAS
-// SWAGGER
+app.use(express.static(path.join(__dirname, "public")))
+
+//////////////////////////////////////////////////////
+// ++ VIEW ENGINE ++
+//////////////////////////////////////////////////////
+
+app.set("views", path.join(__dirname, "views"))
+app.set("view engine", "ejs")
+
+//////////////////////////////////////////////////////
+// ++ SWAGGER ++
+//////////////////////////////////////////////////////
+
 app.use(
-	process.env.SWAGGER_DOCS,
+	swaggerPath,
 	swaggerUI.serve,
-	swaggerUI.setup(specs)
+	swaggerUI.setup(swaggerSpecs)
 )
 
-// RAÍZ
+//////////////////////////////////////////////////////
+// ++ ROUTES ++
+//////////////////////////////////////////////////////
+
 app.get("/", (req, res) => res.redirect("/pcbuilder"))
-// RUTAS REST
+
 app.use("/pcbuilder", builderRoutes)
+
 app.get(/.*/, (req, res) => res.redirect("/"))
 
-// LEVANTAR SERVER
-app.listen(port, async () => {
-	console.log(`http://localhost:${port}`)
-	console.log(`SWAGGER > http://localhost:${port}${swaggerPath}`)
-	try {
-		await mongodbConfig.conexMongoDB()
-			.then(() => {
-				console.log("Conexión con MongoDB !!!")
-			})
-			.catch((err) => {
-				console.log(`Error al conectar con MongoDB. Desc: ${err}`)
-				process.exit(0)
-			})
-	} catch (error) {
-		console.log(`Error al conectar con MongoDB. Desc: ${error}`)
-		process.exit(0)
-	}
-})
+//////////////////////////////////////////////////////
+// ++ START SERVER ++
+//////////////////////////////////////////////////////
+
+try {
+	await conexMongoDB()
+
+	app.listen(PORT, () => {
+		console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+		console.log(`Servitor running @ http://localhost:${PORT}`)
+		console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+		console.log(`Swagger running @ http://localhost:${PORT}${swaggerPath}`)
+		console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+	})
+
+} catch (err) {
+
+	console.log("Error starting Servitor", err)
+
+	process.exit(1)
+
+}
