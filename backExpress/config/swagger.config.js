@@ -1,17 +1,17 @@
-require("dotenv").config()
+import 'dotenv/config'
 
 // npm i swagger-jsdoc swagger-ui-express
-const swaggerJsdoc = require("swagger-jsdoc")
+import swaggerJsdoc from 'swagger-jsdoc'
 
 const options = {
 	definition: {
 		openapi: '3.0.0',
 		info: {
-			title: "PCBUILDER API",
-			version: "1.0.0",
-			description: "API for managing PC Builds",
+			title: 'PCBUILDER API',
+			version: '1.0.0',
+			description: 'API for managing PC Builds',
 			contact: {
-				name: "Alfonso Martínez Kitoko"
+				name: 'Alfonso Martínez Kitoko'
 			},
 			servers: [
 				{
@@ -22,11 +22,9 @@ const options = {
 		}
 	},
 	apis: [
-		'./routes/*.js',
-		'./modules/*/*.js'
+		'./docs/**/*.yaml',
+		'./modules/**/*.js'
 	]
 }
 
-const specs = swaggerJsdoc(options)
-
-module.exports = specs
+export const swaggerSpecs = swaggerJsdoc(options)

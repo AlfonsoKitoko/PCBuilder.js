@@ -1,15 +1,23 @@
-require("dotenv").config()
-const mongoose = require("mongoose")
+import 'dotenv/config'
+import mongoose from 'mongoose'
+import logger from '../config/logger.config.js'
+const mongoUri = process.env.MONGODB_ATLAS
 
-exports.conexMongoDB = async () => {
+export const conexMongoDB = async () => {
 	try {
-		await mongoose.connect(process.env.MONGODB_ATLAS)
+		if (!mongoUri) {
+			throw new Error('La variable MONGODB_ATLAS no está definida en el .env')
+		}
 
-		console.log("Éxito conexión a MongoDB")
+		await mongoose.connect(mongoUri)
+
+		console.log('++ MongoDB Connected Successfully ++')
+		logger.app.info('Éxito conexión a MongoDB')
 	} catch (err) {
+		console.error('-- ERROR connecting to MongoDB --')
+		console.error(err)
 
-		console.error("Error conexión a MongoDB:", err)
-
+		logger.err.error('Error conexión a MongoDB:', err)
 		process.exit(1)
 	}
 }
