@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const { PSU_TYPE, EFF_RATING, MODULAR, CONNECTORS } = require("../constants/index.constant")
-const { positiveIntegerValidator } = require("../validators/integer.validator")
+import mongoose from 'mongoose'
+import { PSU_TYPE, EFF_RATING, MODULAR, CONNECTORS } from '../constants/index.constant.js'
+import { positiveIntegerValidator } from '../validators/integer.validator.js'
 
 const psuSchema = new mongoose.Schema(
 	{
@@ -8,33 +8,37 @@ const psuSchema = new mongoose.Schema(
 		manufacturer: { type: String, required: true },
 		model: { type: String, required: true },
 		psu_type: { type: String, required: true, enum: PSU_TYPE },
+		wattage: { type: Number, required: true, min: 1, validate: positiveIntegerValidator },
 		eff_rating: { type: String, required: true, enum: EFF_RATING },
 		modular: { type: String, required: true, enum: MODULAR },
 		eps_atx_connectors: { type: String, required: true, enum: CONNECTORS },
 		connectors: {
-			type: {
-				atx_4pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				eps_8pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				pcie_16pin_12vhpwr: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				pcie_12pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				pcie_8pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				pcie_6plus2pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				pcie_6pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				sata: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				amp_molex_4pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-				required: true
-			}
+			atx_4pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			eps_8pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			pcie_16pin_12vhpwr: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			pcie_12pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			pcie_8pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			pcie_6plus2pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			pcie_6pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			sata: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+			amp_molex_4pin: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
 		},
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
 	},
 	{ timestamps: true }
 )
+
+const Psu = mongoose.model('PSU', psuSchema)
+
+export default Psu
+
 /* Ejemplo psu:
 - manufacturer: Corsair
 - model: CX750M (2021)
 - psu_type: ATX
+- wattage: 750
 - eff_rating: 80+ Bronze
 - modular: Semi
 - pcie_connectors:
@@ -50,5 +54,3 @@ const psuSchema = new mongoose.Schema(
 - price: 59,99 €
 - partType: psu
 */
-
-export const Psu = mongoose.model("PSU", psuSchema)
