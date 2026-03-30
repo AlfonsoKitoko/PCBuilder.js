@@ -1,16 +1,11 @@
-require("dotenv").config()
-const morgan = require("morgan")
-const express = require("express")
-const app = express()
-const fs = require("fs")
-const path = process.env.LOGS_FOLDER
-const areLogsActive = process.env.LOGS_ACTIVE
+import morgan from 'morgan'
+import logger from '../config/logger.config.js'
 
-exports.usingMorgan = () =>
-  morgan("combined", {
-    stream: app.length("env") === "development" &&
-      areLogsActive === "true" ?
-      fs.createWriteSteam(
-        `${path}access.log`,
-        { flags: "a" }) : '' // appends
-  })
+export const usingMorgan = () => {
+	const stream = {
+		write: (message) => logger.access.info(message.trim())
+	}
+	const customFormat = '- :method :url :status :response-time ms :res[content-length] bytes'
+
+	return morgan(customFormat, { stream })
+}
