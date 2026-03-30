@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const { RAM_TYPE, WIFI_STANDARD } = require("../constants/index.constant")
-const { positiveIntegerValidator } = require("../validators/integer.validator")
+import mongoose from 'mongoose'
+import { RAM_TYPE, WIFI_STANDARD, MOBO_FORM_FACTOR } from '../constants/index.constant.js'
+import { positiveIntegerValidator } from '../validators/integer.validator.js'
 
 const moboSchema = new mongoose.Schema(
 	{
@@ -8,7 +8,7 @@ const moboSchema = new mongoose.Schema(
 		manufacturer: { type: String, required: true },
 		model: { type: String, required: true },
 		socket: { type: String, required: true },
-		form_factor: { type: String, enum: FORM_FACTOR, required: true },
+		form_factor: { type: String, enum: MOBO_FORM_FACTOR, required: true },
 		chipset: { type: String, required: true },
 		ram_type: { type: String, enum: RAM_TYPE, required: true },
 		ram_slots: { type: Number, required: true, min: 2, validate: positiveIntegerValidator },
@@ -34,12 +34,10 @@ const moboSchema = new mongoose.Schema(
 				usb3_gen2: { type: Number, min: 0, default: 0, validate: positiveIntegerValidator },
 				usb3_gen2x2: { type: Number, min: 0, default: 0, validate: positiveIntegerValidator }
 			},
-			ethernet: [
-				{
-					speed: { type: Number, required: true, validate: positiveIntegerValidator },
-					quantity: { type: Number, min: 1, required: true, validate: positiveIntegerValidator }
-				}
-			],
+			ethernet: {
+				speed: { type: Number, required: true, validate: positiveIntegerValidator },
+				quantity: { type: Number, min: 1, required: true, validate: positiveIntegerValidator }
+			},
 			video: {
 				vga: { type: Number, min: 0, default: 0, validate: positiveIntegerValidator },
 				dvi: { type: Number, min: 0, default: 0, validate: positiveIntegerValidator },
@@ -49,15 +47,20 @@ const moboSchema = new mongoose.Schema(
 			audio_jacks: { type: Number, min: 0, default: 3, validate: positiveIntegerValidator }
 		},
 		wireless: {
-			wifi: { type: String, required: true, enum: WIFI_STANDARD, default: "None" },
+			wifi: { type: String, required: true, enum: WIFI_STANDARD, default: 'None' },
 			bluetooth: { type: Boolean, required: true, default: false }
 		},
 		// Price en céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
 	},
 	{ timestamps: true }
 )
+
+const Mobo = mongoose.model('Mobo', moboSchema)
+
+export default Mobo
+
 /* Ejemplo MOBO:
 	- manufacturer: MSI
 	- model: MAG B550 Tomahawk
@@ -76,7 +79,7 @@ const moboSchema = new mongoose.Schema(
 		- usb_headers:
 			- usb2: 2,
 			- usb3_gen1: 1,
-			- usb3_gen2: 0,
+			- usb3_gen2: 1,
 			- usb3_gen2x2: 0
 	- rear_io:
 		- usb:
@@ -99,5 +102,3 @@ const moboSchema = new mongoose.Schema(
 	- price: 17999, // 179.99 €
 	- partType: Mobo
 */
-
-export const Mobo = mongoose.model("Mobo", moboSchema)
