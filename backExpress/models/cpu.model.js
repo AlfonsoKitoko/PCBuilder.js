@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const { CPU_MANUFACTURER } = require("../constants/index.constant")
-const { positiveIntegerValidator } = require("../validators/integer.validator")
+import mongoose from 'mongoose'
+import { CPU_MANUFACTURER } from '../constants/index.constant.js'
+import { positiveIntegerValidator } from '../validators/integer.validator.js'
 
 const cpuSchema = new mongoose.Schema(
 	{
@@ -26,10 +26,13 @@ const cpuSchema = new mongoose.Schema(
 		integrated_graphics: { type: String, required: false },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
 	},
 	{ timestamps: true }
 )
+
+const Cpu = mongoose.model('CPU', cpuSchema)
+export default Cpu
 
 /* Ejemplo cpu:
 	- manufacturer: AMD
@@ -49,5 +52,3 @@ const cpuSchema = new mongoose.Schema(
 	- price: 449.99 €
 	- partType: cpu
 */
-
-export const Cpu = mongoose.model("CPU", cpuSchema)
