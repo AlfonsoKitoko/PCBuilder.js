@@ -1,13 +1,13 @@
-const bcrypt = require("bcrypt")  // npm i bcrypt
+import bcrypt from 'bcrypt'  // npm i bcrypt
 
-exports.hashPassword = async (plainTextString) =>
-  await bcrypt.hash(plainTextString, 12)
+export const hashPassword = async (plainTextString) =>
+	await bcrypt.hash(plainTextString, 12)
 
-exports.comparePassword = async (plainTextString, codedString) => {
-  console.log(`bcrypt: { ${codedString} }`)
+export const comparePassword = async (plainTextString, codedString) => {
+	console.log(`bcrypt: { ${codedString} }`)
 
-  const result = await bcrypt.compare(plainTextString, codedString)
+	const result = await bcrypt.compare(plainTextString, codedString)
 
-  if (result) return true
-  else return false
+	if (result) return true
+	else return false
 }
