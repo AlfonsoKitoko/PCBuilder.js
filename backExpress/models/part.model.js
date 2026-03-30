@@ -1,5 +1,5 @@
-const { PC_PARTS } = require("../constants/index.constant")
-const mongoose = require("mongoose")
+import mongoose from 'mongoose'
+import { PC_PARTS } from '../constants/index.constant.js'
 
 const partSchema = new mongoose.Schema(
 	{
@@ -8,4 +8,6 @@ const partSchema = new mongoose.Schema(
 	}
 )
 
-export const Part = mongoose.model("Part", partSchema)
+const Part = mongoose.model('Part', partSchema)
+
+export default Part
