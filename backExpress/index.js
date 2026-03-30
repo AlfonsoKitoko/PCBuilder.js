@@ -1,41 +1,45 @@
-// --> models > services > controller > routes
+import 'dotenv/config'
+import express from 'express'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import methodOverride from 'method-override'
+import cors from 'cors'
 
-// npm i dotenv express path method-override cors mongoose ejs
+import swaggerUI from 'swagger-ui-express'
+import { swaggerSpecs } from './config/swagger.config.js'
 
-require("dotenv").config()	// npm i dotenv
+import { conexMongoDB } from './config/mongodb.config.js'
 
-const express = require("express")	// npm i express
-const path = require("path")	// npm i path
-const methodOverride = require("method-override")	// npm i method-override
+import { usingMorgan } from './middlewares/morgan.mw.js'
+import { errorHandler } from './middlewares/errorHandler.mw.js'
 
-const swaggerUI = require("swagger-ui-express")	// npm i swagger-jsdoc swagger-ui-express
-const swaggerSpecs = require("./config/swagger.config")
+import builderRoutes from './routes/index.routes.js'
+import AppError from './utils/AppError.js'
 
-const { conexMongoDB } = require("./config/mongodb.config")
-
-const builderRoutes = require("./routes/builder.routes")
+// Definir __dirname para ES Modules
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
-
-const PORT = process.env.PORT
-const swaggerPath = process.env.SWAGGER_DOCS
+const PORT = process.env.PORT || 3000
+const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 
 //////////////////////////////////////////////////////
 // ++ MIDDLEWARES ++
 //////////////////////////////////////////////////////
 
-app.use(express.json())
-
-app.use(methodOverride("_method"))
-
-app.use(express.static(path.join(__dirname, "public")))
+app.use(cors())
+app.use(express.json({ limit: '5mb' }))
+app.use(methodOverride('_method'))
+app.use(usingMorgan())
+app.use(express.static(path.join(__dirname, 'public')))
 
 //////////////////////////////////////////////////////
 // ++ VIEW ENGINE ++
 //////////////////////////////////////////////////////
 
-app.set("views", path.join(__dirname, "views"))
-app.set("view engine", "ejs")
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'ejs')
 
 //////////////////////////////////////////////////////
 // ++ SWAGGER ++
@@ -51,32 +55,36 @@ app.use(
 // ++ ROUTES ++
 //////////////////////////////////////////////////////
 
-app.get("/", (req, res) => res.redirect("/pcbuilder"))
+app.get('/', (req, res) => res.redirect('/pcbuilder'))
 
-app.use("/pcbuilder", builderRoutes)
+app.use('/pcbuilder', builderRoutes)
 
-app.get(/.*/, (req, res) => res.redirect("/"))
+// Captura de rutas inexistentes
+app.use((req, res, next) => {
+	next(new AppError(`Non-existent route: ${req.originalUrl}`, 404))
+})
+
+app.use(errorHandler)
 
 //////////////////////////////////////////////////////
-// ++ START SERVER ++
+// ++ START SERVITOR ++
 //////////////////////////////////////////////////////
 
-try {
-	await conexMongoDB()
+const startServer = async () => {
+	try {
+		await conexMongoDB()
 
-	app.listen(PORT, () => {
-		console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-		console.log(`Servitor running @ http://localhost:${PORT}`)
-		console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-		console.log(`Swagger running @ http://localhost:${PORT}${swaggerPath}`)
-		console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-	})
-
-} catch (err) {
-
-	console.log("Error starting Servitor", err)
-
-	process.exit(1)
-
+		app.listen(PORT, () => {
+			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+			console.log(`    ++ Servitor running @ http://localhost:${PORT} ++`)
+			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+			console.log(`++ Swagger running @ http://localhost:${PORT}${swaggerPath} ++`)
+			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+		})
+	} catch (err) {
+		console.error('Error starting Server', err)
+		process.exit(1)
+	}
 }
+
+startServer()
