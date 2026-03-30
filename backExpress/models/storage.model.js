@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const { positiveIntegerValidator } = require("../validators/integer.validator")
-const { FORM_FACTOR, STORAGE_TYPE, INTERFACE } = require("../constants/index.constant")
+import mongoose from 'mongoose'
+import { positiveIntegerValidator } from '../validators/integer.validator.js'
+import { FORM_FACTOR, STORAGE_TYPE, INTERFACE } from '../constants/index.constant.js'
 
 const storageSchema = new mongoose.Schema(
 	{
@@ -16,10 +16,14 @@ const storageSchema = new mongoose.Schema(
 		nvme: { type: Boolean, required: true, default: false },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
 	},
 	{ timestamps: true }
 )
+
+const Storage = mongoose.model('Storage', storageSchema)
+
+export default Storage
 
 /* Ejemplo storage:
 	- manufacturer: Samsung
@@ -27,11 +31,9 @@ const storageSchema = new mongoose.Schema(
 	- capacity: 500 GB
 	- type: SSD
 	- cache: 512 MB
-	- form_factor: 2.5"
+	- form_factor: 2.5'
 	- interface: SATA 6.0 GB/s
 	- nvme: No
 	- price: 55.98 €
 	- partType: storage
 */
-
-export const Storage = mongoose.model("Storage", storageSchema)
