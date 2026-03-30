@@ -1,9 +1,9 @@
-const appError = require("../utils/appError")
+import { AppError } from '../utils/AppError.js'
 
-exports.restrictTo = (...profiles) => {
-  return (req, res, next) => {
-    if (!profiles.includes(req.user.profile))
-      return next(new appError("Insufficient permissions", 403))
-    next()
-  }
+export const restrictTo = (...profiles) => {
+	return (req, res, next) => {
+		if (!profiles.includes(req.user.profile))
+			return next(new AppError('Insufficient permissions', 403))
+		next()
+	}
 }

@@ -1,22 +1,22 @@
-require("dotenv").config()
-const jwt = require("jsonwebtoken")
-const appError = require("../utils/appError")
+import 'dotenv/config'
+import jwt from 'jsonwebtoken'
+import AppError from '../utils/AppError.js'
 
-exports.protect = (req, res, next) => {
-  let token = null
+export const protect = (req, res, next) => {
+	let token = null
 
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer"))
-    token = req.headers.authorization.split(" ")[1]
+	if (req.headers.authorization && req.headers.authorization.startsWith('Bearer'))
+		token = req.headers.authorization.split(' ')[1]
 
-  if (req.cookies.token) token = req.cookies.token
+	if (req.cookies.token) token = req.cookies.token
 
-  if (!token) return next(new appError("Not authenticated", 401))
+	if (!token) return next(new AppError('Not authenticated', 401))
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = decoded
-    next()
-  } catch (error) {
-    next(new appError(`Token invalid or expired. Desc: ${error}`, 401))
-  }
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET)
+		req.user = decoded
+		next()
+	} catch (error) {
+		next(new AppError(`Token invalid or expired. Desc: ${error}`, 401))
+	}
 }
