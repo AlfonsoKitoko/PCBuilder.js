@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const { OS_MODE } = require("../constants/index.constant")
-const { positiveIntegerValidator } = require("../validators/integer.validator")
+import mongoose from 'mongoose'
+import { OS_MODE } from '../constants/index.constant.js'
+import { positiveIntegerValidator } from '../validators/integer.validator.js'
 
 const osSchema = new mongoose.Schema(
 	{
@@ -11,10 +11,13 @@ const osSchema = new mongoose.Schema(
 		mode: { type: String, required: true, enum: OS_MODE },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
 	},
 	{ timestamps: true }
 )
+const Os = mongoose.model('OS', osSchema)
+
+export default Os
 
 /* Ejemplo os:
 	- manufacturer: Microsoft
@@ -24,5 +27,3 @@ const osSchema = new mongoose.Schema(
 	- price: 119,99 €
 	- partType: os
 */
-
-export const Os = mongoose.model("OS", osSchema)
