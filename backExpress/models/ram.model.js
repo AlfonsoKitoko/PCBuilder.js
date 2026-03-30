@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const { RAM_TYPE, RAM_SIZE } = require("../constants/index.constant")
-const { positiveIntegerValidator } = require("../validators/integer.validator")
+import mongoose from 'mongoose'
+import { RAM_TYPE, RAM_SIZE } from '../constants/index.constant.js'
+import { positiveIntegerValidator } from '../validators/integer.validator.js'
 
 const ramSchema = new mongoose.Schema(
 	{
@@ -8,13 +8,10 @@ const ramSchema = new mongoose.Schema(
 		manufacturer: { type: String, required: true },
 		model: { type: String, required: true },
 		modules: {
-			type: {
-				size: {
-					type: String, required: true, enum: RAM_SIZE
-				},
-				quantity: { type: Number, required: true, validate: positiveIntegerValidator }
+			size: {
+				type: String, required: true, enum: RAM_SIZE
 			},
-			required: true
+			quantity: { type: Number, required: true, validate: positiveIntegerValidator }
 		},
 		ram_type: { type: String, required: true, enum: RAM_TYPE },
 		// Céntimos
@@ -26,6 +23,10 @@ const ramSchema = new mongoose.Schema(
 	{ timestamps: true }
 )
 
+const Ram = mongoose.model("RAM", ramSchema)
+
+export default Ram
+
 /* Ejemplo ram:
 	- manufacturer: Crucial
 	- model: Pro Overclocking
@@ -36,5 +37,3 @@ const ramSchema = new mongoose.Schema(
 	- price: 101.99 €
 	- partType: ram
 */
-
-export const Ram = mongoose.model("RAM", ramSchema)
