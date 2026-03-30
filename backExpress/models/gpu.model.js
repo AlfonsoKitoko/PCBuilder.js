@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const { GPU_TYPE, SYNC_TYPE, INTERFACE_TYPE } = require("../constants/index.constant")
-const { positiveIntegerValidator } = require("../validators/integer.validator")
+import mongoose from 'mongoose'
+import { GPU_TYPE, SYNC_TYPE, INTERFACE_TYPE, EXTERNAL_POWER, GDDR_TYPE } from '../constants/index.constant.js'
+import { positiveIntegerValidator } from '../validators/integer.validator.js'
 
 const gpuSchema = new mongoose.Schema(
 	{
@@ -12,7 +12,9 @@ const gpuSchema = new mongoose.Schema(
 		base_freq: { type: Number, required: true },
 		// GigaHertz
 		boost_freq: { type: Number, required: true },
-		interface: { type: String, enum: INTERFACE_TYPE, required: true, default: "PCIe x16" },
+		memory: { type: Number, required: true },
+		memory_type: { type: String, enum: GDDR_TYPE, required: true },
+		interface: { type: String, enum: INTERFACE_TYPE, required: true, default: 'PCIe x16' },
 		frame_sync: { type: String, enum: SYNC_TYPE, required: true },
 		// Watts
 		tdp: { type: Number, required: true },
@@ -22,12 +24,17 @@ const gpuSchema = new mongoose.Schema(
 			hdmi: { type: Number, min: 0, default: 0 },
 			displayport: { type: Number, min: 0, default: 0 },
 		},
+		external_power: { type: String, enum: EXTERNAL_POWER, required: true },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
 	},
 	{ timestamps: true }
 )
+const Gpu = mongoose.model('GPU', gpuSchema)
+
+export default Gpu
+
 /* Ejemplo gpu:
 	- manufacturer: Gigabyte
 	- series: RTX 40 Series
@@ -46,4 +53,3 @@ const gpuSchema = new mongoose.Schema(
 	- price: 599.99 €
 	- partType: gpu
 */
-export const Gpu = mongoose.model("GPU", gpuSchema)
