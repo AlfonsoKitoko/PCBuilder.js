@@ -1,12 +1,12 @@
 // Índice para unificar las exportaciones de constantes
 
-export * from "./case_type.constant"
-export * from "./form_factor.constant"
-export * from "./gpu.constant"
-export * from "./manufacturer.constant"
-export * from "./os.constant"
-export * from "./pc_parts.constant"
-export * from "./psu.constant"
-export * from "./ram.constant"
-export * from "./storage.constant"
-export * from "./wireless.constant"
+export * from './case_type.constant.js'
+export * from './mobo_form_factor.constant.js'
+export * from './gpu.constant.js'
+export * from './manufacturer.constant.js'
+export * from './os.constant.js'
+export * from './pc_parts.constant.js'
+export * from './psu.constant.js'
+export * from './ram.constant.js'
+export * from './storage.constant.js'
+export * from './wireless.constant.js'

@@ -5,5 +5,6 @@ export const PC_PARTS = [
 	"PSU",
 	"STORAGE",
 	"GPU",
+	"CASE",
 	"OS"
 ]
