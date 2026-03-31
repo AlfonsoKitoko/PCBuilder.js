@@ -1,1 +1,3 @@
 // TODO: HTTPS ??
+// TODO: consistencia de datos (Si se borra un componente, ¿qué pasa con las builds?¿Y si se borra un usuario?)
+// consistencia de datos (soft delete): - modificar schemas, controllers, middlewares y seed
