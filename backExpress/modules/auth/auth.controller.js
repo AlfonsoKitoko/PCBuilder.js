@@ -12,3 +12,11 @@ export const register = wrapAsync(async (req, res) => {
 	const user = await authService.register(req.body)
 	return apiResponse.success(res, 'Registration successful', user)
 })
+
+export const logout = (req, res) => {
+	res.cookie('jwt', 'logout', {
+		expires: new Date(Date.now() + 1000),
+		httpOnly: true
+	})
+	return apiResponse.success(res, null, 'Logout successful')
+}
