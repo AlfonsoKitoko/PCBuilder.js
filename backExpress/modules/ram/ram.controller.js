@@ -23,7 +23,7 @@ export const findRamById = wrapAsync(async (req, res) => {
 export const createRam = wrapAsync(async (req, res) => {
 	const newRam = await ramService.createRam(req.body)
 
-	return apiResponse.success(res, newRam, 'RAM created successfully')
+	return apiResponse.success(res, newRam, 'RAM created successfully', 201)
 })
 
 // U - Actualizar RAM

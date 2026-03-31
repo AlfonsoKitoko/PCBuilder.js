@@ -8,12 +8,12 @@ export const createRam = async (ramData) => {
 
 // R - Listar todas las rams
 export const getAllRams = async () => {
-	return await Ram.find().lean()
+	return await Ram.find().populate('partType', 'name -_id').lean()
 }
 
 // R - Listar ram por id
 export const getRamById = async (id) => {
-	return await Ram.findById(id).lean()
+	return await Ram.findById(id).populate('partType', 'name -_id').lean()
 }
 
 // U - Actualizar ram por id
