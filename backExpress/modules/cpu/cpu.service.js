@@ -8,12 +8,12 @@ export const createCpu = async (cpuData) => {
 
 // R - Listar todas las cpus
 export const getAllCpus = async () => {
-	return await Cpu.find().lean()
+	return await Cpu.find().populate('partType', 'name -_id').lean()
 }
 
 // R - Listar cpu por id
 export const getCpuById = async (id) => {
-	return await Cpu.findById(id).lean()
+	return await Cpu.findById(id).populate('partType', 'name -_id').lean()
 }
 
 // U - Actualizar cpu por id

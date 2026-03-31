@@ -23,7 +23,7 @@ export const findCpuById = wrapAsync(async (req, res) => {
 export const createCpu = wrapAsync(async (req, res) => {
 	const newCpu = await cpuService.createCpu(req.body)
 
-	return apiResponse.success(res, newCpu, 'Cpu created successfully')
+	return apiResponse.success(res, newCpu, 'Cpu created successfully', 201)
 })
 
 // U - Actualizar Cpu
