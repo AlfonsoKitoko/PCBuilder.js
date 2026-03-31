@@ -1,21 +1,29 @@
 export const calcTotalPrice = (build) => {
 	let totalPriceCents = 0
-	const parts = [
+
+	// 1. Componentes Únicos
+	const singleParts = [
 		build.cpu,
 		build.mobo,
-		build.ram,
 		build.gpu,
-		build.storage,
 		build.case,
-		build.psu
+		build.psu,
+		build.os // No olvides el Sistema Operativo si lo tienes en el Schema
 	]
 
-	parts.forEach(part => {
-		if (part?.price) totalPriceCents += part.price;
+	singleParts.forEach(part => {
+		if (part?.price) totalPriceCents += part.price
 	})
 
-	build.ram?.forEach(r => totalPriceCents += r.price)
-	build.storage?.forEach(s => totalPriceCents += s.price)
+	// 2. Componentes Múltiples (Arrays)
+	// Usamos el encadenamiento opcional ?. para evitar errores si el array no existe
+	build.ram?.forEach(r => {
+		if (r?.price) totalPriceCents += r.price
+	})
 
-	return totalPriceCents;
+	build.storage?.forEach(s => {
+		if (s?.price) totalPriceCents += s.price
+	})
+
+	return totalPriceCents
 }

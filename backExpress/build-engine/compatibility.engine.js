@@ -1,15 +1,15 @@
 import { MOBO_FORM_FACTOR } from "../constants/index.constant.js"
 
 export const checkCompatibility = (build) => {
-	const errors = []
+	const report = { errors: [], warnings: [] }
 
-	if (!build) return errors
+	if (!build) return report
 
 	const { cpu, mobo, ram, gpu, storage, case: pcCase, psu } = build
 
 	// 1. Socket CPU vs Motherboard
 	if (cpu && mobo && cpu.socket !== mobo.socket) {
-		errors.push(`Incompatible Socket: CPU is ${cpu.socket} but Motherboard is ${mobo.socket}`)
+		report.errors.push(`Incompatible Socket: CPU is ${cpu.socket} but Motherboard is ${mobo.socket}`)
 	}
 
 	// 2. RAM: Tipo y Cantidad de Módulos
@@ -17,22 +17,87 @@ export const checkCompatibility = (build) => {
 		// Comprobar que todos los módulos sean del mismo tipo que la placa
 		const wrongType = ram.some(r => r.ram_type !== mobo.ram_type)
 		if (wrongType) {
-			errors.push(`RAM type mismatch: Motherboard requires ${mobo.ram_type}`)
+			report.errors.push(`RAM type mismatch: Motherboard requires ${mobo.ram_type}`)
 		}
 
 		// Comprobar slots físicos ocupados
 		// (Ojo: si un objeto RAM representa un pack de 2, deberías sumar r.modules.quantity)
 		const totalModules = ram.reduce((acc, r) => acc + (r.modules?.quantity || 1), 0)
 		if (totalModules > mobo.ram_slots) {
-			errors.push(`Too many RAM modules: ${totalModules} installed, but Mobo only has ${mobo.ram_slots} slots`)
+			report.errors.push(`Too many RAM modules: ${totalModules} installed, but Mobo only has ${mobo.ram_slots} slots`)
+		}
+
+		if (totalModules === 1) {
+			report.warnings.push("Only one RAM module detected. For better performance, consider using dual-channel with 2 modules.")
 		}
 	}
 
 	// 3. Storage: Cantidad de discos
+	if (storage && storage.length > 0) {
+		// --- VALIDACIÓN LÓGICA (Placa Base) ---
+		if (mobo) {
+			const sataSlots = mobo.internal_connectors?.sata_6gb || 0
+			const nvmeSlots = mobo.internal_connectors?.m2_nvme || 0
+
+			const requiredSata = storage.filter(s => s.interface.includes('SATA')).length
+			const requiredNvme = storage.filter(s => s.nvme === true).length
+
+			if (requiredSata > sataSlots) {
+				report.errors.push(`Not enough SATA ports: Need ${requiredSata}, Mobo has ${sataSlots}`)
+			}
+			if (requiredNvme > nvmeSlots) {
+				report.errors.push(`Not enough M.2 slots: Need ${requiredNvme}, Mobo has ${nvmeSlots}`)
+			}
+		}
+
+		if (pcCase) {
+			const bays35 = pcCase.internal_bays?.int35 || 0
+			const bays25 = pcCase.internal_bays?.int25 || 0
+
+			// Total de huecos donde cabe un SSD/HDD de 2.5" (Cabinas de 2.5 + las de 3.5 que son híbridas)
+			const totalSlotsFor25 = bays25 + bays35
+
+			const required35 = storage.filter(s => s.form_factor === '3.5"').length
+			const required25 = storage.filter(s => s.form_factor === '2.5"').length
+
+			// Validar discos grandes (3.5") -> Solo caben en sus bahías específicas
+			if (required35 > bays35) {
+				report.errors.push(`Not enough 3.5" bays: Need ${required35}, Case has ${bays35}`)
+			}
+
+			// Validar discos pequeños (2.5") -> Caben en las suyas Y en las de 3.5" sobrantes
+			const remainingAfter35 = bays35 - required35
+			const availableFor25 = bays25 + (remainingAfter35 > 0 ? remainingAfter35 : 0)
+
+			if (required25 > availableFor25) {
+				report.errors.push(`Not enough physical space for 2.5" drives: Need ${required25}, Case only has ${availableFor25} spots left`)
+			}
+		}
+	}
+
 	if (storage && storage.length > 0 && mobo) {
-		const totalStorageSlots = (mobo.internal_connectors?.sata_6gb || 0) + (mobo.internal_connectors?.m2_nvme || 0)
-		if (storage.length > totalStorageSlots) {
-			errors.push("Not enough storage connectors on the Motherboard")
+		// 1. Conectores IDE (PATA)
+		const requiredIde = storage.filter(s => s.interface === 'IDE').length
+		const availableIde = mobo.internal_connectors?.legacy?.ide || 0
+
+		if (requiredIde > availableIde) {
+			report.errors.push(`Legacy Error: Need ${requiredIde} IDE port(s), but Motherboard only has ${availableIde}`)
+		}
+
+		// 2. Conectores SATA 3GB/s (Legacy SATA)
+		const requiredSata3 = storage.filter(s => s.interface === 'SATA 3GB/S').length
+		const availableSata3 = mobo.internal_connectors?.legacy?.sata_3gb || 0
+
+		if (requiredSata3 > availableSata3) {
+			// Si la placa no tiene SATA 3GB, pero tiene SATA 6GB (que es retrocompatible)
+			const availableSata6 = mobo.internal_connectors?.sata_6gb || 0
+
+			if (requiredSata3 > (availableSata3 + availableSata6)) {
+				report.errors.push(`SATA Error: Not enough ports for your SATA 3GB/s drives`)
+			} else {
+				// Warning: Funcionará, pero estás usando un puerto rápido para un disco lento
+				report.warnings.push(`SATA Note: Your SATA 3GB/s drive will be connected to a SATA 6GB/s port`)
+			}
 		}
 	}
 
@@ -43,17 +108,27 @@ export const checkCompatibility = (build) => {
 
 		// Si la placa es "más grande" (índice mayor) que la caja, error
 		if (moboIndex > caseIndex) {
-			errors.push(`Case (${pcCase.form_factor}) is too small for Motherboard (${mobo.form_factor})`)
+			report.errors.push(`Case (${pcCase.form_factor}) is too small for Motherboard (${mobo.form_factor})`)
 		}
 	}
 
-	// 5. PSU Wattage (Añadiendo el campo que faltaba)
+	// 5. PSU Wattage
 	if (psu && cpu && gpu) {
-		const estimatedConsumption = (cpu.tdp || 0) + (gpu.tdp || 0) + 50 // 50W extra para el resto
-		if (psu.wattage < estimatedConsumption) {
-			errors.push(`PSU wattage too low: Recommended at least ${estimatedConsumption}W`)
+		const gpuConsumption = gpu ? (gpu.tdp || 0) : 0
+		const baseConsumption = (cpu.tdp || 0) + gpuConsumption + 50 // 50W extra para el resto
+		if (psu.wattage < baseConsumption) {
+			report.errors.push(`PSU wattage too low: Recommended at least ${baseConsumption}W`)
+		} else if (psu.wattage < (baseConsumption * 1.2)) {
+			report.warnings.push(`PSU wattage is close to the recommended minimum: ${baseConsumption}W`)
 		}
 	}
 
-	return errors
+	// 6. Gráficos
+	if (cpu && !cpu.hasIntegratedGraphics && !gpu) {
+		report.errors.push("No video output: CPU has no integrated graphics and no GPU is selected.")
+	} else if (cpu && cpu.hasIntegratedGraphics && !gpu) {
+		report.warnings.push("Integrated graphics only: This build might struggle with gaming or heavy 3D tasks.")
+	}
+
+	return report
 }
