@@ -23,7 +23,7 @@ export const findGpuById = wrapAsync(async (req, res) => {
 export const createGpu = wrapAsync(async (req, res) => {
 	const newGpu = await gpuService.createGpu(req.body)
 
-	return apiResponse.success(res, newGpu, 'Gpu created successfully')
+	return apiResponse.success(res, newGpu, 'Gpu created successfully', 201)
 })
 
 // U - Actualizar Gpu
