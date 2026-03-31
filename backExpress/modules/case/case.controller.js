@@ -5,7 +5,7 @@ import AppError from '../../utils/AppError.js'
 
 // R - Listar todas las Cases
 export const findAllCases = wrapAsync(async (req, res) => {
-	const cases = await caseService.getAllCase()
+	const cases = await caseService.getAllCases()
 	return apiResponse.success(res, cases, `${cases.length} Cases retrieved successfully`)
 })
 
@@ -23,7 +23,7 @@ export const findCaseById = wrapAsync(async (req, res) => {
 export const createCase = wrapAsync(async (req, res) => {
 	const newCase = await caseService.createCase(req.body)
 
-	return apiResponse.success(res, newCase, 'Case created successfully')
+	return apiResponse.success(res, newCase, 'Case created successfully', 201)
 })
 
 // U - Actualizar Case

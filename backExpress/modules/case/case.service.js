@@ -8,12 +8,12 @@ export const createCase = async (caseData) => {
 
 // R - Listar todas las cajas
 export const getAllCases = async () => {
-	return await Case.find().lean()
+	return await Case.find().populate('partType', 'name -_id').lean()
 }
 
 // R - Listar caja por id
 export const getCaseById = async (id) => {
-	return await Case.findById(id).lean()
+	return await Case.findById(id).populate('partType', 'name -_id').lean()
 }
 
 // U - Actualizar caja por id
