@@ -5,13 +5,13 @@ import { FORM_FACTOR, STORAGE_TYPE, INTERFACE } from '../constants/index.constan
 const storageSchema = new mongoose.Schema(
 	{
 		// _id autogenerado
-		manufacturer: { type: String, required: true },
-		model: { type: String, required: true },
+		manufacturer: { type: String, uppercase: true, trim: true, required: true },
+		model: { type: String, uppercase: true, trim: true, required: true },
 		// GigaBytes
-		capacity: { type: String, required: true },
-		type: { type: String, required: true, enum: STORAGE_TYPE },
-		form_factor: { type: String, required: true, enum: FORM_FACTOR },
-		interface: { type: String, required: true, enum: INTERFACE },
+		capacity: { type: String, uppercase: true, trim: true, required: true },
+		type: { type: String, uppercase: true, trim: true, enum: STORAGE_TYPE, required: true },
+		form_factor: { type: String, uppercase: true, trim: true, enum: FORM_FACTOR, required: true },
+		interface: { type: String, uppercase: true, trim: true, enum: INTERFACE, required: true },
 		cache: { type: Number, required: true, validate: positiveIntegerValidator },
 		nvme: { type: Boolean, required: true, default: false },
 		// Céntimos
@@ -25,15 +25,17 @@ const Storage = mongoose.model('Storage', storageSchema)
 
 export default Storage
 
-/* Ejemplo storage:
-	- manufacturer: Samsung
-	- model: 870 EVO
-	- capacity: 500 GB
-	- type: SSD
-	- cache: 512 MB
-	- form_factor: 2.5'
-	- interface: SATA 6.0 GB/s
-	- nvme: No
-	- price: 55.98 €
-	- partType: storage
+/* Ejemplo json storage:
+	{
+		"manufacturer": " samsung ",
+		"model": "990 Pro",
+		"capacity": "2tb",
+		"type": "ssd",
+		"form_factor": "m.2",
+		"interface": "M.2 PCIE 4.0 X4",
+		"cache": 2048,
+		"nvme": true,
+		"price": 18990,
+		"partType": "69c3ff0e60737a8c635696a2"
+	}
 */

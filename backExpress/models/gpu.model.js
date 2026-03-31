@@ -2,29 +2,31 @@ import mongoose from 'mongoose'
 import { GPU_TYPE, SYNC_TYPE, INTERFACE_TYPE, EXTERNAL_POWER, GDDR_TYPE } from '../constants/index.constant.js'
 import { positiveIntegerValidator } from '../validators/integer.validator.js'
 
+const gpuPortsSchema = new mongoose.Schema({
+	vga: { type: Number, min: 0, default: 0 },
+	dvi: { type: Number, min: 0, default: 0 },
+	hdmi: { type: Number, min: 0, default: 0 },
+	displayport: { type: Number, min: 0, default: 0 },
+}, { _id: false })
+
 const gpuSchema = new mongoose.Schema(
 	{
 		// _id autogenerado
-		manufacturer: { type: String, required: true },
-		series: { type: String, required: true },
-		gpu_type: { type: String, enum: GPU_TYPE, required: true },
-		// GigaHertz
-		base_freq: { type: Number, required: true },
-		// GigaHertz
-		boost_freq: { type: Number, required: true },
-		memory: { type: Number, required: true },
-		memory_type: { type: String, enum: GDDR_TYPE, required: true },
-		interface: { type: String, enum: INTERFACE_TYPE, required: true, default: 'PCIe x16' },
-		frame_sync: { type: String, enum: SYNC_TYPE, required: true },
+		manufacturer: { type: String, uppercase: true, trim: true, required: true },
+		series: { type: String, uppercase: true, trim: true, required: true },
+		gpu_type: { type: String, uppercase: true, trim: true, enum: GPU_TYPE, required: true },
+		// MegaHertz
+		base_freq: { type: Number, required: true, validate: positiveIntegerValidator },
+		// MegaHertz
+		boost_freq: { type: Number, required: true, validate: positiveIntegerValidator },
+		memory: { type: Number, required: true, validate: positiveIntegerValidator },
+		memory_type: { type: String, uppercase: true, trim: true, enum: GDDR_TYPE, required: true },
+		interface: { type: String, uppercase: true, trim: true, enum: INTERFACE_TYPE, required: true, default: 'PCIE X16' },
+		frame_sync: { type: String, uppercase: true, trim: true, enum: SYNC_TYPE, required: true },
 		// Watts
-		tdp: { type: Number, required: true },
-		ports: {
-			vga: { type: Number, min: 0, default: 0 },
-			dvi: { type: Number, min: 0, default: 0 },
-			hdmi: { type: Number, min: 0, default: 0 },
-			displayport: { type: Number, min: 0, default: 0 },
-		},
-		external_power: { type: String, enum: EXTERNAL_POWER, required: true },
+		tdp: { type: Number, required: true, validate: positiveIntegerValidator },
+		ports: gpuPortsSchema,
+		external_power: { type: String, uppercase: true, trim: true, enum: EXTERNAL_POWER, required: true },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
 		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
@@ -35,21 +37,26 @@ const Gpu = mongoose.model('GPU', gpuSchema)
 
 export default Gpu
 
-/* Ejemplo gpu:
-	- manufacturer: Gigabyte
-	- series: RTX 40 Series
-	- model: RTX 4070 Windforce OC
-	- gpu_type: NVIDIA
-	- base_freq: 1.92 GHz
-	- boost_freq: 2.48 GHz
-	- interface: PCIe x16
-	- frame_sync: G-Sync
-	- tdp: 200 W
-	- ports:
-		- vga: 0
-		- dvi: 0
-		- hdmi: 2
-		- displyport: 1
-	- price: 599.99 €
-	- partType: gpu
+/* Ejemplo json gpu:
+	{
+		"manufacturer": " msi ",
+		"series": "geforce rtx 4070 ti super ventus 3x",
+		"gpu_type": "nvidia",
+		"base_freq": 2340,
+		"boost_freq": 2640,
+		"memory": 16,
+		"memory_type": "gddr6x",
+		"interface": "pcie x16",
+		"frame_sync": "nvidia g-sync",
+		"tdp": 285,
+		"ports": {
+			"vga": 0,
+			"dvi": 0,
+			"hdmi": 1,
+			"displayport": 3
+		},
+		"external_power": "1 X PCIE 16-PIN 12VHPWR",
+		"price": 89990,
+		"partType": "69c3ff0e60737a8c6356969d"
+	}
 */
