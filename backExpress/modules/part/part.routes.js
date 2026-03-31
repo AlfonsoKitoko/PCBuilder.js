@@ -1,18 +1,15 @@
 import { Router } from 'express'
 import * as partController from './part.controller.js'
-// import { protect } from '../../middlewares/jwt.mw.js'
+import { protect } from '../../middlewares/jwt.mw.js'
+import { restrictTo } from '../../middlewares/profile.mw.js'
 
 const router = Router()
 
 router.get('/', partController.findAllParts)
 router.get('/:id', partController.findPartById)
-
-// router.post('/', protect, partController.createPart)
-// router.patch('/:id', protect, partController.updatePartById)
-// router.delete('/:id', protect, partController.deletePartById)
-
-router.post('/', partController.createPart)
-router.patch('/:id', partController.updatePartById)
-router.delete('/:id', partController.deletePartById)
+// Sólo el ADMIN puede crear, modificar o eliminar PARTs
+router.post('/', protect, restrictTo('ADMIN'), partController.createPart)
+router.patch('/:id', protect, restrictTo('ADMIN'), partController.updatePartById)
+router.delete('/:id', protect, restrictTo('ADMIN'), partController.deletePartById)
 
 export default router

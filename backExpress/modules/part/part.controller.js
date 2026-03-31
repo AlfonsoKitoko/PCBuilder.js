@@ -23,7 +23,7 @@ export const findPartById = wrapAsync(async (req, res) => {
 export const createPart = wrapAsync(async (req, res) => {
 	const newPart = await partService.createPart(req.body)
 
-	return apiResponse.success(res, newPart, 'Part created successfully')
+	return apiResponse.success(res, newPart, 'Part created successfully', 201)
 })
 
 // U - Actualizar Part
