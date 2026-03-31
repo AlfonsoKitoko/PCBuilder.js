@@ -23,7 +23,7 @@ export const findOsById = wrapAsync(async (req, res) => {
 export const createOs = wrapAsync(async (req, res) => {
 	const newOs = await osService.createOs(req.body)
 
-	return apiResponse.success(res, newOs, 'Os created successfully')
+	return apiResponse.success(res, newOs, 'Os created successfully', 201)
 })
 
 // U - Actualizar Os

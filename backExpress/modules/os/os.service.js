@@ -8,12 +8,12 @@ export const createOs = async (osData) => {
 
 // R - Listar todas las oss
 export const getAllOss = async () => {
-	return await Os.find().lean()
+	return await Os.find().populate('partType', 'name -_id').lean()
 }
 
 // R - Listar os por id
 export const getOsById = async (id) => {
-	return await Os.findById(id).lean()
+	return await Os.findById(id).populate('partType', 'name -_id').lean()
 }
 
 // U - Actualizar os por id
