@@ -23,7 +23,7 @@ export const findMoboById = wrapAsync(async (req, res) => {
 export const createMobo = wrapAsync(async (req, res) => {
 	const newMobo = await moboService.createMobo(req.body)
 
-	return apiResponse.success(res, newMobo, 'Mobo created successfully')
+	return apiResponse.success(res, newMobo, 'Mobo created successfully', 201)
 })
 
 // U - Actualizar Mobo
