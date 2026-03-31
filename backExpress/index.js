@@ -21,7 +21,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const port = process.env.PORT || 3000
+const baseUrl = process.env.BASE_URL || '/api/v1'
 const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 
 //////////////////////////////////////////////////////
@@ -55,9 +56,9 @@ app.use(
 // ++ ROUTES ++
 //////////////////////////////////////////////////////
 
-app.get('/', (req, res) => res.redirect('/pcbuilder'))
+app.get('/', (req, res) => res.redirect(baseUrl))
 
-app.use('/pcbuilder', builderRoutes)
+app.use(baseUrl, builderRoutes)
 
 // Captura de rutas inexistentes
 app.use((req, res, next) => {
@@ -74,11 +75,11 @@ const startServer = async () => {
 	try {
 		await conexMongoDB()
 
-		app.listen(PORT, () => {
+		app.listen(port, () => {
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-			console.log(`    ++ Servitor running @ http://localhost:${PORT} ++`)
+			console.log(`++ Servitor running at http://localhost:${port}${baseUrl} ++`)
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-			console.log(`++ Swagger running @ http://localhost:${PORT}${swaggerPath} ++`)
+			console.log(`++ Swagger running @ http://localhost:${port}${swaggerPath} ++`)
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 		})
 	} catch (err) {
