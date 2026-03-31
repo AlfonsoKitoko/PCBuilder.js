@@ -5,7 +5,7 @@ import AppError from '../../utils/AppError.js'
 
 // R - Listar todas las Psus
 export const findAllPsus = wrapAsync(async (req, res) => {
-	const psus = await psuService.getAllPsu()
+	const psus = await psuService.getAllPsus()
 	return apiResponse.success(res, psus, `${psus.length} Psus retrieved successfully`)
 })
 
@@ -23,13 +23,13 @@ export const findPsuById = wrapAsync(async (req, res) => {
 export const createPsu = wrapAsync(async (req, res) => {
 	const newPsu = await psuService.createPsu(req.body)
 
-	return apiResponse.success(res, newPsu, 'Psu created successfully')
+	return apiResponse.success(res, newPsu, 'Psu created successfully', 201)
 })
 
 // U - Actualizar Psu
 export const updatePsuById = wrapAsync(async (req, res) => {
 	const { id } = req.params
-	const updatedPsu = await psuService.updatePsus(id, req.body)
+	const updatedPsu = await psuService.updatePsu(id, req.body)
 
 	if (!updatedPsu) throw new AppError('Psu not found', 404)
 

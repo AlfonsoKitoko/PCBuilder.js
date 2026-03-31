@@ -8,12 +8,12 @@ export const createPsu = async (psuData) => {
 
 // R - Listar todas las psus
 export const getAllPsus = async () => {
-	return await Psu.find().lean()
+	return await Psu.find().populate('partType', 'name -_id').lean()
 }
 
 // R - Listar psu por id
 export const getPsuById = async (id) => {
-	return await Psu.findById(id).lean()
+	return await Psu.findById(id).populate('partType', 'name -_id').lean()
 }
 
 // U - Actualizar psu por id
