@@ -8,12 +8,12 @@ export const createStorage = async (storageData) => {
 
 // R - Listar todas las storages
 export const getAllStorages = async () => {
-	return await Storage.find().lean()
+	return await Storage.find().populate('partType', 'name -_id').lean()
 }
 
 // R - Listar storage por id
 export const getStorageById = async (id) => {
-	return await Storage.findById(id).lean()
+	return await Storage.findById(id).populate('partType', 'name -_id').lean()
 }
 
 // U - Actualizar storage por id

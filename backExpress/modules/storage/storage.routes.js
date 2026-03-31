@@ -1,18 +1,15 @@
 import { Router } from 'express'
 import * as storageController from './storage.controller.js'
-// import { protect } from '../../middlewares/jwt.mw.js'
+import { protect } from '../../middlewares/jwt.mw.js'
+import { restrictTo } from '../../middlewares/profile.mw.js'
 
 const router = Router()
 
 router.get('/', storageController.findAllStorages)
 router.get('/:id', storageController.findStorageById)
-
-// router.post('/', protect, storageController.createStorage)
-// router.patch('/:id', protect, storageController.updateStorageById)
-// router.delete('/:id', protect, storageController.deleteStorageById)
-
-router.post('/', storageController.createStorage)
-router.patch('/:id', storageController.updateStorageById)
-router.delete('/:id', storageController.deleteStorageById)
+// Sólo el ADMIN puede crear, modificar o eliminar STORAGEs
+router.post('/', protect, restrictTo('ADMIN'), storageController.createStorage)
+router.patch('/:id', protect, restrictTo('ADMIN'), storageController.updateStorageById)
+router.delete('/:id', protect, restrictTo('ADMIN'), storageController.deleteStorageById)
 
 export default router

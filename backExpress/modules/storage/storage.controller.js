@@ -23,7 +23,7 @@ export const findStorageById = wrapAsync(async (req, res) => {
 export const createStorage = wrapAsync(async (req, res) => {
 	const newStorage = await storageService.createStorage(req.body)
 
-	return apiResponse.success(res, newStorage, 'Storage created successfully')
+	return apiResponse.success(res, newStorage, 'Storage created successfully', 201)
 })
 
 // U - Actualizar Storage
