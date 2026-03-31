@@ -1,34 +1,34 @@
 export const GPU_TYPE = [
-	"INTEL",
-	"AMD RADEON",
-	"NVIDIA"
+	'INTEL',
+	'AMD RADEON',
+	'NVIDIA'
 ]
 export const SYNC_TYPE = [
-	"AMD FreeSync",
-	"NVIDIA G-Sync",
-	"None"
+	'AMD FREESYNC',
+	'NVIDIA G-SYNC',
+	'NONE'
 ]
 export const EXTERNAL_POWER = [
-	"None",
-	"1 x PCIe 6-Pin",
-	"2 x PCIe 6-Pin",
-	"1 x PCIe 8-Pin",
-	"1 x PCIe 8-Pin + 1 x PCIe 6-Pin",
-	"2 x PCIe 8-Pin",
-	"2 x PCIe 8-Pin + 1 x PCIe 6-Pin",
-	"3 x PCIe 8-Pin",
-	"4 x PCIe 8-Pin",
-	"1 x PCIe 12-Pin",
-	"1 x PCIe 16-Pin 12VHPWR",
-	"2 x PCIe 16-Pin 12VHPWR",
-	"1 x EPS 8-Pin"
+	'NONE',
+	'1 X PCIE 6-PIN',
+	'2 X PCIE 6-PIN',
+	'1 X PCIE 8-PIN',
+	'1 X PCIE 8-PIN + 1 X PCIE 6-PIN',
+	'2 X PCIE 8-PIN',
+	'2 X PCIE 8-PIN + 1 X PCIE 6-PIN',
+	'3 X PCIE 8-PIN',
+	'4 X PCIE 8-PIN',
+	'1 X PCIE 12-PIN',
+	'1 X PCIE 16-PIN 12VHPWR',
+	'2 X PCIE 16-PIN 12VHPWR',
+	'1 X EPS 8-PIN'
 ]
 
 export const INTERFACE_TYPE = [
-	"AGP",
-	"PCI",
-	"PCIe x1",
-	"PCIe x8",
-	"PCIe x16",
-	"PCIe x16 GC-HPWR",
+	'AGP',
+	'PCI',
+	'PCIE X1',
+	'PCIE X8',
+	'PCIE X16',
+	'PCIE X16 GC-HPWR',
 ]

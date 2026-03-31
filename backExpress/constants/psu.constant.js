@@ -1,36 +1,36 @@
 export const PSU_TYPE = [
-	"ATX",
-	"Flex ATX",
-	"Mini ITX",
-	"SFX",
-	"TFX",
+	'ATX',
+	'FLEX-ATX',
+	'MINI-ITX',
+	'SFX',
+	'TFX',
 ]
 
 export const EFF_RATING = [
-	"80+ Titanium",
-	"80+ Platinum",
-	"80+ Gold",
-	"80+ Silver",
-	"80+ Bronze",
-	"80+",
+	'80+ TITANIUM',
+	'80+ PLATINUM',
+	'80+ GOLD',
+	'80+ SILVER',
+	'80+ BRONZE',
+	'80+',
 ]
 
 export const MODULAR = [
-	"No",
-	"Full",
-	"Full / Side",
-	"Semi",
+	'NO',
+	'FULL',
+	'FULL / SIDE',
+	'SEMI',
 ]
 
 export const CONNECTORS = [
-	"4 x EPS 8-pin",
-	"3 x EPS 8-pin",
-	"2 x EPS 8-pin + 1 x ATX 4-pin",
-	"2 x EPS 8-pin",
-	"1 x EPS 8-pin + 2 x ATX 4-pin",
-	"1 x EPS 8-pin + 1 x ATX 4-pin",
-	"1 x EPS 8-pin",
-	"2 x ATX 4-pin",
-	"1 x ATX 4-pin",
-	"None",
+	'4 X EPS 8-PIN',
+	'3 X EPS 8-PIN',
+	'2 X EPS 8-PIN + 1 X ATX 4-PIN',
+	'2 X EPS 8-PIN',
+	'1 X EPS 8-PIN + 2 X ATX 4-PIN',
+	'1 X EPS 8-PIN + 1 X ATX 4-PIN',
+	'1 X EPS 8-PIN',
+	'2 X ATX 4-PIN',
+	'1 X ATX 4-PIN',
+	'NONE',
 ]
