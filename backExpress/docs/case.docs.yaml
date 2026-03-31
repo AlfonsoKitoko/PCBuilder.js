@@ -1,0 +1,98 @@
+paths:
+  /cases:
+    get:
+      summary: "Listar todos los gabinetes"
+      tags: ["Catalog / Cases"]
+      responses:
+        200:
+          description: "Lista de gabinetes recuperada"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Case"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Crear un nuevo gabinete (Protegido)"
+      tags: ["Catalog / Cases"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Case"
+      responses:
+        201:
+          description: "Gabinete creado con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /cases/{id}:
+    get:
+      summary: "Obtener gabinete por ID"
+      tags: ["Catalog / Cases"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar gabinete (Protegido)"
+      tags: ["Catalog / Cases"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Case"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar gabinete (Protegido)"
+      tags: ["Catalog / Cases"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

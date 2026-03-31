@@ -1,0 +1,88 @@
+paths:
+  /builds:
+    get:
+      summary: "Listar mis configuraciones de PC (Protegido)"
+      description: "Recupera todas las builds creadas por el usuario autenticado."
+      tags: ["Builds"]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Lista de builds del usuario"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Build"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Crear una nueva configuración (Protegido)"
+      description: "Guarda una nueva combinación de componentes vinculada al usuario."
+      tags: ["Builds"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Build"
+      responses:
+        201:
+          description: "Build creada exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Build"
+        400:
+          $ref: "#/components/responses/ValidationError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+
+  /builds/{id}:
+    patch:
+      summary: "Actualizar una configuración (Protegido)"
+      tags: ["Builds"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la build"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Build"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar una configuración (Protegido)"
+      tags: ["Builds"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

@@ -1,0 +1,99 @@
+paths:
+  /storage:
+    get:
+      summary: "Listar todas las unidades de almacenamiento"
+      tags: ["Catalog / Storage"]
+      responses:
+        200:
+          description: "Lista de unidades de almacenamiento recuperada"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Storage"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Registrar una nueva unidad de almacenamiento (Protegido)"
+      tags: ["Catalog / Storage"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Storage"
+      responses:
+        201:
+          description: "Unidad creada con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Storage"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /storage/{id}:
+    get:
+      summary: "Obtener unidad de almacenamiento por ID"
+      tags: ["Catalog / Storage"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la unidad"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Storage"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar unidad de almacenamiento (Protegido)"
+      tags: ["Catalog / Storage"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Storage"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar unidad de almacenamiento (Protegido)"
+      tags: ["Catalog / Storage"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

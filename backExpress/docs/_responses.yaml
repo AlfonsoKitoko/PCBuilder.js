@@ -1,0 +1,61 @@
+components:
+  responses:
+    # 200 - Operación genérica exitosa (Delete, Update)
+    SuccessAction:
+      description: "Operación realizada con éxito"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error' # Reutilizamos el esquema simple (success/message)
+
+    # 400 - Error de lógica o validación
+    ValidationError:
+      description: "Los datos enviados no son válidos o hay un error de lógica"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    # 401 - Autenticación fallida
+    Unauthorized:
+      description: "No tienes permisos o el token es inválido/expirado"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    # 403 - Forbidden (Token válido pero sin rango de Admin)
+    Forbidden:
+      description: "No tienes los privilegios necesarios (ej. requiere ser Admin)"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    # 404 - No encontrado
+    NotFound:
+      description: "El recurso solicitado no existe"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    # 500 - Error de Servidor
+    InternalError:
+      description: "Error interno del servidor"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    # Este esquema es el "molde" para todas las respuestas de error/éxito simples
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Mensaje descriptivo del error"

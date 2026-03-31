@@ -1,0 +1,99 @@
+paths:
+  /gpus:
+    get:
+      summary: "Listar todas las tarjetas gráficas"
+      tags: ["Catalog / GPUs"]
+      responses:
+        200:
+          description: "Lista de GPUs recuperada"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Gpu"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Registrar una nueva GPU (Protegido)"
+      tags: ["Catalog / GPUs"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Gpu"
+      responses:
+        201:
+          description: "GPU creada con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Gpu"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /gpus/{id}:
+    get:
+      summary: "Obtener GPU por ID"
+      tags: ["Catalog / GPUs"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la GPU"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Gpu"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar GPU (Protegido)"
+      tags: ["Catalog / GPUs"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Gpu"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar GPU (Protegido)"
+      tags: ["Catalog / GPUs"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

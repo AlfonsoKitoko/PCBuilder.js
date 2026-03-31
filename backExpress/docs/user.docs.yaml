@@ -1,0 +1,99 @@
+paths:
+  /users:
+    get:
+      summary: "Listar todos los usuarios"
+      tags: ["Users"]
+      responses:
+        200:
+          description: "Lista de usuarios recuperada con éxito"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Crear un nuevo usuario (Protegido)"
+      tags: ["Users"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        201:
+          description: "Usuario creado con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /users/{id}:
+    get:
+      summary: "Obtener usuario por ID"
+      tags: ["Users"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB del usuario"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar datos de usuario (Protegido)"
+      tags: ["Users"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar usuario (Protegido)"
+      tags: ["Users"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

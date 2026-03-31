@@ -1,0 +1,99 @@
+paths:
+  /mobos:
+    get:
+      summary: "Listar todas las placas base"
+      tags: ["Catalog / Motherboards"]
+      responses:
+        200:
+          description: "Lista de placas base recuperada"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Mobo"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Registrar una nueva placa base (Protegido)"
+      tags: ["Catalog / Motherboards"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Mobo"
+      responses:
+        201:
+          description: "Placa base creada con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mobo"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /mobos/{id}:
+    get:
+      summary: "Obtener placa base por ID"
+      tags: ["Catalog / Motherboards"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la Motherboard"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mobo"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar placa base (Protegido)"
+      tags: ["Catalog / Motherboards"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Mobo"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar placa base (Protegido)"
+      tags: ["Catalog / Motherboards"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

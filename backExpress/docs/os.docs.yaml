@@ -1,0 +1,99 @@
+paths:
+  /oss:
+    get:
+      summary: "Listar todos los sistemas operativos"
+      tags: ["Catalog / OS"]
+      responses:
+        200:
+          description: "Lista de OS recuperada"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Os"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Registrar un nuevo sistema operativo (Protegido)"
+      tags: ["Catalog / OS"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Os"
+      responses:
+        201:
+          description: "OS creado con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Os"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /oss/{id}:
+    get:
+      summary: "Obtener sistema operativo por ID"
+      tags: ["Catalog / OS"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB del OS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Os"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar sistema operativo (Protegido)"
+      tags: ["Catalog / OS"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Os"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar sistema operativo (Protegido)"
+      tags: ["Catalog / OS"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

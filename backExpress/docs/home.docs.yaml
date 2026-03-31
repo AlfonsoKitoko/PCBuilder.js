@@ -1,0 +1,26 @@
+paths:
+  /:
+    get:
+      summary: "Información base de la API"
+      description: "Endpoint de bienvenida que confirma que el servicio está activo."
+      tags:
+        - "General"
+      responses:
+        200:
+          description: "Bienvenida y estado del sistema"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Welcome to PcBuilder API"
+                  version:
+                    type: string
+                    example: "1.0.0"
+        500:
+          $ref: "#/components/responses/InternalError"

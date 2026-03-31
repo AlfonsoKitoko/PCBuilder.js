@@ -1,0 +1,99 @@
+paths:
+  /rams:
+    get:
+      summary: "Listar todas las memorias RAM"
+      tags: ["Catalog / Memory (RAM)"]
+      responses:
+        200:
+          description: "Lista de RAMs recuperada con éxito"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ram"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Registrar una nueva memoria RAM (Protegido)"
+      tags: ["Catalog / Memory (RAM)"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ram"
+      responses:
+        201:
+          description: "RAM creada con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ram"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /rams/{id}:
+    get:
+      summary: "Obtener memoria RAM por ID"
+      tags: ["Catalog / Memory (RAM)"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la RAM"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ram"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar memoria RAM (Protegido)"
+      tags: ["Catalog / Memory (RAM)"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ram"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar memoria RAM (Protegido)"
+      tags: ["Catalog / Memory (RAM)"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

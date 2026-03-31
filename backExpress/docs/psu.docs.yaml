@@ -1,0 +1,99 @@
+paths:
+  /psus:
+    get:
+      summary: "Listar todas las fuentes de alimentación"
+      tags: ["Catalog / Power Supplies"]
+      responses:
+        200:
+          description: "Lista de PSUs recuperada con éxito"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Psu"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Registrar una nueva fuente de alimentación (Protegido)"
+      tags: ["Catalog / Power Supplies"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Psu"
+      responses:
+        201:
+          description: "PSU creada con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Psu"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /psus/{id}:
+    get:
+      summary: "Obtener fuente de alimentación por ID"
+      tags: ["Catalog / Power Supplies"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la PSU"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Psu"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar fuente de alimentación (Protegido)"
+      tags: ["Catalog / Power Supplies"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Psu"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar fuente de alimentación (Protegido)"
+      tags: ["Catalog / Power Supplies"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

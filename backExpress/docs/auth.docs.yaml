@@ -1,0 +1,64 @@
+paths:
+  /auth/register:
+    post:
+      summary: "Registrar un nuevo usuario"
+      description: "Crea una cuenta de usuario en la plataforma PCBuilder."
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User" # Inyectado vía Mongoose
+      responses:
+        201:
+          description: "Usuario registrado con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        400:
+          $ref: "#/components/responses/ValidationError"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+  /auth/login:
+    post:
+      summary: "Iniciar sesión"
+      description: "Autentica al usuario y devuelve un token JWT para peticiones protegidas."
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "usuario@ejemplo.com"
+                password:
+                  type: string
+                  format: password
+                  example: "123456"
+      responses:
+        200:
+          description: "Login exitoso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user:
+                    $ref: "#/components/schemas/User"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalError"

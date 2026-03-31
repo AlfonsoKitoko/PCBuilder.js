@@ -1,0 +1,100 @@
+paths:
+  /parts:
+    get:
+      summary: "Listar todas las piezas del catálogo general"
+      description: "Recupera todas las partes independientemente de su categoría (CPU, GPU, etc.)"
+      tags: ["Catalog / Master Inventory"]
+      responses:
+        200:
+          description: "Inventario recuperado con éxito"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Part"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Añadir una nueva pieza al inventario maestro (Protegido)"
+      tags: ["Catalog / Master Inventory"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Part"
+      responses:
+        201:
+          description: "Pieza creada correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Part"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /parts/{id}:
+    get:
+      summary: "Obtener una pieza específica por ID"
+      tags: ["Catalog / Master Inventory"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la pieza"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Part"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar información de una pieza (Protegido)"
+      tags: ["Catalog / Master Inventory"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Part"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar una pieza del catálogo (Protegido)"
+      tags: ["Catalog / Master Inventory"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"

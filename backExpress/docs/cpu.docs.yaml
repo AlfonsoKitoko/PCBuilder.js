@@ -1,0 +1,99 @@
+paths:
+  /cpus:
+    get:
+      summary: "Listar todos los procesadores"
+      tags: ["Catalog / CPUs"]
+      responses:
+        200:
+          description: "Lista de CPUs recuperada"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cpu"
+        500:
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: "Crear un nuevo procesador (Protegido)"
+      tags: ["Catalog / CPUs"]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cpu"
+      responses:
+        201:
+          description: "CPU creada con éxito"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cpu"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        400:
+          $ref: "#/components/responses/ValidationError"
+
+  /cpus/{id}:
+    get:
+      summary: "Obtener procesador por ID"
+      tags: ["Catalog / CPUs"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: "ID de MongoDB de la CPU"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cpu"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: "Actualizar procesador (Protegido)"
+      tags: ["Catalog / CPUs"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cpu"
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: "Eliminar procesador (Protegido)"
+      tags: ["Catalog / CPUs"]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          $ref: "#/components/responses/SuccessAction"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
