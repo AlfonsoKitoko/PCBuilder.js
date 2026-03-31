@@ -1,18 +1,28 @@
 import { Router } from 'express'
 import * as userController from './user.controller.js'
-// import { protect } from '../../middlewares/jwt.mw.js'
+import { protect } from '../../middlewares/jwt.mw.js'
+import { restrictTo } from '../../middlewares/profile.mw.js'
 
 const router = Router()
 
-router.get('/', userController.findAllUsers)
-router.get('/:id', userController.findUserById)
+// R - Listar todas las Users
+router.get('/', protect, userController.findAllUsers)
 
-// router.post('/', protect, userController.createUser)
-// router.patch('/:id', protect, userController.updateUserById)
-// router.delete('/:id', protect, userController.deleteUserById)
+// U - Modificar mismo User
+router.patch('/me', protect, userController.updateMe)
 
-router.post('/', userController.createUser)
-router.patch('/:id', userController.updateUserById)
-router.delete('/:id', userController.deleteUserById)
+// R - Buscar por ID
+router.get('/:id', protect, userController.findUserById)
+
+// Sólo el ADMIN puede crear, modificar o eliminar USERs
+
+// C - Crear User
+router.post('/', protect, restrictTo('ADMIN'), userController.createUser)
+
+// U - Modificar User
+router.patch('/:id', protect, restrictTo('ADMIN'), userController.updateUserById)
+
+// D - Eliminar User
+router.delete('/:id', protect, restrictTo('ADMIN'), userController.deleteUserById)
 
 export default router
