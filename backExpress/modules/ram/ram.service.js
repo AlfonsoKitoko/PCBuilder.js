@@ -26,5 +26,5 @@ export const updateRam = async (id, ramData) => {
 
 // D - Eliminar ram por id
 export const deleteRam = async (id) => {
-	return await Ram.findByIdAndDelete(id)
+	return await Ram.findByIdAndUpdate(id, { active: false })
 }

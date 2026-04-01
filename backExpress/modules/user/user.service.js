@@ -64,5 +64,5 @@ export const updateUser = async (id, userId, userProfile, userData) => {
 
 // D - Eliminar user por id
 export const deleteUser = async (id) => {
-	return await User.findByIdAndDelete(id)
+	return await User.findByIdAndUpdate(id, { active: false })
 }

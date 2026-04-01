@@ -26,5 +26,5 @@ export const updateGpu = async (id, gpuData) => {
 
 // D - Eliminar gpu por id
 export const deleteGpu = async (id) => {
-	return await Gpu.findByIdAndDelete(id)
+	return await Gpu.findByIdAndUpdate(id, { active: false })
 }

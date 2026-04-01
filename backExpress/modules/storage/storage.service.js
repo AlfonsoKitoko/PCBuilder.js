@@ -26,5 +26,5 @@ export const updateStorage = async (id, storageData) => {
 
 // D - Eliminar storage por id
 export const deleteStorage = async (id) => {
-	return await Storage.findByIdAndDelete(id)
+	return await Storage.findByIdAndUpdate(id, { active: false })
 }

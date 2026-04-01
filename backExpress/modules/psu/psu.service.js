@@ -26,5 +26,5 @@ export const updatePsu = async (id, psuData) => {
 
 // D - Eliminar psu por id
 export const deletePsu = async (id) => {
-	return await Psu.findByIdAndDelete(id)
+	return await Psu.findByIdAndUpdate(id, { active: false })
 }

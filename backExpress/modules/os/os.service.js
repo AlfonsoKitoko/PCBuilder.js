@@ -26,5 +26,5 @@ export const updateOs = async (id, osData) => {
 
 // D - Eliminar os por id
 export const deleteOs = async (id) => {
-	return await Os.findByIdAndDelete(id)
+	return await Os.findByIdAndUpdate(id, { active: false })
 }

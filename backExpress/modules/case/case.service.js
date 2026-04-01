@@ -26,5 +26,5 @@ export const updateCase = async (id, caseData) => {
 
 // D - Eliminar caja por id
 export const deleteCase = async (id) => {
-	return await Case.findByIdAndDelete(id)
+	return await Case.findByIdAndUpdate(id, { active: false })
 }

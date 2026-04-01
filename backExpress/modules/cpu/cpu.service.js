@@ -26,5 +26,5 @@ export const updateCpu = async (id, cpuData) => {
 
 // D - Eliminar cpu por id
 export const deleteCpu = async (id) => {
-	return await Cpu.findByIdAndDelete(id)
+	return await Cpu.findByIdAndUpdate(id, { active: false })
 }

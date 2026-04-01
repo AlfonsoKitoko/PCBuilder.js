@@ -26,5 +26,5 @@ export const updateMobo = async (id, moboData) => {
 
 // D - Eliminar mobo por id
 export const deleteMobo = async (id) => {
-	return await Mobo.findByIdAndDelete(id)
+	return await Mobo.findByIdAndUpdate(id, { active: false })
 }
