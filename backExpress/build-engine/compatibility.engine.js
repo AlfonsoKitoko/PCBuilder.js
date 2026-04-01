@@ -32,6 +32,14 @@ export const checkCompatibility = (build) => {
 		}
 	}
 
+	if (ram && ram.length > 1) {
+		const speeds = ram.map(r => r.speed)
+		const uniqueSpeeds = [...new Set(speeds)]
+		if (uniqueSpeeds.length > 1) {
+			report.warnings.push(`Mixed RAM speeds detected: ${uniqueSpeeds.join(', ')}. All modules will run at the speed of the slowest one (${Math.min(...speeds)} MHz).`)
+		}
+	}
+
 	// 3. Storage: Cantidad de discos
 	if (storage && storage.length > 0) {
 		// --- VALIDACIÓN LÓGICA (Placa Base) ---
@@ -128,6 +136,14 @@ export const checkCompatibility = (build) => {
 		report.errors.push("No video output: CPU has no integrated graphics and no GPU is selected.")
 	} else if (cpu && cpu.hasIntegratedGraphics && !gpu) {
 		report.warnings.push("Integrated graphics only: This build might struggle with gaming or heavy 3D tasks.")
+	}
+
+	if (cpu && cpu.hasIntegratedGraphics && !gpu && mobo) {
+		const video = mobo.rear_io?.video
+		const totalPorts = (video?.vga || 0) + (video?.dvi || 0) + (video?.hdmi || 0) + (video?.displayport || 0) > 0
+		if (totalPorts === 0) {
+			report.errors.push("No video output: CPU has integrated graphics but Motherboard has no video ports (VGA / DVI / HDMI / DisplayPort).")
+		}
 	}
 
 	return report
