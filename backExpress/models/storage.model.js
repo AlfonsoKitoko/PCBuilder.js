@@ -16,12 +16,18 @@ const storageSchema = new mongoose.Schema(
 		nvme: { type: Boolean, required: true, default: false },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
-	},
-	{ timestamps: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		// necesario para el soft delete
+		active: { type: Boolean, default: true, select: false }
+	}, { timestamps: true }
 )
 
 const Storage = mongoose.model('Storage', storageSchema)
+
+storageSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default Storage
 

@@ -29,11 +29,17 @@ const caseSchema = new mongoose.Schema(
 		color: { type: String, uppercase: true, trim: true, required: false },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
-	},
-	{ timestamps: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		// necesario para el soft delete
+		active: { type: Boolean, default: true, select: false }
+	}, { timestamps: true }
 )
 const Case = mongoose.model('Case', caseSchema)
+
+caseSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default Case
 

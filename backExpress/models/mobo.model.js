@@ -76,12 +76,18 @@ const moboSchema = new mongoose.Schema(
 		},
 		// Price en céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
-	},
-	{ timestamps: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		// necesario para el soft delete
+		active: { type: Boolean, default: true, select: false }
+	}, { timestamps: true }
 )
 
 const Mobo = mongoose.model('Mobo', moboSchema)
+
+moboSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default Mobo
 

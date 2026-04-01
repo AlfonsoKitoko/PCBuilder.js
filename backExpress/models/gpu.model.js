@@ -29,11 +29,17 @@ const gpuSchema = new mongoose.Schema(
 		external_power: { type: String, uppercase: true, trim: true, enum: EXTERNAL_POWER, required: true },
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
-	},
-	{ timestamps: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		// necesario para el soft delete
+		active: { type: Boolean, default: true, select: false }
+	}, { timestamps: true }
 )
 const Gpu = mongoose.model('GPU', gpuSchema)
+
+gpuSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default Gpu
 

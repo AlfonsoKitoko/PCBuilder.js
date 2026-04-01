@@ -25,13 +25,19 @@ const buildSchema = new mongoose.Schema({
 	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 	// Céntimos
 	totalPrice: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-},
-	{ timestamps: true }
+	// necesario para el soft delete
+	active: { type: Boolean, default: true, select: false }
+}, { timestamps: true }
 )
 // Índice compuesto para evitar builds con mismo nombre por usuario
 buildSchema.index({ name: 1, owner: 1 }, { unique: true })
 
 const Build = mongoose.model('Build', buildSchema)
+
+buildSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default Build
 

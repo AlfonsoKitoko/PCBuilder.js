@@ -33,12 +33,19 @@ const cpuSchema = new mongoose.Schema(
 		},
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true }
-	},
-	{ timestamps: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		// necesario para el soft delete
+		active: { type: Boolean, default: true, select: false }
+	}, { timestamps: true }
 )
 
 const Cpu = mongoose.model('CPU', cpuSchema)
+
+cpuSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
+
 export default Cpu
 
 /* Ejemplo json cpu:

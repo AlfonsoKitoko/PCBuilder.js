@@ -25,12 +25,18 @@ const ramSchema = new mongoose.Schema(
 		price: {
 			type: Number, required: true, min: 0, validate: positiveIntegerValidator
 		},
-		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true }
-	},
-	{ timestamps: true }
+		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true },
+		// necesario para el soft delete
+		active: { type: Boolean, default: true, select: false }
+	}, { timestamps: true }
 )
 
 const Ram = mongoose.model("RAM", ramSchema)
+
+ramSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default Ram
 

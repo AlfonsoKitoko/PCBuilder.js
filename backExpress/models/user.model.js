@@ -35,11 +35,17 @@ const userSchema = new mongoose.Schema(
 			default: 'USER',
 			required: true
 		},
-	},
-	{ timestamps: true }
+		// necesario para el soft delete
+		active: { type: Boolean, default: true, select: false }
+	}, { timestamps: true }
 )
 
 const User = mongoose.model('User', userSchema)
+
+userSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default User
 

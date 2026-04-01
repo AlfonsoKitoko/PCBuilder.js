@@ -12,14 +12,15 @@ const partSchema = new mongoose.Schema(
 			enum: PC_PARTS,
 			required: true
 		},
-	},
-	{
-		timestamps: true,
-		versionKey: false
-	}
+	}, { timestamps: true, versionKey: false }
 )
 
 const Part = mongoose.model('Part', partSchema)
+
+partSchema.pre(/^find/, function (next) {
+	this.find({ active: { $ne: false } })
+	next()
+})
 
 export default Part
 
