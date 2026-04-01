@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/cpus/cpus') },
 
 	// Detalles cpu (ID) -> /cpus/id-cpu
-	{ path: '', loadComponent: () => import('./pages/cpu/cpu') },
+	{ path: '/:id', loadComponent: () => import('./pages/cpu/cpu') },
 
 	// Crear cpu -> /cpus
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar cpu (ID) -> /cpus/id-cpu
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]

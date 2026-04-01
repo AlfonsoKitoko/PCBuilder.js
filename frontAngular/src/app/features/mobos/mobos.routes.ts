@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/mobos/mobos') },
 
 	// Detalles mobos (ID) -> /mobos/id-mobo
-	{ path: '', loadComponent: () => import('./pages/mobo/mobo') },
+	{ path: '/:id', loadComponent: () => import('./pages/mobo/mobo') },
 
 	// Crear mobos -> /mobos
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar mobos (ID) -> /mobos/id-mobo
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]

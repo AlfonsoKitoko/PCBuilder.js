@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/parts/parts') },
 
 	// Detalles parte (ID) -> /parts/id-part
-	{ path: '', loadComponent: () => import('./pages/part/part') },
+	{ path: '/:id', loadComponent: () => import('./pages/part/part') },
 
 	// Crear parte -> /parts
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar parte (ID) -> /parts/id-part
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]

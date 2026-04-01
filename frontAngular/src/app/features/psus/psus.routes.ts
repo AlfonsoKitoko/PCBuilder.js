@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/psus/psus') },
 
 	// Detalles psu (ID) -> /psus/id-psu
-	{ path: '', loadComponent: () => import('./pages/psu/psu') },
+	{ path: '/:id', loadComponent: () => import('./pages/psu/psu') },
 
 	// Crear psu -> /psus
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar psu (ID) -> /psus/id-psu
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]

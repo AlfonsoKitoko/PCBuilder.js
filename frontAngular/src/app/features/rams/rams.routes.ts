@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/rams/rams') },
 
 	// Detalles ram (ID) -> /rams/id-ram
-	{ path: '', loadComponent: () => import('./pages/ram/ram') },
+	{ path: '/:id', loadComponent: () => import('./pages/ram/ram') },
 
 	// Crear ram -> /rams
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar ram (ID) -> /rams/id-ram
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]

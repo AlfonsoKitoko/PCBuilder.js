@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/cases/cases') },
 
 	// Detalles caja (ID) -> /cases/id-case
-	{ path: '', loadComponent: () => import('./pages/case/case') },
+	{ path: '/:id', loadComponent: () => import('./pages/case/case') },
 
 	// Crear caja -> /cases
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar caja (ID) -> /cases/id-case
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]

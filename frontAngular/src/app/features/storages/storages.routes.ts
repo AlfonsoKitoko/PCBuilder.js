@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/storages/storages') },
 
 	// Detalles storage (ID) -> /storages/id-storage
-	{ path: '', loadComponent: () => import('./pages/storage/storage') },
+	{ path: '/:id', loadComponent: () => import('./pages/storage/storage') },
 
 	// Crear storage -> /storages
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar storage (ID) -> /storages/id-storage
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]

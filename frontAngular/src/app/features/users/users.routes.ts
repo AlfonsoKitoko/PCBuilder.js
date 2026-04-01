@@ -5,11 +5,11 @@ export const routes: Routes = [
 	{ path: '', loadComponent: () => import('./pages/users/users') },
 
 	// Detalles user (ID) -> /users/id-user
-	{ path: '', loadComponent: () => import('./pages/user/user') },
+	{ path: '/:id', loadComponent: () => import('./pages/user/user') },
 
 	// Crear user -> /users
-	{ path: '', loadComponent: () => import('./pages/new/new') },
+	{ path: '/', loadComponent: () => import('./pages/new/new') },
 
 	// Actualizar user (ID) -> /users/id-user
-	{ path: '', loadComponent: () => import('./pages/edit/edit') },
+	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
 ]
