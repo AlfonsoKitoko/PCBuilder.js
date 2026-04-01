@@ -14,7 +14,7 @@ const fileLayout = {
 // Formato en el que se imprmen las líneas por consola
 const consoleLayout = {
 	type: 'pattern',
-	pattern: '%[[%d{yyyy-MM-dd hh:mm:ss}] [%p] -%] %m'
+	pattern: '%[[%d{yyyy-MM-dd hh:mm:ss}] [%p]%] - %m'
 }
 
 if (logsActive && env === 'development') {
@@ -60,7 +60,7 @@ if (logsActive && env === 'development') {
 } else {
 	log4js.configure({
 		appenders: {
-			console: { type: console }
+			console: { type: 'console' }
 		},
 		categories: {
 			default: { appenders: ['access'], level: 'info' }

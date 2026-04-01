@@ -21,8 +21,9 @@ export const getAllBuilds = wrapAsync(async (req, res) => {
 
 // R - Listar mis Builds
 export const getMyBuilds = wrapAsync(async (req, res) => {
-	const builds = await buildService.getBuildsByUser(req.user._id)
-	return apiResponse.success(res, builds, `My (${builds.length}) Builds retrieved`)
+	const builds = await buildService.getBuildsByUser(req.user.id)
+	const count = builds.length
+	return apiResponse.success(res, builds, count > 0 ? `Retrieved ${count} Builds for current user` : `You haven't created any builds yet`)
 })
 
 export const getBuildsByOneUser = wrapAsync(async (req, res) => {
