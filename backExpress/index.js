@@ -29,7 +29,24 @@ const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 // ++ MIDDLEWARES ++
 //////////////////////////////////////////////////////
 
-app.use(cors())
+const allowedOrigins = [
+	'http://localhost:4200',			// Angular development server
+	'https://localhost:4200',
+	`http://localhost:${port}`,		// Express development server
+	`https://localhost:${port}`,
+]
+
+app.use(
+	cors({
+		origin: (origin, callback) => {
+			if (!origin || allowedOrigins.includes(origin))
+				callback(null, true)
+			else callback(new AppError('CORS Error: Origin not allowed', 403))
+		},
+		credentials: true,
+	})
+)
+
 app.use(express.json({ limit: '5mb' }))
 app.use(methodOverride('_method'))
 app.use(usingMorgan())
