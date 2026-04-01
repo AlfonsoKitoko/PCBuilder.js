@@ -29,15 +29,8 @@ const buildSchema = new mongoose.Schema({
 	active: { type: Boolean, default: true, select: false }
 }, { timestamps: true }
 )
-// Índice compuesto para evitar builds con mismo nombre por usuario
-buildSchema.index({ name: 1, owner: 1 }, { unique: true })
 
 const Build = mongoose.model('Build', buildSchema)
-
-buildSchema.pre(/^find/, function (next) {
-	this.find({ active: { $ne: false } })
-	next()
-})
 
 export default Build
 

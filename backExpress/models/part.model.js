@@ -4,28 +4,14 @@ import { PC_PARTS } from '../constants/index.constant.js'
 const partSchema = new mongoose.Schema(
 	{
 		// _id autogenerado
-		name: {
-			type: String,
-			uppercase: true,
-			trim: true,
-			unique: true,
-			enum: PC_PARTS,
-			required: true
-		},
+		name: { type: String, uppercase: true, trim: true, unique: true, enum: PC_PARTS, required: true },
 	}, { timestamps: true, versionKey: false }
 )
 
 const Part = mongoose.model('Part', partSchema)
 
-partSchema.pre(/^find/, function (next) {
-	this.find({ active: { $ne: false } })
-	next()
-})
-
 export default Part
 
 /* ejemplo json part:
-	{
-		"name": "cpu"
-	}
+	{ "name": "cpu" }
 */
