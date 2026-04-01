@@ -32,7 +32,7 @@ export const updatePart = async (id, partData) => {
 	}).lean()
 }
 
-// D - Eliminar part por id
+// D - Eliminar part por id (sólo si no tiene dependencias)
 export const deletePart = async (id) => {
 	const parts = [Case, Cpu, Gpu, Mobo, Os, Psu, Ram, Storage]
 

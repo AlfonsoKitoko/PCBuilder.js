@@ -22,24 +22,32 @@ export const createBuild = async (buildData, userId) => {
 // R - Listar todas las builds
 export const getAllBuilds = async () => {
 	return await Build.find()
+		.select('-__v -createdAt -updatedAt -mobo -storage -case -description')
 		.populate('owner', 'username')
-		.sort({ createdAt: -1 })
+		.populate('cpu gpu os', 'manufacturer model')
+		.populate('ram', 'manufacturer model capacity speed')
+		.populate('psu', 'manufacturer model wattage')
+		.sort({ updatedAt: -1, createdAt: -1 })
 		.lean()
 }
 
 // R - Listar todas las builds de un usuario
 export const getBuildsByUser = async (userId) => {
 	return await Build.find({ owner: userId })
-		.populate('owner', 'username')
-		.populate('cpu gpu os')
-		.sort({ createdAt: -1 })
+		.select('-__v -createdAt -updatedAt -mobo -storage -case -description')
+		.populate('cpu gpu os', 'manufacturer model')
+		.populate('ram', 'manufacturer model capacity speed')
+		.populate('psu', 'manufacturer model wattage')
+		.sort({ updatedAt: -1, createdAt: -1 })
 		.lean()
 }
 
 // R - Detalle build por id
 export const getBuildById = async (id) => {
 	const build = await Build.findById(id)
-		.populate('cpu mobo ram storage gpu psu case os owner')
+		.select('-__v')
+		.populate('owner', 'username')
+		.populate('cpu mobo ram storage gpu psu case os')
 		.lean()
 
 	if (!build) throw new AppError('Build not found', 404)
