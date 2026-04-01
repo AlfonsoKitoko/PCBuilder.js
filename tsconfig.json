@@ -1,0 +1,9 @@
+{
+	"angularCompilerOptions": {
+		"enableI18nLegacyMessageIdFormat": false,
+		"strictInjectionParameters": true,
+		"strictInputAccessModifiers": true,
+		"strictTemplates": true, // <--- AÑADE ESTA LÍNEA
+		"strictStandalone": true
+	}
+}
