@@ -1,6 +1,9 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	{ path: 'login', loadComponent: () => import('./login/login') },
-	{ path: 'register', loadComponent: () => import('./register/register') }
+	// Login usuarios
+	{ path: 'login', loadComponent: () => import('./pages/login/login') },
+
+	// Registro usuarios nuevos
+	{ path: 'register', loadComponent: () => import('./pages/register/register') }
 ]

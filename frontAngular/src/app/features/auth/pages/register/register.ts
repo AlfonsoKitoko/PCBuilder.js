@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core'
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Validator } from '../../../shared/services/validator.service'
-import { AuthService } from '../../../shared/services/auth.service'
+import { Validator } from '../../../../shared/services/validator.service'
+import { AuthService } from '../../../../shared/services/auth.service'
 import { Router } from '@angular/router'
-import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../shared/constants/patterns'
+import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../../shared/constants/patterns'
 
 @Component({
 	selector: 'app-register',
