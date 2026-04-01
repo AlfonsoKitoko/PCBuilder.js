@@ -21,7 +21,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3010
 const baseUrl = process.env.BASE_URL || '/api/v1'
 const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 

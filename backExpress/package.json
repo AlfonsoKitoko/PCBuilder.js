@@ -9,10 +9,10 @@
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "node --watch src/index.js"
+		"dev": "bun --watch src/index.js"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Alfonso Martínez Kitoko",
 	"license": "ISC",
 	"dependencies": {
 		"bcrypt": "^6.0.0",
