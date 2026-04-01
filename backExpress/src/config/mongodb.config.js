@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
-import logger from '../config/logger.config.js'
+import logger from './logger.config.js'
 const mongoUri = process.env.MONGODB_ATLAS
 
 export const conexMongoDB = async () => {
