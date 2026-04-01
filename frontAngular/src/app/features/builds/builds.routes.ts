@@ -17,5 +17,5 @@ export const routes: Routes = [
 	{ path: 'edit/:id', loadComponent: () => import('./pages/edit/edit') },
 
 	// Builds de otros usuarios -> /builds/user/id-del-usuario
-	{ path: 'user/:userId', loadComponent: () => import('./pages/edit/edit') },
+	{ path: 'user/:userId', loadComponent: () => import('./pages/builds/builds') },
 ]
