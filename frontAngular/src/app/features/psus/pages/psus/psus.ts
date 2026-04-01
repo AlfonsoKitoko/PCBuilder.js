@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-psus',
@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	templateUrl: './psus.html',
 	styles: ``,
 })
-export class Psus {}
+export default class Psus { }

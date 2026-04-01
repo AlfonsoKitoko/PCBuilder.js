@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-storage',
@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	templateUrl: './storage.html',
 	styles: ``,
 })
-export class Storage {}
+export default class Storage { }

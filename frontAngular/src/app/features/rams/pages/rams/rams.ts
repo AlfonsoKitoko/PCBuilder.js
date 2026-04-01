@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-rams',
@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	templateUrl: './rams.html',
 	styles: ``,
 })
-export class Rams {}
+export default class Rams { }

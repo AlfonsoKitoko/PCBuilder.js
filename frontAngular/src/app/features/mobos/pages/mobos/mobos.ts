@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-mobos',
@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	templateUrl: './mobos.html',
 	styles: ``,
 })
-export class Mobos {}
+export default class Mobos { }

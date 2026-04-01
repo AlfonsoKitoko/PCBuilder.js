@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-cpus',
@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	templateUrl: './cpus.html',
 	styles: ``,
 })
-export class Cpus {}
+export default class Cpus { }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-new',
@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	templateUrl: './new.html',
 	styles: ``,
 })
-export class New {}
+export default class New { }
