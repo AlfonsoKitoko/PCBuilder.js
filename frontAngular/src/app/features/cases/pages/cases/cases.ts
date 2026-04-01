@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-cases',
@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	templateUrl: './cases.html',
 	styles: ``,
 })
-export class Cases {}
+export default class Cases { }
