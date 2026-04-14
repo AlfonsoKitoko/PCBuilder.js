@@ -1,1 +1,68 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+@import 'tailwindcss';
+
+@theme {
+	/* NÚCLEO: El azul-índigo del logo */
+	--color-brand-primary: #4f10f2;
+	/* ACENTO: Verde menta del logo */
+	--color-brand-success: #52ffad;
+	/* CONTRASTE: Rosa/Fucsia */
+	--color-brand-danger: #ff005a;
+
+	/* Un azul profundo pero con color, no negro. Ideal para hovers y textos fuertes */
+	--color-brand-dark: #2a0eb3;
+	/* Un tono intermedio para bordes o elementos secundarios */
+	--color-brand-soft: #e8e4ff;
+	/* Un verde esmeralda vibrante para textos de éxito */
+	--color-brand-muted: #00c878;
+	/* FONDO: Blanco con tinte azulado muy sutil */
+	--color-brand-surface: #f9f9ff;
+
+	--font-sans: 'Rubik', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+	body {
+		@apply bg-brand-surface font-sans text-slate-900 antialiased;
+
+		font-optical-sizing: auto;
+		text-rendering: optimizeLegibility;
+	}
+
+	h1,
+	h2,
+	h3 {
+		@apply text-brand-primary font-bold;
+	}
+
+	.container {
+		@apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+	}
+}
+
+@layer components {
+	/* BOTÓN PRINCIPAL: Violeta eléctrico */
+	.btn-primary {
+		@apply bg-brand-primary hover:bg-brand-dark cursor-pointer rounded-md px-4 py-2 text-center font-medium text-white transition-all hover:shadow-[0_0_15px_rgba(90,48,242,0.4)] active:scale-95 disabled:opacity-50;
+	}
+
+	/* BOTÓN DE ÉXITO/COMPRA: Verde neón (Atrae mucho la vista) */
+	.btn-success {
+		@apply bg-brand-success hover:bg-brand-muted cursor-pointer rounded-md px-4 py-2 text-center font-bold text-slate-900 transition-all active:scale-95;
+	}
+
+	/* BOTÓN DANGER: Tu color de contraste #FF005A */
+	.btn-danger {
+		@apply bg-brand-danger cursor-pointer rounded-md px-4 py-2 text-center font-medium text-white transition-all hover:opacity-90 active:scale-95;
+	}
+
+	.input-field {
+		@apply focus:ring-brand-primary/20 focus:border-brand-primary w-full rounded-md border border-slate-300 bg-white px-3 py-2 transition-all focus:ring-2 focus:outline-none;
+	}
+
+	/* Tabla con cabecera en el violeta más suave para no cansar la vista */
+	.main-table th {
+		@apply bg-brand-soft/10 text-brand-dark border-brand-soft/20 border-b px-4 py-3 text-xs font-bold tracking-wider uppercase;
+	}
+}
