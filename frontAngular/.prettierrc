@@ -2,7 +2,10 @@
 	"printWidth": 100,
 	"singleQuote": true,
 	"plugins": [
-		"prettier-plugin-tailwindcss"
+		"prettier-plugin-organize-imports",
+    "prettier-plugin-organize-attributes",
+    "prettier-plugin-multiline-arrays",
+    "prettier-plugin-tailwindcss"
 	],
 	"overrides": [
 		{
