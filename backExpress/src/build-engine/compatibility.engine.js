@@ -21,7 +21,6 @@ export const checkCompatibility = (build) => {
 		}
 
 		// Comprobar slots físicos ocupados
-		// (Ojo: si un objeto RAM representa un pack de 2, deberías sumar r.modules.quantity)
 		const totalModules = ram.reduce((acc, r) => acc + (r.modules?.quantity || 1), 0)
 		if (totalModules > mobo.ram_slots) {
 			report.errors.push(`Too many RAM modules: ${totalModules} installed, but Mobo only has ${mobo.ram_slots} slots`)

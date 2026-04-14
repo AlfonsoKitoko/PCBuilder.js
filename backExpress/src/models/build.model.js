@@ -25,8 +25,6 @@ const buildSchema = new mongoose.Schema({
 	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 	// Céntimos
 	totalPrice: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
-	// necesario para el soft delete
-	active: { type: Boolean, default: true, select: false }
 }, { timestamps: true }
 )
 

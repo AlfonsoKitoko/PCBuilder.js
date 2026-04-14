@@ -8,7 +8,7 @@ export const calcTotalPrice = (build) => {
 		build.gpu,
 		build.case,
 		build.psu,
-		build.os // No olvides el Sistema Operativo si lo tienes en el Schema
+		build.os
 	]
 
 	singleParts.forEach(part => {

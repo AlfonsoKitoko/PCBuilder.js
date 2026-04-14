@@ -64,8 +64,8 @@ const options = {
 		}
 	},
 	apis: [
-		'./models/*.js',		// Models
-		'./docs/**/*.yaml'	// Routes
+		'./src/models/*.js',		// Models
+		'./src/docs/**/*.yaml'	// Routes
 	]
 }
 
