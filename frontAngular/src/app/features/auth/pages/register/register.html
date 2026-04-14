@@ -1,1 +1,179 @@
-<p>register works!</p>
+<div class="flex min-h-screen items-center justify-center p-6 py-12">
+	<div class="w-full max-w-2xl rounded-3xl border border-slate-100 bg-white p-10 shadow-2xl">
+		<div class="mb-10 text-center">
+			<h1 class="mb-2 text-4xl font-extrabold">Crear cuenta</h1>
+			<p class="text-slate-500">Únete a la mayor comunidad de constructores de PC</p>
+		</div>
+
+		<form
+			(ngSubmit)="onRegister()"
+			[formGroup]="registerForm"
+			class="grid grid-cols-1 gap-6 md:grid-cols-2"
+		>
+			<div class="md:col-span-2">
+				<label for="username" class="label-form"
+					>Nombre de Usuario <span class="text-brand-danger">*</span></label
+				>
+				<input
+					id="username"
+					type="text"
+					formControlName="username"
+					placeholder="pcejemplo123"
+					class="input-field"
+					[class.border-brand-danger]="
+						registerForm.get('username')?.invalid && registerForm.get('username')?.touched
+					"
+				/>
+			</div>
+
+			<div>
+				<label for="firstName" class="label-form">Nombre</label>
+				<input
+					id="firstName"
+					type="text"
+					formControlName="firstName"
+					placeholder="Tu nombre"
+					class="input-field"
+					[class.border-brand-danger]="
+						registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched
+					"
+				/>
+			</div>
+
+			<div>
+				<label for="lastName" class="label-form">Apellido</label>
+				<input
+					id="lastName"
+					type="text"
+					formControlName="lastName"
+					placeholder="Tu apellido"
+					class="input-field"
+					[class.border-brand-danger]="
+						registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched
+					"
+				/>
+			</div>
+
+			<div class="md:col-span-2">
+				<label for="email" class="label-form"
+					>Correo electrónico <span class="text-brand-danger">*</span></label
+				>
+				<input
+					id="email"
+					type="email"
+					formControlName="email"
+					placeholder="correo@ejemplo.com"
+					class="input-field"
+					[class.border-brand-danger]="
+						registerForm.get('email')?.invalid && registerForm.get('email')?.touched
+					"
+				/>
+				@if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+					<p class="text-brand-danger mt-1 text-xs">Introduce un email válido</p>
+				}
+			</div>
+
+			<div class="md:col-span-2">
+				<label for="birthDate" class="label-form">Fecha de Nacimiento</label>
+				<input
+					id="birthDate"
+					type="date"
+					formControlName="birthDate"
+					class="input-field"
+					[class.border-brand-danger]="
+						registerForm.get('birthDate')?.invalid && registerForm.get('birthDate')?.touched
+					"
+				/>
+			</div>
+
+			<div>
+				<label for="password" class="label-form"
+					>Contraseña <span class="text-brand-danger">*</span></label
+				>
+				<input
+					id="password"
+					type="password"
+					formControlName="password"
+					placeholder="••••••••"
+					class="input-field"
+					[class.border-brand-danger]="
+						registerForm.get('password')?.invalid && registerForm.get('password')?.touched
+					"
+				/>
+				@if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+					<p class="text-brand-danger mt-1 text-[10px]">8+ carácteres (A-Z, 0-9, @#$...)</p>
+				}
+			</div>
+
+			<div>
+				<label for="repeatPassword" class="label-form"
+					>Repetir contraseña <span class="text-brand-danger">*</span></label
+				>
+				<input
+					id="repeatPassword"
+					type="password"
+					formControlName="repeatPassword"
+					placeholder="••••••••"
+					class="input-field"
+					[class.border-brand-danger]="
+						(registerForm.get('repeatPassword')?.invalid || registerForm.hasError('noMatch')) &&
+						registerForm.get('repeatPassword')?.touched
+					"
+				/>
+				@if (registerForm.hasError('noMatch') && registerForm.get('repeatPassword')?.touched) {
+					<p class="text-brand-danger mt-1 text-xs">Las contraseñas no coinciden</p>
+				}
+			</div>
+
+			<div class="mt-4 md:col-span-2">
+				<button
+					type="submit"
+					class="btn-primary group flex w-full items-center justify-center gap-3 py-4"
+					[disabled]="registerForm.invalid || isLoading()"
+				>
+					@if (isLoading()) {
+						<svg class="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+							<circle
+								class="opacity-25"
+								cx="12"
+								cy="12"
+								r="10"
+								stroke="currentColor"
+								stroke-width="4"
+							></circle>
+							<path
+								class="opacity-75"
+								fill="currentColor"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+							></path>
+						</svg>
+						<span>Creando cuenta...</span>
+					} @else {
+						<span class="text-lg">Crear mi cuenta</span>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5 transition-transform group-hover:translate-x-1"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M14 5l7 7m0 0l-7 7m7-7H3"
+							/>
+						</svg>
+					}
+				</button>
+
+				<p class="mt-6 text-center text-sm text-slate-500">
+					¿Ya tienes cuenta?
+					<a routerLink="/auth/login" class="text-brand-primary font-bold hover:underline"
+						>Iniciar sesión</a
+					>
+				</p>
+			</div>
+		</form>
+	</div>
+</div>
