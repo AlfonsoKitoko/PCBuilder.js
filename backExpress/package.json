@@ -9,7 +9,8 @@
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "bun --watch src/index.js"
+		"dev": "bun --watch src/index.js",
+		"seed": "node src/database/seeds/partTypes.seed.js && node src/database/seeds/parts.seed.js && node src/database/userSeeds/users.seed.js && node src/database/buildSeeds/builds.seed.js"
 	},
 	"keywords": [],
 	"author": "Alfonso Martínez Kitoko",

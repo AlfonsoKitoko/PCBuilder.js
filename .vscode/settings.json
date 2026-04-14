@@ -1,3 +1,5 @@
 {
-	"postman.settings.dotenv-detection-notification-visibility": false
+  "postman.settings.dotenv-detection-notification-visibility": false,
+  "html.format.enable": true,
+  "angular.enable-strict-mode-prompt": false
 }

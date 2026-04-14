@@ -7,11 +7,14 @@ classDiagram
         +String email
         +String profile
         +Date birthDate
+        +Boolean active
     }
 
     class Build {
         +String name
+        +String description
         +Number totalPrice
+        +Boolean active
         +Date createdAt
     }
 
@@ -21,9 +24,9 @@ classDiagram
 
     class CPU {
         +String manufacturer
-        +String model
-        +Number core_count
+        +String socket
         +Number tdp
+        +Boolean hasIntegrated
         +Number price
     }
 
@@ -39,14 +42,13 @@ classDiagram
         +String series
         +String gpu_type
         +Number tdp
-        +Object ports
         +Number price
     }
 
     class RAM {
         +String manufacturer
-        +Object modules
         +String ram_type
+        +Object modules
         +Number price
     }
 
@@ -60,7 +62,7 @@ classDiagram
     class PSU {
         +String manufacturer
         +String eff_rating
-        +String modular
+        +Number wattage
         +Number price
     }
 
@@ -72,12 +74,16 @@ classDiagram
     }
 
     class OS {
-        +String name
+        +String manufacturer
+        +String version
+        +String edition
         +Number price
     }
 
-    %% Relaciones
+    %% Relaciones de Propiedad
     User "1" -- "*" Build : owner
+
+    %% Relaciones de la Build
     Build "1" --> "1" CPU : cpu
     Build "1" --> "1" Mobo : mobo
     Build "1" --> "1" PSU : psu
@@ -87,7 +93,7 @@ classDiagram
     Build "1" --> "0..1" GPU : gpu
     Build "1" --> "0..1" OS : os
 
-    %% Relación con PartType
+    %% Relación con PartType (Herencia lógica)
     CPU ..> Part : partType
     Mobo ..> Part : partType
     GPU ..> Part : partType
@@ -101,19 +107,31 @@ classDiagram
 ```mermaid
 graph TD
     subgraph Cliente [Capa de Presentación - Frontend]
-        A[Navegador Web] --> B[App Angular]
+        U[Usuario] --> A[Navegador Web]
+        A --> B["App Angular :4200"]
     end
 
     subgraph Servidor [Capa de Lógica - Backend]
-        B -- "Peticiones HTTP (JSON)" --> C[API REST - Express]
+        B -- "HTTP /api/v1 (env: 3010)" --> C["API REST - Express (Bun)"]
         C --> D[Middlewares / Validaciones]
-        D --> E[Controladores / Lógica de Negocio]
+        D --> E[Controladores / Engines de Compatibilidad]
     end
 
     subgraph Datos [Capa de Persistencia]
         E --> F[Mongoose ODM]
         F --> G[(MongoDB Atlas)]
     end
+
+    %% --- ESTILOS DE COLORES ---
+    style U fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style B fill:#e91e63,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#00bcd4,stroke:#fff,stroke-width:2px,color:#fff
+    style G fill:#4caf50,stroke:#fff,stroke-width:2px,color:#fff
+
+    %% Estilos de los subgraphs
+    style Cliente fill:#fff0f5,stroke:#e91e63,stroke-dasharray: 5 5
+    style Servidor fill:#e0f7fa,stroke:#00bcd4,stroke-dasharray: 5 5
+    style Datos fill:#f1f8e9,stroke:#4caf50,stroke-dasharray: 5 5
 ```
 
 ```bash
@@ -125,30 +143,30 @@ backExpress
 ├── package.json
 └── src
     ├── build-engine
-    │   ├── compatibility.engine.js     
+    │   ├── compatibility.engine.js
     │   ├── power.engine.js
     │   ├── price.engine.js
-    │   └── validation.engine.js        
+    │   └── validation.engine.js
     ├── config
     │   ├── logger.config.js
     │   ├── mongodb.config.js
     │   └── swagger.config.js
     ├── constants
-    │   ├── case_type.constant.js       
+    │   ├── case_type.constant.js
     │   ├── gpu.constant.js
     │   ├── index.constant.js
-    │   ├── manufacturer.constant.js    
+    │   ├── manufacturer.constant.js
     │   ├── mobo_form_factor.constant.js    │   ├── os.constant.js
-    │   ├── pc_parts.constant.js        
+    │   ├── pc_parts.constant.js
     │   ├── psu.constant.js
     │   ├── ram.constant.js
     │   ├── storage.constant.js
-    │   └── wireless.constant.js        
+    │   └── wireless.constant.js
     ├── database
     │   ├── buildSeeds
     │   │   └── builds.seed.js
     │   ├── seeds
-    │   │   ├── partTypes.seed.js       
+    │   │   ├── partTypes.seed.js
     │   │   └── parts.seed.js
     │   └── userSeeds
     │       └── users.seed.js
@@ -187,51 +205,51 @@ backExpress
     │   └── user.model.js
     ├── modules
     │   ├── auth
-    │   │   ├── auth.controller.js      
+    │   │   ├── auth.controller.js
     │   │   ├── auth.routes.js
     │   │   └── auth.service.js
     │   ├── build
-    │   │   ├── build.controller.js     
+    │   │   ├── build.controller.js
     │   │   ├── build.routes.js
-    │   │   └── build.service.js        
+    │   │   └── build.service.js
     │   ├── case
-    │   │   ├── case.controller.js      
+    │   │   ├── case.controller.js
     │   │   ├── case.routes.js
     │   │   └── case.service.js
     │   ├── cpu
-    │   │   ├── cpu.controller.js       
+    │   │   ├── cpu.controller.js
     │   │   ├── cpu.routes.js
     │   │   └── cpu.service.js
     │   ├── gpu
-    │   │   ├── gpu.controller.js       
+    │   │   ├── gpu.controller.js
     │   │   ├── gpu.routes.js
     │   │   └── gpu.service.js
     │   ├── mobo
-    │   │   ├── mobo.controller.js      
+    │   │   ├── mobo.controller.js
     │   │   ├── mobo.routes.js
     │   │   └── mobo.service.js
     │   ├── os
-    │   │   ├── os.controller.js        
+    │   │   ├── os.controller.js
     │   │   ├── os.routes.js
     │   │   └── os.service.js
     │   ├── part
-    │   │   ├── part.controller.js      
+    │   │   ├── part.controller.js
     │   │   ├── part.routes.js
     │   │   └── part.service.js
     │   ├── psu
-    │   │   ├── psu.controller.js       
+    │   │   ├── psu.controller.js
     │   │   ├── psu.routes.js
     │   │   └── psu.service.js
     │   ├── ram
-    │   │   ├── ram.controller.js       
+    │   │   ├── ram.controller.js
     │   │   ├── ram.routes.js
     │   │   └── ram.service.js
     │   ├── storage
-    │   │   ├── storage.controller.js   
-    │   │   ├── storage.routes.js       
-    │   │   └── storage.service.js      
+    │   │   ├── storage.controller.js
+    │   │   ├── storage.routes.js
+    │   │   └── storage.service.js
     │   └── user
-    │       ├── user.controller.js      
+    │       ├── user.controller.js
     │       ├── user.routes.js
     │       └── user.service.js
     ├── public
@@ -239,7 +257,7 @@ backExpress
     ├── routes
     │   └── index.routes.js
     ├── tests
-    │   └── pcbuilder.echoapi.json      
+    │   └── pcbuilder.echoapi.json
     ├── utils
     │   ├── AppError.js
     │   ├── apiResponse.js
@@ -247,6 +265,6 @@ backExpress
     │   └── bcrypt.js
     ├── validators
     │   ├── array.validator.js
-    │   └── integer.validator.js        
+    │   └── integer.validator.js
     └── views
 ```
