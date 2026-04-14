@@ -1,1 +1,15 @@
-<router-outlet />
+<div class="flex min-h-screen flex-col">
+	<app-header />
+	<main class="flex-grow">
+		<router-outlet />
+	</main>
+	<app-footer />
+
+	@if (modalService.activeModal(); as modalData) {
+		<app-confirmation-modal
+			[data]="modalData"
+			(confirm)="modalService.confirmAction()"
+			(cancel)="modalService.cancelAction()"
+		/>
+	}
+</div>
