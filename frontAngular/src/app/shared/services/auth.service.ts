@@ -20,11 +20,11 @@ export class AuthService {
 	isAuthenticated = computed(() => !!this.user())
 
 	constructor() {
-		if (this.token()) {
+		const savedToken = localStorage.getItem('token')
+
+		if (savedToken) {
 			this.getMe().subscribe({
-				next: (user) => {
-					this.user.set(user)
-				},
+				next: (user) => this.user.set(user),
 				error: () => this.clearSession()
 			})
 		}
