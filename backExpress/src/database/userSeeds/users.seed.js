@@ -77,7 +77,8 @@ const seedUsers = async () => {
 		]
 
 		// 4. Insertar en la base de datos
-		const createdUsers = await User.insertMany(users)
+		const createdUsers = await User.create(users)
+
 		console.log(`++ ${createdUsers.length} Usuarios creados con éxito ++`)
 
 		// Opcional: Imprimir los IDs por consola para tenerlos a mano

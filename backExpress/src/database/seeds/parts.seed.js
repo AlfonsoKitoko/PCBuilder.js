@@ -756,21 +756,25 @@ const seedComponents = async () => {
 			}
 		]
 
-		// Inserción por bloques para debug exacto
-		await Cpu.insertMany(cpus)
-		await Mobo.insertMany(mobos)
-		await Ram.insertMany(rams)
-		await Storage.insertMany(storages)
-		await Gpu.insertMany(gpus)
-		await Case.insertMany(cases)
-		await Psu.insertMany(psus)
-		await Os.insertMany(oss)
+		// Promesa previa para hacer todas las inserciones en bloque
+		await Promise.all([
+			Cpu.create(cpus),
+			Mobo.create(mobos),
+			Ram.create(rams),
+			Storage.create(storages),
+			Gpu.create(gpus),
+			Case.create(cases),
+			Psu.create(psus),
+			Os.create(oss),
+		])
 
 		console.log('++ Seed de hardware completado con éxito ++')
 		await mongoose.connection.close()
 		process.exit(0)
 	} catch (error) {
 		console.error('!! Error en el Seed de Componentes !!', error)
+		// Cierra la conexión aunque esta falle
+		if (mongoose.connection.readyState !== 0) await mongoose.connection.close()
 		process.exit(1)
 	}
 }

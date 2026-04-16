@@ -27,8 +27,11 @@ const seedParts = async () => {
 			{ name: 'STORAGE' }
 		]
 
-		await Part.insertMany(categories)
-		console.log('++ Categorías (Parts) creadas con éxito ++')
+		await Promise.all(
+			categories.map((p) => Part.create(p))
+		)
+
+		console.log(`++ (${categories.length}) Categorías (Parts) creadas con éxito ++`)
 
 		await mongoose.connection.close()
 		process.exit(0)

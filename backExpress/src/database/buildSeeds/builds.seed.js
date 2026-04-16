@@ -82,7 +82,7 @@ const seedBuilds = async () => {
 			}
 		})
 
-		await Build.insertMany(finalBuilds)
+		await Build.create(finalBuilds)
 		console.log('++ 10 Builds creadas y vinculadas con éxito ++')
 
 		await mongoose.connection.close()
