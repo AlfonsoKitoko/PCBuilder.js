@@ -17,7 +17,7 @@ export class Validator {
 		}
 	}
 
-	nofuruteDateValidator(control: AbstractControl) {
+	nofutureDateValidator(control: AbstractControl) {
 		const selectedDate = new Date(control.value)
 		const currentDate = new Date()
 
