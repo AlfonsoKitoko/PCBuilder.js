@@ -5,68 +5,52 @@
 			<p class="text-slate-500">Únete a la mayor comunidad de constructores de PC</p>
 		</div>
 
-		<form
-			(ngSubmit)="onRegister()"
-			[formGroup]="registerForm"
-			class="grid grid-cols-1 gap-6 md:grid-cols-2"
-		>
+		<form class="grid grid-cols-1 gap-6 md:grid-cols-2" [formGroup]="registerForm" (ngSubmit)="onRegister()">
 			<div class="md:col-span-2">
-				<label for="username" class="label-form"
-					>Nombre de Usuario <span class="text-brand-danger">*</span></label
-				>
+				<label class="label-form" for="username">Nombre de Usuario <span class="text-brand-danger">*</span></label>
 				<input
+					class="input-field"
 					id="username"
+					[class.border-brand-danger]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
 					type="text"
 					formControlName="username"
 					placeholder="pcejemplo123"
-					class="input-field"
-					[class.border-brand-danger]="
-						registerForm.get('username')?.invalid && registerForm.get('username')?.touched
-					"
 				/>
 			</div>
 
 			<div>
-				<label for="firstName" class="label-form">Nombre</label>
+				<label class="label-form" for="firstName">Nombre</label>
 				<input
+					class="input-field"
 					id="firstName"
+					[class.border-brand-danger]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
 					type="text"
 					formControlName="firstName"
 					placeholder="Tu nombre"
-					class="input-field"
-					[class.border-brand-danger]="
-						registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched
-					"
 				/>
 			</div>
 
 			<div>
-				<label for="lastName" class="label-form">Apellido</label>
+				<label class="label-form" for="lastName">Apellido</label>
 				<input
+					class="input-field"
 					id="lastName"
+					[class.border-brand-danger]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
 					type="text"
 					formControlName="lastName"
 					placeholder="Tu apellido"
-					class="input-field"
-					[class.border-brand-danger]="
-						registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched
-					"
 				/>
 			</div>
 
 			<div class="md:col-span-2">
-				<label for="email" class="label-form"
-					>Correo electrónico <span class="text-brand-danger">*</span></label
-				>
+				<label class="label-form" for="email">Correo electrónico <span class="text-brand-danger">*</span></label>
 				<input
+					class="input-field"
 					id="email"
+					[class.border-brand-danger]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
 					type="email"
 					formControlName="email"
 					placeholder="correo@ejemplo.com"
-					class="input-field"
-					[class.border-brand-danger]="
-						registerForm.get('email')?.invalid && registerForm.get('email')?.touched
-					"
 				/>
 				@if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
 					<p class="text-brand-danger mt-1 text-xs">Introduce un email válido</p>
@@ -74,31 +58,25 @@
 			</div>
 
 			<div class="md:col-span-2">
-				<label for="birthDate" class="label-form">Fecha de Nacimiento</label>
+				<label class="label-form" for="birthDate">Fecha de Nacimiento</label>
 				<input
+					class="input-field"
 					id="birthDate"
+					[class.border-brand-danger]="registerForm.get('birthDate')?.invalid && registerForm.get('birthDate')?.touched"
 					type="date"
 					formControlName="birthDate"
-					class="input-field"
-					[class.border-brand-danger]="
-						registerForm.get('birthDate')?.invalid && registerForm.get('birthDate')?.touched
-					"
 				/>
 			</div>
 
 			<div>
-				<label for="password" class="label-form"
-					>Contraseña <span class="text-brand-danger">*</span></label
-				>
+				<label class="label-form" for="password">Contraseña <span class="text-brand-danger">*</span></label>
 				<input
+					class="input-field"
 					id="password"
+					[class.border-brand-danger]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
 					type="password"
 					formControlName="password"
 					placeholder="••••••••"
-					class="input-field"
-					[class.border-brand-danger]="
-						registerForm.get('password')?.invalid && registerForm.get('password')?.touched
-					"
 				/>
 				@if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
 					<p class="text-brand-danger mt-1 text-[10px]">8+ carácteres (A-Z, 0-9, @#$...)</p>
@@ -106,72 +84,47 @@
 			</div>
 
 			<div>
-				<label for="repeatPassword" class="label-form"
-					>Repetir contraseña <span class="text-brand-danger">*</span></label
-				>
+				<label class="label-form" for="passwordRepeat">Repetir contraseña <span class="text-brand-danger">*</span></label>
 				<input
-					id="repeatPassword"
-					type="password"
-					formControlName="repeatPassword"
-					placeholder="••••••••"
 					class="input-field"
-					[class.border-brand-danger]="
-						(registerForm.get('repeatPassword')?.invalid || registerForm.hasError('noMatch')) &&
-						registerForm.get('repeatPassword')?.touched
-					"
+					id="passwordRepeat"
+					[class.border-brand-danger]="(registerForm.get('passwordRepeat')?.invalid || registerForm.hasError('noMatch')) && registerForm.get('passwordRepeat')?.touched"
+					type="password"
+					formControlName="passwordRepeat"
+					placeholder="••••••••"
 				/>
-				@if (registerForm.hasError('noMatch') && registerForm.get('repeatPassword')?.touched) {
+				@if (registerForm.hasError('noMatch') && registerForm.get('passwordRepeat')?.touched) {
 					<p class="text-brand-danger mt-1 text-xs">Las contraseñas no coinciden</p>
 				}
 			</div>
 
+			@if (errorMessage()) {
+				<div class="animate-in slide-in-from-right-full fixed right-10 bottom-10 z-50 flex items-center gap-4 rounded-2xl bg-slate-900 p-5 text-white shadow-2xl">
+					<div class="bg-brand-danger h-2 w-2 animate-pulse rounded-full"></div>
+					<p class="text-sm font-medium">{{ errorMessage() }}</p>
+					<button class="ml-2 opacity-50 hover:opacity-100" (click)="errorMessage.set(null)" type="button">✕</button>
+				</div>
+			}
+
 			<div class="mt-4 md:col-span-2">
-				<button
-					type="submit"
-					class="btn-primary group flex w-full items-center justify-center gap-3 py-4"
-					[disabled]="registerForm.invalid || isLoading()"
-				>
+				<button class="btn-primary group flex w-full items-center justify-center gap-3 py-4" [disabled]="registerForm.invalid || isLoading()" type="submit">
 					@if (isLoading()) {
 						<svg class="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-							<circle
-								class="opacity-25"
-								cx="12"
-								cy="12"
-								r="10"
-								stroke="currentColor"
-								stroke-width="4"
-							></circle>
-							<path
-								class="opacity-75"
-								fill="currentColor"
-								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-							></path>
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 						</svg>
 						<span>Creando cuenta...</span>
 					} @else {
 						<span class="text-lg">Crear mi cuenta</span>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-5 w-5 transition-transform group-hover:translate-x-1"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M14 5l7 7m0 0l-7 7m7-7H3"
-							/>
+						<svg class="h-5 w-5 transition-transform group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
 						</svg>
 					}
 				</button>
 
 				<p class="mt-6 text-center text-sm text-slate-500">
 					¿Ya tienes cuenta?
-					<a routerLink="/auth/login" class="text-brand-primary font-bold hover:underline"
-						>Iniciar sesión</a
-					>
+					<a class="text-brand-primary font-bold hover:underline" routerLink="/auth/login">Iniciar sesión</a>
 				</p>
 			</div>
 		</form>

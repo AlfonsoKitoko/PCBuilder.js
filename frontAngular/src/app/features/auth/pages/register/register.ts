@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core'
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Validator } from '../../../../shared/services/validator.service'
-import { AuthService } from '../../../../shared/services/auth.service'
 import { Router, RouterLink } from '@angular/router'
 import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../../shared/constants/patterns'
+import { AuthService } from '../../../../shared/services/auth.service'
+import { Validator } from '../../../../shared/services/validator.service'
 
 @Component({
 	selector: 'app-register',
-	imports: [ReactiveFormsModule,RouterLink],
+	imports: [ReactiveFormsModule, RouterLink],
 	templateUrl: './register.html',
 })
 export default class Register {
@@ -27,24 +27,35 @@ export default class Register {
 			email: [, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
 			password: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
 			passwordRepeat: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
-			birthDate: [, [this.validator.nofuruteDateValidator]],
+			birthDate: [, [this.validator.nofutureDateValidator]],
 		},
-		{ validators: [this.validator.passwordMatchValidator()] }
+		{ validators: [this.validator.passwordMatchValidator()] },
 	);
 
 	onRegister() {
-		if (this.registerForm.valid) {
-			this.isLoading.set(true)
-			this.errorMessage.set(null)
+		// Bloquea los intentos extra si ya está cargando
+		if (this.isLoading()) return
 
-			const { passwordRepeat, ...registerData } = this.registerForm.value
-			this.authService.register(registerData).subscribe({
-				next: () => this.router.navigate(['/']),
-				error: (err) => {
-					this.isLoading.set(false)
-					this.errorMessage.set(err.error?.message || ' Error al registrarse. Por favor, inténtalo de nuevo.')
-				}
-			})
+		if (this.registerForm.invalid) {
+			this.registerForm.markAllAsTouched()
+			return
 		}
+
+		this.errorMessage.set(null)
+		this.isLoading.set(true)
+
+		const { passwordRepeat, ...registerData } = this.registerForm.value
+
+		this.authService.register(registerData).subscribe({
+			next: () => {
+				this.isLoading.set(false)
+				this.router.navigate(['/'])
+			},
+			error: (err) => {
+				this.isLoading.set(false)
+				this.errorMessage.set(err.error?.message || ' Error al registrarse. Por favor, inténtalo de nuevo.')
+				setTimeout(() => this.errorMessage.set(null), 5000)
+			},
+		})
 	}
 }
