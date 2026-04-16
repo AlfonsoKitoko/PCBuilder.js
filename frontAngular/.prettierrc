@@ -1,11 +1,13 @@
 {
-	"printWidth": 100,
+	"printWidth": 200,
 	"singleQuote": true,
+	"semi":true,
+	"trailingComma": "all",
 	"plugins": [
 		"prettier-plugin-organize-imports",
-    "prettier-plugin-organize-attributes",
-    "prettier-plugin-multiline-arrays",
-    "prettier-plugin-tailwindcss"
+		"prettier-plugin-organize-attributes",
+		"prettier-plugin-multiline-arrays",
+		"prettier-plugin-tailwindcss"
 	],
 	"overrides": [
 		{

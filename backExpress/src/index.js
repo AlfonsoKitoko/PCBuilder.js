@@ -30,8 +30,8 @@ const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 //////////////////////////////////////////////////////
 
 const allowedOrigins = [
-	'http://localhost:4200',			// Angular development server
-	'https://localhost:4200',
+	'http://localhost:4201',			// Angular development server
+	'https://localhost:4201',
 	`http://localhost:${port}`,		// Express development server
 	`https://localhost:${port}`,
 ]
