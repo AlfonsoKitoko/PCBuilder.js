@@ -3,7 +3,7 @@ import 'dotenv/config'
 import swaggerJsdoc from 'swagger-jsdoc'
 import m2s from 'mongoose-to-swagger'
 
-const port = process.env.PORT || 3010
+const backPort = process.env.BACK_PORT || 3010
 const baseUrl = process.env.BASE_URL || '/api/v1'
 
 import Build from '../models/build.model.js'
@@ -43,7 +43,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: `http://localhost:${port}${baseUrl}`,
+				url: `http://localhost:${backPort}${baseUrl}`,
 				description: 'Local Servitor'
 			}
 		],

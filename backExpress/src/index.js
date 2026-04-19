@@ -21,7 +21,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
-const port = process.env.PORT || 3010
+const backPort = process.env.BACK_PORT || 3010
+const frontPort = process.env.FRONT_PORT || 4201
 const baseUrl = process.env.BASE_URL || '/api/v1'
 const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 
@@ -30,10 +31,10 @@ const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 //////////////////////////////////////////////////////
 
 const allowedOrigins = [
-	'http://localhost:4201',			// Angular development server
-	'https://localhost:4201',
-	`http://localhost:${port}`,		// Express development server
-	`https://localhost:${port}`,
+	`http://localhost:${frontPort}`,			// Angular development server
+	`https://localhost:${frontPort}`,
+	`http://localhost:${backPort}`,		// Express development server
+	`https://localhost:${backPort}`,
 ]
 
 app.use(
@@ -92,11 +93,11 @@ const startServer = async () => {
 	try {
 		await conexMongoDB()
 
-		app.listen(port, () => {
+		app.listen(backPort, () => {
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-			console.log(`++ Servitor running at http://localhost:${port}${baseUrl} ++`)
+			console.log(`++ Servitor running at http://localhost:${backPort}${baseUrl} ++`)
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-			console.log(`++ Swagger running @ http://localhost:${port}${swaggerPath} ++`)
+			console.log(`++ Swagger running @ http://localhost:${backPort}${swaggerPath} ++`)
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 		})
 	} catch (err) {
