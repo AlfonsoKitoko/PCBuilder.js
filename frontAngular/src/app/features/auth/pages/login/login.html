@@ -6,80 +6,46 @@
 		<form (ngSubmit)="onLogin()" [formGroup]="loginForm" class="flex flex-col gap-5">
 			<div>
 				<label for="email" class="label-form">Correo electrónico</label>
-				<input
-					id="email"
-					type="email"
-					formControlName="email"
-					placeholder="tu@email.com"
-					class="input-field"
+				<input id="email" type="email" formControlName="email" placeholder="tu@email.com" class="input-field"
 					[class.border-brand-danger]="
 						loginForm.get('email')?.invalid && loginForm.get('email')?.touched
-					"
-				/>
+					" />
 
 				@if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-					<p class="text-brand-danger mt-1 text-xs font-medium">Introduce un email válido</p>
+				<p class="text-brand-danger mt-1 text-xs font-medium">Introduce un email válido</p>
 				}
 			</div>
 
 			<div>
 				<label for="password" class="label-form">Contraseña</label>
-				<input
-					id="password"
-					type="password"
-					formControlName="password"
-					placeholder="••••••••"
-					class="input-field"
+				<input id="password" type="password" formControlName="password" placeholder="••••••••" class="input-field"
 					[class.border-brand-danger]="
 						loginForm.get('password')?.invalid && loginForm.get('password')?.touched
-					"
-				/>
+					" />
 
 				@if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-					<p class="text-brand-danger mt-1 text-xs font-medium">
-						Mínimo 8 caracteres (A-Z, 0-9, @#$...)
-					</p>
+				<p class="text-brand-danger mt-1 text-xs font-medium">
+					Mínimo 8 caracteres (A-Z, 0-9, @#$...)
+				</p>
 				}
 			</div>
 
-			<button
-				type="submit"
-				class="btn-primary group mt-2 flex items-center justify-center gap-2 py-3"
-				[disabled]="loginForm.invalid || isLoading()"
-			>
+			<button type="submit" class="btn-primary group mt-2 flex items-center justify-center gap-2 py-3"
+				[disabled]="loginForm.invalid || isLoading()">
 				@if (isLoading()) {
-					<svg class="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-						<circle
-							class="opacity-25"
-							cx="12"
-							cy="12"
-							r="10"
-							stroke="currentColor"
-							stroke-width="4"
-						></circle>
-						<path
-							class="opacity-75"
-							fill="currentColor"
-							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-						></path>
-					</svg>
-					<span>Entrando...</span>
+				<svg class="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+					<path class="opacity-75" fill="currentColor"
+						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+					</path>
+				</svg>
+				<span>Entrando...</span>
 				} @else {
-					<span class="text-lg">Iniciar sesión</span>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5 transition-transform group-hover:translate-x-1"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M14 5l7 7m0 0l-7 7m7-7H3"
-						/>
-					</svg>
+				<span class="text-lg">Iniciar sesión</span>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-hover:translate-x-1"
+					fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+				</svg>
 				}
 			</button>
 
@@ -92,7 +58,9 @@
 				</div>
 			</div>
 
-			<a routerLink="/auth/register" class="btn-secondary py-3">Crear una cuenta nueva</a>
+			<a routerLink="/auth/forgot-password" class="text-center btn-secondary py-3">¿Olvidaste la contraseña?</a>
+
+			<a routerLink="/auth/register" class="text-center btn-secondary py-3">Crear una cuenta nueva</a>
 		</form>
 	</div>
 </div>
