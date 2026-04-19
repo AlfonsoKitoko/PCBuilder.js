@@ -67,7 +67,7 @@ export const requestPasswordReset = async (email) => {
 
 	await user.save()
 
-	const resetUrl = `${process.env.FRONT_PORT || 'http://localhost:4201'}/reset-password/${resetToken}`
+	const resetUrl = `http://localhost:${process.env.FRONT_PORT || '4201'}/auth/reset-password/${resetToken}`
 
 	await sendEmail(
 		user.email,
