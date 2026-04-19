@@ -32,12 +32,11 @@ const psuSchema = new mongoose.Schema(
 	}, { timestamps: true }
 )
 
-const Psu = mongoose.model('PSU', psuSchema)
-
-psuSchema.pre(/^find/, function (next) {
+psuSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const Psu = mongoose.model('PSU', psuSchema)
 
 export default Psu
 

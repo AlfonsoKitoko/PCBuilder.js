@@ -34,12 +34,12 @@ const caseSchema = new mongoose.Schema(
 		active: { type: Boolean, default: true, select: false }
 	}, { timestamps: true }
 )
-const Case = mongoose.model('Case', caseSchema)
 
-caseSchema.pre(/^find/, function (next) {
+caseSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const Case = mongoose.model('Case', caseSchema)
 
 export default Case
 

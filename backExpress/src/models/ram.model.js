@@ -31,12 +31,11 @@ const ramSchema = new mongoose.Schema(
 	}, { timestamps: true }
 )
 
-const Ram = mongoose.model("RAM", ramSchema)
-
-ramSchema.pre(/^find/, function (next) {
+ramSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const Ram = mongoose.model("RAM", ramSchema)
 
 export default Ram
 

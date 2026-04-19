@@ -39,12 +39,11 @@ const cpuSchema = new mongoose.Schema(
 	}, { timestamps: true }
 )
 
-const Cpu = mongoose.model('CPU', cpuSchema)
-
-cpuSchema.pre(/^find/, function (next) {
+cpuSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const Cpu = mongoose.model('CPU', cpuSchema)
 
 export default Cpu
 

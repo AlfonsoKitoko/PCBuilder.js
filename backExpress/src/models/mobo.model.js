@@ -82,12 +82,12 @@ const moboSchema = new mongoose.Schema(
 	}, { timestamps: true }
 )
 
-const Mobo = mongoose.model('Mobo', moboSchema)
-
 moboSchema.pre(/^find/, function (next) {
 	this.find({ active: { $ne: false } })
 	next()
 })
+
+const Mobo = mongoose.model('Mobo', moboSchema)
 
 export default Mobo
 

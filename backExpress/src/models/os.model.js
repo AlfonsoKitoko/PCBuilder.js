@@ -16,12 +16,12 @@ const osSchema = new mongoose.Schema(
 		active: { type: Boolean, default: true, select: false }
 	}, { timestamps: true }
 )
-const Os = mongoose.model('OS', osSchema)
 
-osSchema.pre(/^find/, function (next) {
+osSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const Os = mongoose.model('OS', osSchema)
 
 export default Os
 

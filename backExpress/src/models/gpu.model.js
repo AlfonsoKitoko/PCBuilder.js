@@ -34,12 +34,12 @@ const gpuSchema = new mongoose.Schema(
 		active: { type: Boolean, default: true, select: false }
 	}, { timestamps: true }
 )
-const Gpu = mongoose.model('GPU', gpuSchema)
 
-gpuSchema.pre(/^find/, function (next) {
+gpuSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const Gpu = mongoose.model('GPU', gpuSchema)
 
 export default Gpu
 

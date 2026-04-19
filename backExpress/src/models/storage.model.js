@@ -22,12 +22,11 @@ const storageSchema = new mongoose.Schema(
 	}, { timestamps: true }
 )
 
-const Storage = mongoose.model('Storage', storageSchema)
-
-storageSchema.pre(/^find/, function (next) {
+storageSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const Storage = mongoose.model('Storage', storageSchema)
 
 export default Storage
 
