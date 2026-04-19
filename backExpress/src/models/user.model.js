@@ -35,17 +35,19 @@ const userSchema = new mongoose.Schema(
 			default: 'USER',
 			required: true
 		},
+		// Campos para la recuperación de contraseña
+		resetPasswordToken: { type: String, select: false },
+		resetPasswordExpires: { type: Date, select: false },
 		// necesario para el soft delete
 		active: { type: Boolean, default: true, select: false }
 	}, { timestamps: true }
 )
 
-const User = mongoose.model('User', userSchema)
-
-userSchema.pre(/^find/, function (next) {
+userSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
-	next()
 })
+
+const User = mongoose.model('User', userSchema)
 
 export default User
 
