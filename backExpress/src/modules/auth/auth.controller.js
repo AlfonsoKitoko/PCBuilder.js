@@ -20,3 +20,18 @@ export const logout = (req, res) => {
 	})
 	return apiResponse.success(res, null, 'Logout successful')
 }
+
+export const forgotPassword = wrapAsync(async (req, res) => {
+	const { email } = req.body
+	const result = await authService.requestPasswordReset(email)
+
+	return apiResponse.success(res, 'Reset email sent successfully', result)
+})
+
+export const resetPassword = wrapAsync(async (req, res) => {
+	const { token } = req.params
+	const { password } = req.body
+	const result = await authService.resetUserPassword(token, password)
+
+	return apiResponse.success(res, 'Pasword has been reset successfully', result)
+})
