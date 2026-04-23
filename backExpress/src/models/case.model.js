@@ -30,10 +30,28 @@ const caseSchema = new mongoose.Schema(
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
 		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		slug: { type: String, unique: true, index: true },
 		// necesario para el soft delete
-		active: { type: Boolean, default: true, select: false }
+		active: { type: Boolean, default: true, select: false },
 	}, { timestamps: true }
 )
+
+// Middleware para generar el Slug antes de validar/guardar
+caseSchema.pre('validate', function () {
+	if (!this.isModified('manufacturer') && !this.isModified('model')) return
+
+	// Combinamos fabricante y modelo para un slug único y descriptivo
+	const baseString = `${this.manufacturer} ${this.model}`
+
+	this.slug = baseString
+		.toLowerCase()
+		.trim()
+		.normalize('NFD') // Quita acentos y caracteres especiales
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^a-z0-9\s-]/g, '') // Quita todo lo que no sea letras, números o espacios
+		.replace(/[\s-]+/g, '-') // Reemplaza espacios y guiones múltiples por un solo guion
+		.replace(/^-+|-+$/g, '') // Quita guiones al inicio o final
+})
 
 caseSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })

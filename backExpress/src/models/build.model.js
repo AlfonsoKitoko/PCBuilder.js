@@ -25,8 +25,28 @@ const buildSchema = new mongoose.Schema({
 	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 	// Céntimos
 	totalPrice: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
+	slug: { type: String, unique: true, index: true }
 }, { timestamps: true }
 )
+
+// Middleware para generar el Slug de la Build
+buildSchema.pre('validate', function () {
+	if (!this.isModified('name')) return
+
+	// Generamos slug inicial
+	let baseSlug = this.name
+		.toLowerCase()
+		.trim()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^a-z0-9\s-]/g, '')
+		.replace(/[\s-]+/g, '-')
+		.replace(/^-+|-+$/g, '')
+
+	// OPCIONAL: Podrías añadir un sufijo aleatorio corto si quieres permitir nombres duplicados
+	// entre distintos usuarios, o simplemente confiar en el unique: true.
+	this.slug = baseSlug
+})
 
 const Build = mongoose.model('Build', buildSchema)
 

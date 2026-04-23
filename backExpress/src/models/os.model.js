@@ -12,10 +12,28 @@ const osSchema = new mongoose.Schema(
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
 		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		slug: { type: String, unique: true, index: true },
 		// necesario para el soft delete
-		active: { type: Boolean, default: true, select: false }
+		active: { type: Boolean, default: true, select: false },
 	}, { timestamps: true }
 )
+
+// Middleware para generar el Slug (Fabricante + Versión + Edición)
+osSchema.pre('validate', function () {
+	if (!this.isModified('manufacturer') && !this.isModified('version') && !this.isModified('edition')) return
+
+	// Combinamos los tres campos para evitar colisiones entre Home/Pro
+	const baseString = `${this.manufacturer} ${this.version} ${this.edition}`
+
+	this.slug = baseString
+		.toLowerCase()
+		.trim()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^a-z0-9\s-]/g, '')
+		.replace(/[\s-]+/g, '-')
+		.replace(/^-+|-+$/g, '')
+})
 
 osSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })

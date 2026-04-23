@@ -27,10 +27,28 @@ const psuSchema = new mongoose.Schema(
 		// Céntimos
 		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
 		partType: { type: mongoose.Schema.Types.ObjectId, ref: 'Part', required: true },
+		slug: { type: String, unique: true, index: true },
 		// necesario para el soft delete
-		active: { type: Boolean, default: true, select: false }
+		active: { type: Boolean, default: true, select: false },
 	}, { timestamps: true }
 )
+
+// Middleware para generar el Slug (Fabricante + Modelo + Wattage)
+psuSchema.pre('validate', function () {
+	if (!this.isModified('manufacturer') && !this.isModified('model') && !this.isModified('wattage')) return
+
+	// Añadimos el wattage al final para diferenciar modelos iguales con distinta potencia
+	const baseString = `${this.manufacturer} ${this.model} ${this.wattage}w`
+
+	this.slug = baseString
+		.toLowerCase()
+		.trim()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^a-z0-9\s-]/g, '')
+		.replace(/[\s-]+/g, '-')
+		.replace(/^-+|-+$/g, '')
+})
 
 psuSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })
