@@ -6,7 +6,7 @@ import AppError from '../../utils/AppError.js'
 // R - Listar todas las Oss
 export const findAllOss = wrapAsync(async (req, res) => {
 	const oss = await osService.getAllOss()
-	return apiResponse.success(res, oss, `${oss.length} Oss retrieved successfully`)
+	return apiResponse.success(res, `${oss.length} Oss retrieved successfully`, oss)
 })
 
 // R - Buscar por ID
@@ -16,14 +16,14 @@ export const findOsById = wrapAsync(async (req, res) => {
 
 	if (!foundOs) throw new AppError('Os not found', 404)
 
-	return apiResponse.success(res, foundOs, 'Os details retrieved')
+	return apiResponse.success(res, 'Os details retrieved', foundOs)
 })
 
 // C - Crear Os
 export const createOs = wrapAsync(async (req, res) => {
 	const newOs = await osService.createOs(req.body)
 
-	return apiResponse.success(res, newOs, 'Os created successfully', 201)
+	return apiResponse.success(res, 'Os created successfully', newOs, 201)
 })
 
 // U - Actualizar Os
@@ -33,7 +33,7 @@ export const updateOsById = wrapAsync(async (req, res) => {
 
 	if (!updatedOs) throw new AppError('Os not found', 404)
 
-	return apiResponse.success(res, updatedOs, 'Os updated successfully')
+	return apiResponse.success(res, 'Os updated successfully', updatedOs)
 })
 
 // D - Eliminar Os
@@ -43,5 +43,5 @@ export const deleteOsById = wrapAsync(async (req, res) => {
 
 	if (!deletedOs) throw new AppError('Os not found', 404)
 
-	return apiResponse.success(res, null, 'Os deleted successfully')
+	return apiResponse.success(res, 'Os deleted successfully', null)
 })

@@ -6,7 +6,7 @@ import AppError from '../../utils/AppError.js'
 // R - Listar todas las Parts
 export const findAllParts = wrapAsync(async (req, res) => {
 	const parts = await partService.getAllParts()
-	return apiResponse.success(res, parts, `${parts.length} Parts retrieved successfully`)
+	return apiResponse.success(res, `${parts.length} Parts retrieved successfully`, parts)
 })
 
 // R - Buscar por ID
@@ -16,14 +16,14 @@ export const findPartById = wrapAsync(async (req, res) => {
 
 	if (!foundPart) throw new AppError('Part not found', 404)
 
-	return apiResponse.success(res, foundPart, 'Part details retrieved')
+	return apiResponse.success(res, 'Part details retrieved', foundPart)
 })
 
 // C - Crear Part
 export const createPart = wrapAsync(async (req, res) => {
 	const newPart = await partService.createPart(req.body)
 
-	return apiResponse.success(res, newPart, 'Part created successfully', 201)
+	return apiResponse.success(res, 'Part created successfully', newPart, 201)
 })
 
 // U - Actualizar Part
@@ -33,7 +33,7 @@ export const updatePartById = wrapAsync(async (req, res) => {
 
 	if (!updatedPart) throw new AppError('Part not found', 404)
 
-	return apiResponse.success(res, updatedPart, 'Part updated successfully')
+	return apiResponse.success(res, 'Part updated successfully', updatedPart)
 })
 
 // D - Eliminar Part
@@ -43,5 +43,5 @@ export const deletePartById = wrapAsync(async (req, res) => {
 
 	if (!deletedPart) throw new AppError('Part not found', 404)
 
-	return apiResponse.success(res, null, 'Part deleted successfully')
+	return apiResponse.success(res, 'Part deleted successfully', null)
 })

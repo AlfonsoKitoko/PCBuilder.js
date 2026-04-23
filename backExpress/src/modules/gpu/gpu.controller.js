@@ -6,7 +6,7 @@ import AppError from '../../utils/AppError.js'
 // R - Listar todas las Gpus
 export const findAllGpus = wrapAsync(async (req, res) => {
 	const gpus = await gpuService.getAllGpus()
-	return apiResponse.success(res, gpus, `${gpus.length} Gpus retrieved successfully`)
+	return apiResponse.success(res, `${gpus.length} Gpus retrieved successfully`, gpus)
 })
 
 // R - Buscar por ID
@@ -16,14 +16,14 @@ export const findGpuById = wrapAsync(async (req, res) => {
 
 	if (!foundGpu) throw new AppError('Gpu not found', 404)
 
-	return apiResponse.success(res, foundGpu, 'Gpu details retrieved')
+	return apiResponse.success(res, 'Gpu details retrieved', foundGpu)
 })
 
 // C - Crear Gpu
 export const createGpu = wrapAsync(async (req, res) => {
 	const newGpu = await gpuService.createGpu(req.body)
 
-	return apiResponse.success(res, newGpu, 'Gpu created successfully', 201)
+	return apiResponse.success(res, 'Gpu created successfully', newGpu, 201)
 })
 
 // U - Actualizar Gpu
@@ -33,7 +33,7 @@ export const updateGpuById = wrapAsync(async (req, res) => {
 
 	if (!updatedGpu) throw new AppError('Gpu not found', 404)
 
-	return apiResponse.success(res, updatedGpu, 'Gpu updated successfully')
+	return apiResponse.success(res, 'Gpu updated successfully', updatedGpu)
 })
 
 // D - Eliminar Gpu
@@ -43,5 +43,5 @@ export const deleteGpuById = wrapAsync(async (req, res) => {
 
 	if (!deletedGpu) throw new AppError('Gpu not found', 404)
 
-	return apiResponse.success(res, null, 'Gpu deleted successfully')
+	return apiResponse.success(res, 'Gpu deleted successfully', null)
 })

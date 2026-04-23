@@ -6,7 +6,7 @@ import AppError from '../../utils/AppError.js'
 // R - Listar todas las Psus
 export const findAllPsus = wrapAsync(async (req, res) => {
 	const psus = await psuService.getAllPsus()
-	return apiResponse.success(res, psus, `${psus.length} Psus retrieved successfully`)
+	return apiResponse.success(res, `${psus.length} Psus retrieved successfully`, psus)
 })
 
 // R - Buscar por ID
@@ -16,14 +16,14 @@ export const findPsuById = wrapAsync(async (req, res) => {
 
 	if (!foundPsu) throw new AppError('Psu not found', 404)
 
-	return apiResponse.success(res, foundPsu, 'Psu details retrieved')
+	return apiResponse.success(res, 'Psu details retrieved', foundPsu)
 })
 
 // C - Crear Psu
 export const createPsu = wrapAsync(async (req, res) => {
 	const newPsu = await psuService.createPsu(req.body)
 
-	return apiResponse.success(res, newPsu, 'Psu created successfully', 201)
+	return apiResponse.success(res, 'Psu created successfully', newPsu, 201)
 })
 
 // U - Actualizar Psu
@@ -33,7 +33,7 @@ export const updatePsuById = wrapAsync(async (req, res) => {
 
 	if (!updatedPsu) throw new AppError('Psu not found', 404)
 
-	return apiResponse.success(res, updatedPsu, 'Psu updated successfully')
+	return apiResponse.success(res, 'Psu updated successfully', updatedPsu)
 })
 
 // D - Eliminar Psu
@@ -43,5 +43,5 @@ export const deletePsuById = wrapAsync(async (req, res) => {
 
 	if (!deletedPsu) throw new AppError('Psu not found', 404)
 
-	return apiResponse.success(res, null, 'Psu deleted successfully')
+	return apiResponse.success(res, 'Psu deleted successfully', null)
 })

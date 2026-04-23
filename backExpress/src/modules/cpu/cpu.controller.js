@@ -6,7 +6,7 @@ import AppError from '../../utils/AppError.js'
 // R - Listar todas las Cpus
 export const findAllCpus = wrapAsync(async (req, res) => {
 	const cpus = await cpuService.getAllCpus()
-	return apiResponse.success(res, cpus, `${cpus.length} Cpus retrieved successfully`)
+	return apiResponse.success(res, `${cpus.length} Cpus retrieved successfully`, cpus)
 })
 
 // R - Buscar por ID
@@ -16,14 +16,14 @@ export const findCpuById = wrapAsync(async (req, res) => {
 
 	if (!foundCpu) throw new AppError('Cpu not found', 404)
 
-	return apiResponse.success(res, foundCpu, 'Cpu details retrieved')
+	return apiResponse.success(res, 'Cpu details retrieved', foundCpu)
 })
 
 // C - Crear Cpu
 export const createCpu = wrapAsync(async (req, res) => {
 	const newCpu = await cpuService.createCpu(req.body)
 
-	return apiResponse.success(res, newCpu, 'Cpu created successfully', 201)
+	return apiResponse.success(res, 'Cpu created successfully', newCpu, 201)
 })
 
 // U - Actualizar Cpu
@@ -33,7 +33,7 @@ export const updateCpuById = wrapAsync(async (req, res) => {
 
 	if (!updatedCpu) throw new AppError('Cpu not found', 404)
 
-	return apiResponse.success(res, updatedCpu, 'Cpu updated successfully')
+	return apiResponse.success(res, 'Cpu updated successfully', updatedCpu)
 })
 
 // D - Eliminar Cpu
@@ -43,5 +43,5 @@ export const deleteCpuById = wrapAsync(async (req, res) => {
 
 	if (!deletedCpu) throw new AppError('Cpu not found', 404)
 
-	return apiResponse.success(res, null, 'Cpu deleted successfully')
+	return apiResponse.success(res, 'Cpu deleted successfully', null)
 })

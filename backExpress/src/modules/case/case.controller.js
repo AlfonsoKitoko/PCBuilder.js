@@ -6,7 +6,7 @@ import AppError from '../../utils/AppError.js'
 // R - Listar todas las Cases
 export const findAllCases = wrapAsync(async (req, res) => {
 	const cases = await caseService.getAllCases()
-	return apiResponse.success(res, cases, `${cases.length} Cases retrieved successfully`)
+	return apiResponse.success(res, `${cases.length} Cases retrieved successfully`, cases)
 })
 
 // R - Buscar por ID
@@ -16,14 +16,14 @@ export const findCaseById = wrapAsync(async (req, res) => {
 
 	if (!foundCase) throw new AppError('Case not found', 404)
 
-	return apiResponse.success(res, foundCase, 'Case details retrieved')
+	return apiResponse.success(res, 'Case details retrieved', foundCase)
 })
 
 // C - Crear Case
 export const createCase = wrapAsync(async (req, res) => {
 	const newCase = await caseService.createCase(req.body)
 
-	return apiResponse.success(res, newCase, 'Case created successfully', 201)
+	return apiResponse.success(res, 'Case created successfully', newCase, 201)
 })
 
 // U - Actualizar Case
@@ -33,7 +33,7 @@ export const updateCaseById = wrapAsync(async (req, res) => {
 
 	if (!updatedCase) throw new AppError('Case not found', 404)
 
-	return apiResponse.success(res, updatedCase, 'Case updated successfully')
+	return apiResponse.success(res, 'Case updated successfully', updatedCase)
 })
 
 // D - Eliminar Case
@@ -43,5 +43,5 @@ export const deleteCaseById = wrapAsync(async (req, res) => {
 
 	if (!deletedCase) throw new AppError('Case not found', 404)
 
-	return apiResponse.success(res, null, 'Case deleted successfully')
+	return apiResponse.success(res, 'Case deleted successfully', null)
 })
