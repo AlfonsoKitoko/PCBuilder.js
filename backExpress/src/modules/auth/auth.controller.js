@@ -9,8 +9,8 @@ export const login = wrapAsync(async (req, res) => {
 })
 
 export const register = wrapAsync(async (req, res) => {
-	const user = await authService.register(req.body)
-	return apiResponse.success(res, 'Registration successful', user)
+	const { user, token } = await authService.register(req.body)
+	return apiResponse.success(res, 'Registration successful', { user, token })
 })
 
 export const logout = (req, res) => {
@@ -18,7 +18,7 @@ export const logout = (req, res) => {
 		expires: new Date(Date.now() + 1000),
 		httpOnly: true
 	})
-	return apiResponse.success(res, null, 'Logout successful')
+	return apiResponse.success(res, 'Logout successful', null)
 }
 
 export const forgotPassword = wrapAsync(async (req, res) => {
@@ -34,4 +34,8 @@ export const resetPassword = wrapAsync(async (req, res) => {
 	const result = await authService.resetUserPassword(token, password)
 
 	return apiResponse.success(res, 'Pasword has been reset successfully', result)
+})
+
+export const getMe = wrapAsync(async (req, res) => {
+	return apiResponse.success(res, 'User data retrieved', req.user)
 })
