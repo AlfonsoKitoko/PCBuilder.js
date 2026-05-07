@@ -1,3 +1,3 @@
-export const EMAIL_PATTERN: RegExp = new RegExp(/^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,6})+$/)
+export const EMAIL_PATTERN: RegExp = /^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,6})+$/
 
-export const PASSWORD_PATTERN: RegExp = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,20}$/)
+export const PASSWORD_PATTERN: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
