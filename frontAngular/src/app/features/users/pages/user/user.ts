@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { ModalService } from '../../../../shared/services/modal.service';
@@ -20,7 +20,7 @@ export default class User {
 	private readonly toast = inject(ToastService);
 
 	user = this.userService.selectedUser;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.userService.isLoading;
 
 	ngOnInit() {

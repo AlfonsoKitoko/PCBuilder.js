@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
+import { ModalService } from '../../../../shared/services/modal.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { UserService } from '../../../../shared/services/user.service';
 import { getImageUrl } from '../../../../shared/utils/image-mapper';
@@ -22,6 +23,7 @@ export default class NewEdit implements OnInit {
 	private readonly userService = inject(UserService);
 	private readonly authService = inject(AuthService);
 	private readonly router = inject(Router);
+	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
 
 	readonly getImageUrl = getImageUrl;
@@ -72,32 +74,43 @@ export default class NewEdit implements OnInit {
 		}
 	}
 
-	onSubmit() {
+	async onSubmit() {
 		if (this.form.invalid || !this.canManage()) {
 			this.form.markAllAsTouched();
 			return;
 		}
 
-		this.isLoading.set(true);
-		const data = this.form.getRawValue();
+		const action = this.isEditMode() ? 'actualizar' : 'crear';
 
-		// Si estamos editando y el password está vacío, lo eliminamos para no sobreescribirlo
-		if (this.isEditMode() && !data.password) {
-			delete data.password;
-		}
-
-		const request = this.isEditMode() ? this.userService.update(this.id()!, data) : this.userService.create(data);
-
-		request.subscribe({
-			next: () => {
-				const msg = this.isEditMode() ? 'Usuario actualizado' : 'Usuario creado correctamente';
-				this.toast.show(msg, 'success');
-				this.router.navigate(['/user/all']);
-			},
-			error: (err) => {
-				this.isLoading.set(false);
-				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			},
+		const confirmed = await this.modal.confirm({
+			title: `¿Confirmar ${action}?`,
+			message: `¿Estás seguro de que deseas ${action} esta caja?`,
+			confirmLabel: 'Aceptar',
+			cancelLabel: 'Cancelat',
 		});
+
+		if (confirmed) {
+			this.isLoading.set(true);
+			const data = this.form.getRawValue();
+
+			// Si estamos editando y el password está vacío, lo eliminamos para no sobreescribirlo
+			if (this.isEditMode() && !data.password) {
+				delete data.password;
+			}
+
+			const request = this.isEditMode() ? this.userService.update(this.id()!, data) : this.userService.create(data);
+
+			request.subscribe({
+				next: () => {
+					const msg = this.isEditMode() ? 'Usuario actualizado' : 'Usuario creado correctamente';
+					this.toast.show(msg, 'success');
+					this.router.navigate(['/user/all']);
+				},
+				error: (err) => {
+					this.isLoading.set(false);
+					this.toast.show(err.error?.message || 'Error en la operación', 'error');
+				},
+			});
+		}
 	}
 }
