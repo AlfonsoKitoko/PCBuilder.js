@@ -1,18 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { Gpu } from '../models/gpu.model';
+import { PartService } from './part.service';
 
 @Injectable({ providedIn: 'root' })
 export class GpuService {
 	private http = inject(HttpClient);
+	private partService = inject(PartService);
 	private apiUrl = `${environment.apiUrl}/gpu`;
 
 	gpus = signal<Gpu[]>([]);
 	selectedGpu = signal<Gpu | null>(null);
 	isLoading = signal(false);
+	partType = computed(() => this.partService.parts().find((p) => p.slug === 'gpu'));
 
 	getAll() {
 		this.isLoading.set(true);
@@ -24,7 +27,7 @@ export class GpuService {
 			},
 			error: (err) => {
 				this.isLoading.set(false);
-				console.error('Error al obtener CPUs:', err);
+				console.error('Error al obtener GPUs:', err);
 			},
 		});
 	}
@@ -51,7 +54,19 @@ export class GpuService {
 	create(newGpu: Gpu): Observable<ApiResponse<Gpu>> {
 		this.isLoading.set(true);
 
-		return this.http.post<ApiResponse<Gpu>>(this.apiUrl, newGpu, { withCredentials: true }).pipe(
+		const idPart = this.partType()?._id;
+
+		if (!idPart) {
+			console.error('Error: No se ha encontrado el ID de la categoria "gpu"');
+			return throwError(() => new Error('Categoría no inicializada'));
+		}
+
+		const gpuWithType = {
+			...newGpu,
+			partType: idPart,
+		};
+
+		return this.http.post<ApiResponse<Gpu>>(this.apiUrl, gpuWithType, { withCredentials: true }).pipe(
 			tap((res) => {
 				this.gpus.update((c) => [...c, res.data]);
 				this.isLoading.set(false);

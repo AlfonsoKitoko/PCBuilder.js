@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
 import { GpuService } from '../../../../shared/services/gpu.service';
@@ -24,8 +25,12 @@ export default class Gpu {
 	readonly getImageUrl = getImageUrl;
 
 	gpu = this.gpuService.selectedGpu;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.gpuService.isLoading;
+
+	managementRoles = [userProfile.ADMIN];
+
+	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -40,6 +45,7 @@ export default class Gpu {
 			},
 		});
 	}
+
 	addToBuild() {
 		const currentGpu = this.gpu();
 		if (currentGpu) {
@@ -54,6 +60,28 @@ export default class Gpu {
 			} else {
 				this.router.navigate(['/build/new']);
 			}
+		}
+	}
+
+	async deleteGpu() {
+		const currentGpu = this.gpu();
+		if (!currentGpu) return;
+
+		const confirmed = await this.modal.confirm({
+			title: '¿Eliminar Componente?',
+			message: `¿Quieres borrar permanentemente ${currentGpu.manufacturer} ${currentGpu.model}?`,
+			confirmLabel: 'Eliminar',
+			cancelLabel: 'Cancelar',
+		});
+
+		if (confirmed) {
+			this.gpuService.delete(currentGpu._id!).subscribe({
+				next: () => {
+					this.toast.show('Tarjeta gráfica eliminada', 'success');
+					this.router.navigate(['/gpu/all']);
+				},
+				error: () => this.toast.show('Error al elminiar', 'error'),
+			});
 		}
 	}
 }

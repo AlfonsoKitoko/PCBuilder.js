@@ -7,14 +7,28 @@
 			</p>
 		</div>
 
-		<div class="relative w-full md:w-64">
-			<input
-				class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
-				[value]="tableHandler.searchTerm()"
-				(input)="tableHandler.searchTerm.set($any($event.target).value)"
-				type="text"
-				placeholder="Filtrar GPUs..."
-			/>
+		<div class="flex w-full items-center gap-2 md:w-auto">
+			<div class="relative flex-1 md:w-64">
+				<input
+					class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
+					[value]="tableHandler.searchTerm()"
+					(input)="tableHandler.searchTerm.set($any($event.target).value)"
+					type="text"
+					placeholder="Filtrar GPUs..."
+				/>
+			</div>
+
+			@if (canManage()) {
+				<a
+					class="btn btn-primary btn-sm h-9 rounded-lg px-3 text-xs font-bold uppercase shadow-sm"
+					[routerLink]="['/gpu/new']"
+				>
+					<svg class="mr-1.5 h-4 w-4 fill-current" viewBox="0 0 24 24">
+						<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+					</svg>
+					<span class="hidden sm:inline">Crear</span>
+				</a>
+			}
 		</div>
 	</header>
 
@@ -29,17 +43,8 @@
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('gpu_type')"
 					>
-						Tipo
+						Chipset
 						@if (tableHandler.sortCol() === 'gpu_type') {
-							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
-						}
-					</th>
-					<th
-						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
-						(click)="tableHandler.toggleSort('manufacturer')"
-					>
-						Fabricante
-						@if (tableHandler.sortCol() === 'manufacturer') {
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
@@ -63,33 +68,13 @@
 					</th>
 					<th
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
-						(click)="tableHandler.toggleSort('base_freq')"
-					>
-						Freq. Base
-						@if (tableHandler.sortCol() === 'base_freq') {
-							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
-						}
-					</th>
-					<th
-						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('boost_freq')"
 					>
-						Freq. Boost
+						Boost
 						@if (tableHandler.sortCol() === 'boost_freq') {
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
-					<th class="p-3 text-left">Interfaz</th>
-					<th
-						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
-						(click)="tableHandler.toggleSort('tdp')"
-					>
-						TDP
-						@if (tableHandler.sortCol() === 'tdp') {
-							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
-						}
-					</th>
-					<th class="p-3 text-left">Puertos</th>
 					<th
 						class="hover:text-primary cursor-pointer p-3 pr-6 text-right transition-colors"
 						(click)="tableHandler.toggleSort('price')"
@@ -99,22 +84,22 @@
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
+					<th class="w-56 p-3 text-center text-[9px] font-bold tracking-widest uppercase">Acciones</th>
 				</tr>
 			</thead>
 			<tbody class="divide-base-300 divide-y dark:divide-white/5">
 				@for (gpu of tableHandler.filteredData(); track gpu._id) {
-					<tr
-						class="group hover:bg-base-200/50 cursor-pointer transition-colors"
-						(click)="goToDetail(gpu._id, gpu.slug)"
-					>
+					<tr class="group hover:bg-base-200/50 transition-colors">
 						<td class="p-3 align-middle">
-							<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
-								<img
-									class="h-full w-full object-contain"
-									[src]="getImageUrl('gpu', gpu.slug)"
-									(error)="$any($event.target).src = getImageUrl(undefined)"
-								/>
-							</div>
+							<a class="block" [routerLink]="['/gpu', gpu._id, gpu.slug]">
+								<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
+									<img
+										class="h-full w-full object-contain"
+										[src]="getImageUrl('gpu', gpu.slug)"
+										(error)="$any($event.target).src = getImageUrl(undefined)"
+									/>
+								</div>
+							</a>
 						</td>
 						<td class="p-3 align-middle text-sm font-bold tracking-tighter uppercase">
 							<span
@@ -125,26 +110,44 @@
 								{{ gpu.gpu_type }}
 							</span>
 						</td>
-						<td class="p-3 align-middle text-sm font-bold uppercase">{{ gpu.manufacturer }}</td>
-						<td class="text-primary p-3 align-middle text-sm font-bold group-hover:underline">{{ gpu.model }}</td>
+						<td class="p-3 align-middle">
+							<a class="text-primary text-sm font-bold hover:underline" [routerLink]="['/gpu', gpu._id, gpu.slug]">
+								<span class="text-base-content/60 mr-1 font-medium uppercase">{{ gpu.manufacturer }}</span>
+								{{ gpu.model }}
+							</a>
+						</td>
 						<td class="p-3 align-middle text-sm font-semibold">{{ gpu.memory }} GB {{ gpu.memory_type }}</td>
 						<td class="p-3 align-middle text-sm font-semibold">
-							{{ (gpu.base_freq || 0) / 1000 | number: '1.2-2' }} GHz
-						</td>
-						<td class="text-primary p-3 align-middle text-sm font-semibold">
 							{{ (gpu.boost_freq || 0) / 1000 | number: '1.2-2' }} GHz
-						</td>
-						<td class="text-base-content/60 p-3 align-middle text-xs font-medium uppercase">{{ gpu.interface }}</td>
-						<td class="text-base-content/60 p-3 align-middle text-xs font-medium">{{ gpu.tdp }} W</td>
-						<td class="text-base-content/50 p-3 align-middle text-[10px] font-medium italic">
-							@for (port of gpu.ports | keyvalue; track port.key) {
-								@if (port.value) {
-									<div>{{ port.value }}x {{ port.key }}</div>
-								}
-							}
 						</td>
 						<td class="p-3 pr-6 text-right align-middle font-black tracking-tighter">
 							{{ gpu.price / 100 | currency: 'EUR' }}
+						</td>
+						<td class="p-3 pr-4 text-right align-middle">
+							<div class="flex justify-end gap-2">
+								<button
+									class="btn btn-primary btn-xs h-8 px-3 font-bold tracking-wider uppercase"
+									(click)="$event.stopPropagation(); quickAddToBuild($event, gpu)"
+								>
+									<svg class="mr-1 h-3 w-3 fill-current" viewBox="0 0 24 24">
+										<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+									</svg>
+									Agregar
+								</button>
+								@if (canManage()) {
+									<button
+										class="btn btn-error btn-outline btn-xs h-8 px-3 font-bold tracking-wider uppercase"
+										(click)="$event.stopPropagation(); deleteGpu($event, gpu)"
+									>
+										<svg class="mr-1 h-3 w-3 fill-current" viewBox="0 0 24 24">
+											<path
+												d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95 1.414-1.414z"
+											/>
+										</svg>
+										Eliminar
+									</button>
+								}
+							</div>
 						</td>
 					</tr>
 				}
@@ -155,9 +158,9 @@
 	<div class="border-base-300 block border-t lg:hidden dark:border-white/10">
 		<div class="flex flex-col">
 			@for (gpu of tableHandler.filteredData(); track gpu._id) {
-				<div
+				<a
 					class="group border-base-300 bg-base-100 hover:bg-base-200/50 flex cursor-pointer gap-4 border-b p-3 transition-colors dark:border-white/10 dark:bg-transparent"
-					(click)="goToDetail(gpu._id, gpu.slug)"
+					[routerLink]="['/gpu', gpu._id, gpu.slug]"
 				>
 					<div
 						class="ring-base-300 flex h-16 w-16 shrink-0 items-center justify-center rounded bg-white p-1.5 ring-1 dark:ring-white/10"
@@ -172,45 +175,58 @@
 
 					<div class="flex flex-1 flex-col gap-1">
 						<div class="flex items-baseline justify-between">
-							<h3
-								class="text-primary text-base leading-none font-bold decoration-1 underline-offset-2 group-hover:underline"
-							>
+							<h3 class="text-primary text-sm font-bold group-hover:underline">
 								<span
-									class="mr-1 text-base font-bold uppercase"
+									class="mr-1 uppercase"
 									[class.text-green-600]="gpu.gpu_type === 'NVIDIA'"
 									[class.text-red-600]="gpu.gpu_type === 'AMD RADEON'"
 									[class.text-blue-600]="gpu.gpu_type === 'INTEL'"
+									>{{ gpu.gpu_type }}</span
 								>
-									{{ gpu.gpu_type }}
-								</span>
-								<span class="text-base-content/60 mr-1 text-base uppercase">{{ gpu.manufacturer }}</span>
 								{{ gpu.model }}
 							</h3>
-							<span class="text-base-content text-base font-black tracking-tighter">
-								{{ gpu.price / 100 | currency: 'EUR' }}
-							</span>
+							<span class="text-base-content text-base font-black tracking-tighter">{{
+								gpu.price / 100 | currency: 'EUR'
+							}}</span>
 						</div>
 
-						<div class="text-base-content/70 flex flex-wrap items-center gap-x-4 text-[11px] font-medium">
-							<span class="flex gap-1"
-								><span class="text-base-content/40 font-bold uppercase">Mem:</span> {{ gpu.memory }} GB</span
+						<div class="flex items-center justify-between">
+							<div class="text-base-content/70 flex flex-wrap items-center gap-x-3 text-[11px] font-medium">
+								<span>{{ gpu.memory }}GB {{ gpu.memory_type }}</span>
+								<span>{{ (gpu.boost_freq || 0) / 1000 | number: '1.2-2' }}GHz</span>
+								<span>{{ gpu.tdp }}W</span>
+							</div>
+							<button
+								class="btn btn-primary btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
+								(click)="$event.stopPropagation(); $event.preventDefault(); quickAddToBuild($event, gpu)"
 							>
-							<span class="flex gap-1"
-								><span class="text-base-content/40 font-bold uppercase">Base:</span>
-								{{ (gpu.base_freq || 0) / 1000 | number: '1.2-2' }} GHz</span
-							>
-							<span class="flex gap-1"
-								><span class="text-base-content/40 font-bold uppercase">Boost:</span>
-								{{ (gpu.boost_freq || 0) / 1000 | number: '1.2-2' }} GHz</span
-							>
+								<svg class="mr-0.5 h-2.5 w-2.5 fill-current" viewBox="0 0 24 24">
+									<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+								</svg>
+								Agregar
+							</button>
 						</div>
 
-						<div class="text-base-content/50 flex flex-wrap items-center gap-x-4 text-[10px] font-medium">
-							<span class="flex gap-1"><span class="font-bold uppercase">Interfaz:</span> {{ gpu.interface }}</span>
-							<span class="flex gap-1"><span class="font-bold uppercase">TDP:</span> {{ gpu.tdp }} W</span>
+						<div class="flex items-center justify-between">
+							<div class="text-base-content/50 text-[10px] font-medium italic">
+								{{ gpu.manufacturer }} • {{ gpu.interface }}
+							</div>
+							@if (canManage()) {
+								<button
+									class="btn btn-error btn-ghost btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
+									(click)="$event.stopPropagation(); $event.preventDefault(); deleteGpu($event, gpu)"
+								>
+									<svg class="mr-0.5 h-2.5 w-2.5 fill-current" viewBox="0 0 24 24">
+										<path
+											d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95 1.414-1.414z"
+										/>
+									</svg>
+									Eliminar
+								</button>
+							}
 						</div>
 					</div>
-				</div>
+				</a>
 			} @empty {
 				<div class="py-12 text-center text-xs font-medium italic opacity-30">
 					No hay coincidencias para "{{ tableHandler.searchTerm() }}"
