@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
 import { ModalService } from '../../../../shared/services/modal.service';
@@ -24,8 +25,12 @@ export default class Os {
 	readonly getImageUrl = getImageUrl;
 
 	os = this.osService.selectedOs;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.osService.isLoading;
+
+	managementRoles = [userProfile.ADMIN];
+
+	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -54,6 +59,28 @@ export default class Os {
 			} else {
 				this.router.navigate(['/build/new']);
 			}
+		}
+	}
+
+	async deleteOs() {
+		const currentOs = this.os();
+		if (!currentOs) return;
+
+		const confirmed = await this.modal.confirm({
+			title: '¿Eliminar Componente?',
+			message: `¿Quieres borrar permanentemente ${currentOs.manufacturer} ${currentOs.version}?`,
+			confirmLabel: 'Eliminar',
+			cancelLabel: 'Cancelar',
+		});
+
+		if (confirmed) {
+			this.osService.delete(currentOs._id!).subscribe({
+				next: () => {
+					this.toast.show('Sistema operativo eliminado', 'success');
+					this.router.navigate(['/os/all']);
+				},
+				error: () => this.toast.show('Error al elminiar', 'error'),
+			});
 		}
 	}
 }

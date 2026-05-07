@@ -1,18 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { Os } from '../models/os.model';
+import { PartService } from './part.service';
 
 @Injectable({ providedIn: 'root' })
 export class OsService {
 	private http = inject(HttpClient);
 	private apiUrl = `${environment.apiUrl}/os`;
+	private partService = inject(PartService);
 
 	oss = signal<Os[]>([]);
 	selectedOs = signal<Os | null>(null);
 	isLoading = signal(false);
+	partType = computed(() => this.partService.parts().find((p) => p.slug === 'os'));
 
 	getAll() {
 		this.isLoading.set(true);
@@ -24,7 +27,7 @@ export class OsService {
 			},
 			error: (err) => {
 				this.isLoading.set(false);
-				console.error('Error al obtener CPUs:', err);
+				console.error('Error al obtener OSs:', err);
 			},
 		});
 	}
@@ -51,7 +54,19 @@ export class OsService {
 	create(newOs: Os): Observable<ApiResponse<Os>> {
 		this.isLoading.set(true);
 
-		return this.http.post<ApiResponse<Os>>(this.apiUrl, newOs, { withCredentials: true }).pipe(
+		const idPart = this.partType()?._id;
+
+		if (!idPart) {
+			console.error('Error: No se ha encontrado el ID de la categoria "os"');
+			return throwError(() => new Error('Categoría no inicializada'));
+		}
+
+		const osWithType = {
+			...newOs,
+			partType: idPart,
+		};
+
+		return this.http.post<ApiResponse<Os>>(this.apiUrl, osWithType, { withCredentials: true }).pipe(
 			tap((res) => {
 				this.oss.update((c) => [...c, res.data]);
 				this.isLoading.set(false);
