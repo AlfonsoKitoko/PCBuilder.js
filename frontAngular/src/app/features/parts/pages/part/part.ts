@@ -4,6 +4,5 @@ import { Component } from '@angular/core'
 	selector: 'app-part',
 	imports: [],
 	templateUrl: './part.html',
-	styles: ``,
 })
 export default class Part { }
