@@ -14,13 +14,11 @@ export const checkCompatibility = (build) => {
 
 	// 2. RAM: Tipo y Cantidad de Módulos
 	if (ram && ram.length > 0 && mobo) {
-		// Comprobar que todos los módulos sean del mismo tipo que la placa
 		const wrongType = ram.some(r => r.ram_type !== mobo.ram_type)
 		if (wrongType) {
 			report.errors.push(`RAM type mismatch: Motherboard requires ${mobo.ram_type}`)
 		}
 
-		// Comprobar slots físicos ocupados
 		const totalModules = ram.reduce((acc, r) => acc + (r.modules?.quantity || 1), 0)
 		if (totalModules > mobo.ram_slots) {
 			report.errors.push(`Too many RAM modules: ${totalModules} installed, but Mobo only has ${mobo.ram_slots} slots`)
@@ -31,22 +29,15 @@ export const checkCompatibility = (build) => {
 		}
 	}
 
-	if (ram && ram.length > 1) {
-		const speeds = ram.map(r => r.speed)
-		const uniqueSpeeds = [...new Set(speeds)]
-		if (uniqueSpeeds.length > 1) {
-			report.warnings.push(`Mixed RAM speeds detected: ${uniqueSpeeds.join(', ')}. All modules will run at the speed of the slowest one (${Math.min(...speeds)} MHz).`)
-		}
-	}
-
 	// 3. Storage: Cantidad de discos
 	if (storage && storage.length > 0) {
-		// --- VALIDACIÓN LÓGICA (Placa Base) ---
 		if (mobo) {
-			const sataSlots = mobo.internal_connectors?.sata_6gb || 0
-			const nvmeSlots = mobo.internal_connectors?.m2_nvme || 0
+			// CORRECCIÓN: Acceso a rutas anidadas en el objeto Mobo
+			const storageInfo = mobo.internal_connectors?.storage
+			const sataSlots = storageInfo?.sata_6gb || 0
+			const nvmeSlots = storageInfo?.m2_slots || 0
 
-			const requiredSata = storage.filter(s => s.interface.includes('SATA')).length
+			const requiredSata = storage.filter(s => s.interface?.includes('SATA')).length
 			const requiredNvme = storage.filter(s => s.nvme === true).length
 
 			if (requiredSata > sataSlots) {
@@ -60,19 +51,13 @@ export const checkCompatibility = (build) => {
 		if (pcCase) {
 			const bays35 = pcCase.internal_bays?.int35 || 0
 			const bays25 = pcCase.internal_bays?.int25 || 0
-
-			// Total de huecos donde cabe un SSD/HDD de 2.5" (Cabinas de 2.5 + las de 3.5 que son híbridas)
-			const totalSlotsFor25 = bays25 + bays35
-
 			const required35 = storage.filter(s => s.form_factor === '3.5"').length
 			const required25 = storage.filter(s => s.form_factor === '2.5"').length
 
-			// Validar discos grandes (3.5") -> Solo caben en sus bahías específicas
 			if (required35 > bays35) {
 				report.errors.push(`Not enough 3.5" bays: Need ${required35}, Case has ${bays35}`)
 			}
 
-			// Validar discos pequeños (2.5") -> Caben en las suyas Y en las de 3.5" sobrantes
 			const remainingAfter35 = bays35 - required35
 			const availableFor25 = bays25 + (remainingAfter35 > 0 ? remainingAfter35 : 0)
 
@@ -82,8 +67,8 @@ export const checkCompatibility = (build) => {
 		}
 	}
 
+	// Validación Legacy Storage
 	if (storage && storage.length > 0 && mobo) {
-		// 1. Conectores IDE (PATA)
 		const requiredIde = storage.filter(s => s.interface === 'IDE').length
 		const availableIde = mobo.internal_connectors?.legacy?.ide || 0
 
@@ -91,57 +76,54 @@ export const checkCompatibility = (build) => {
 			report.errors.push(`Legacy Error: Need ${requiredIde} IDE port(s), but Motherboard only has ${availableIde}`)
 		}
 
-		// 2. Conectores SATA 3GB/s (Legacy SATA)
 		const requiredSata3 = storage.filter(s => s.interface === 'SATA 3GB/S').length
 		const availableSata3 = mobo.internal_connectors?.legacy?.sata_3gb || 0
+		const availableSata6 = mobo.internal_connectors?.storage?.sata_6gb || 0
 
 		if (requiredSata3 > availableSata3) {
-			// Si la placa no tiene SATA 3GB, pero tiene SATA 6GB (que es retrocompatible)
-			const availableSata6 = mobo.internal_connectors?.sata_6gb || 0
-
 			if (requiredSata3 > (availableSata3 + availableSata6)) {
 				report.errors.push(`SATA Error: Not enough ports for your SATA 3GB/s drives`)
 			} else {
-				// Warning: Funcionará, pero estás usando un puerto rápido para un disco lento
 				report.warnings.push(`SATA Note: Your SATA 3GB/s drive will be connected to a SATA 6GB/s port`)
 			}
 		}
 	}
 
-	// 4. Form Factor (Usando tu constante)
+	// 4. Form Factor
 	if (pcCase && mobo) {
 		const caseIndex = MOBO_FORM_FACTOR.indexOf(pcCase.form_factor)
 		const moboIndex = MOBO_FORM_FACTOR.indexOf(mobo.form_factor)
 
-		// Si la placa es "más grande" (índice mayor) que la caja, error
 		if (moboIndex > caseIndex) {
 			report.errors.push(`Case (${pcCase.form_factor}) is too small for Motherboard (${mobo.form_factor})`)
 		}
 	}
 
-	// 5. PSU Wattage
-	if (psu && cpu && gpu) {
+	// 5. PSU Wattage (Cálculo básico para validación inmediata)
+	if (psu && cpu && (gpu || cpu.hasIntegrated)) {
 		const gpuConsumption = gpu ? (gpu.tdp || 0) : 0
-		const baseConsumption = (cpu.tdp || 0) + gpuConsumption + 50 // 50W extra para el resto
+		const baseConsumption = (cpu.tdp || 0) + gpuConsumption + 50
 		if (psu.wattage < baseConsumption) {
 			report.errors.push(`PSU wattage too low: Recommended at least ${baseConsumption}W`)
-		} else if (psu.wattage < (baseConsumption * 1.2)) {
-			report.warnings.push(`PSU wattage is close to the recommended minimum: ${baseConsumption}W`)
 		}
 	}
 
-	// 6. Gráficos
-	if (cpu && !cpu.hasIntegratedGraphics && !gpu) {
+	// 6. Gráficos (CORREGIDO: Usamos la propiedad booleana correcta del modelo)
+	const hasIGP = cpu?.hasIntegrated === true
+
+	if (cpu && !hasIGP && !gpu) {
 		report.errors.push("No video output: CPU has no integrated graphics and no GPU is selected.")
-	} else if (cpu && cpu.hasIntegratedGraphics && !gpu) {
+	} else if (cpu && hasIGP && !gpu) {
 		report.warnings.push("Integrated graphics only: This build might struggle with gaming or heavy 3D tasks.")
 	}
 
-	if (cpu && cpu.hasIntegratedGraphics && !gpu && mobo) {
+	// Validación de puertos físicos en la placa si se usa la integrada
+	if (cpu && hasIGP && !gpu && mobo) {
 		const video = mobo.rear_io?.video
-		const totalPorts = (video?.vga || 0) + (video?.dvi || 0) + (video?.hdmi || 0) + (video?.displayport || 0) > 0
+		const totalPorts = (video?.vga || 0) + (video?.dvi || 0) + (video?.hdmi || 0) + (video?.displayport || 0)
+
 		if (totalPorts === 0) {
-			report.errors.push("No video output: CPU has integrated graphics but Motherboard has no video ports (VGA / DVI / HDMI / DisplayPort).")
+			report.errors.push("No video output: CPU has integrated graphics but Motherboard has no video ports.")
 		}
 	}
 

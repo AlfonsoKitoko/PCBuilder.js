@@ -51,7 +51,7 @@ app.use(
 app.use(express.json({ limit: '5mb' }))
 app.use(methodOverride('_method'))
 app.use(usingMorgan())
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(`${baseUrl}/public`, express.static(path.join(__dirname, '../public')))
 
 //////////////////////////////////////////////////////
 // ++ VIEW ENGINE ++
