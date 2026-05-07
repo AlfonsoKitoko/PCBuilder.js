@@ -1,0 +1,199 @@
+import { HttpClient } from "@angular/common/http"
+import { inject, Injectable, signal } from "@angular/core"
+import { environment } from "../../../environments/environment.development"
+import { catchError, Observable, tap, throwError } from "rxjs"
+import { ApiResponse } from "../models/api-response.model"
+import { Build } from "../models/build.model"
+import { BuildState } from "../models/build-state.model"
+
+@Injectable({ providedIn: 'root' })
+export class BuildService {
+	private http = inject(HttpClient)
+	private apiUrl = `${environment.apiUrl}/builds`
+
+	builds = signal<Build[]>([])
+	selectedBuild = signal<Build | null>(null)
+	isLoading = signal(false)
+
+	currentBuild = signal<BuildState>({
+		_id:undefined,
+		cpu:null,
+		mobo:null,
+		gpu:null,
+		ram:[],
+		storage:[],
+		psu:null,
+		case:null,
+		os:null
+	})
+
+	addPart(type: keyof BuildState, part:any){
+		this.currentBuild.update(state=>{
+			const currentValue = state[type]
+
+			if(Array.isArray(currentValue)){
+				return {
+					...state,
+					[type]:[...currentValue,part]
+				}
+			}
+
+			return {
+				...state,
+				[type]:part
+			}
+		})
+	}
+
+	removePart(type: keyof BuildState, index?:number){
+		this.currentBuild.update(state => {
+			const val = state[type]
+
+			if(Array.isArray(val) && index !== undefined){
+				return { ...state, [type]: val.filter((_, i) => i !== index) }
+			}
+			return { ...state, [type]: Array.isArray(val) ? [] : null }
+		})
+	}
+
+	resetBuild(){
+		this.currentBuild.set({
+			_id: undefined,
+			cpu:null,
+			mobo:null,
+			ram:[],
+			storage:[],
+			gpu:null,
+			case:null,
+			psu:null,
+			os:null
+		})
+	}
+
+	setEditBuild(build: Build) {
+  this.currentBuild.set({
+    _id: build._id, // Aquí recuperamos el ID de MongoDB
+    cpu: build.cpu,
+    mobo: build.mobo,
+    gpu: build.gpu ?? null,
+    ram: build.ram || [],
+    storage: build.storage || [],
+    psu: build.psu,
+    case: build.case,
+    os: build.os ?? null
+  })
+}
+
+	getAll() {
+		this.isLoading.set(true)
+
+		this.http.get<ApiResponse<Build[]>>(this.apiUrl).subscribe({
+			next: (res) => {
+				console.log(res)
+				this.builds.set(res.data)
+				this.isLoading.set(false)
+			},
+			error: (err) => {
+				this.isLoading.set(false)
+				console.error('Error al obtener CPUs:', err)
+			}
+		})
+	}
+
+	getMine(){
+		this.isLoading.set(true)
+
+		this.http.get<ApiResponse<Build[]>>(`${this.apiUrl}/mine`,{withCredentials:true}).subscribe({
+			next:(res)=>{
+				this.builds.set(res.data)
+				this.isLoading.set(false)
+			},
+			error:(err)=>{
+				this.isLoading.set(false)
+				console.error('Error al obtener tus builds: ',err)
+			}
+		})
+	}
+
+	getUserBuilds(userId:string){
+		this.isLoading.set(true)
+
+		this.http.get<ApiResponse<Build[]>>(`${this.apiUrl}/user/${userId}`,{withCredentials:true}).subscribe({
+			next:(res)=>{
+				this.builds.set(res.data)
+				this.isLoading.set(false)
+			},
+			error:(err)=>{
+				this.isLoading.set(false)
+				console.error('Error al obtener las builds del usuario:',err)
+			}
+		})
+	}
+
+	getById(id: string): Observable<ApiResponse<Build>> {
+		const cachedBuild = this.builds().find((b) => b._id === id)
+		if(cachedBuild) this.selectedBuild.set(cachedBuild)
+		else this.selectedBuild.set(null)
+
+		this.isLoading.set(true)
+
+		return this.http.get<ApiResponse<Build>>(`${this.apiUrl}/${id}`).pipe(
+			tap((res) => {
+				this.selectedBuild.set(res.data)
+				this.isLoading.set(false)
+			}),
+			catchError((err) => {
+				this.isLoading.set(false)
+				return throwError(() => err)
+			})
+		)
+	}
+
+	create(newBuild: Build): Observable<ApiResponse<Build>> {
+		this.isLoading.set(true)
+
+		return this.http.post<ApiResponse<Build>>(this.apiUrl, newBuild, { withCredentials: true }).pipe(
+			tap((res) => {
+				this.builds.update((c) => [...c, res.data])
+				this.isLoading.set(false)
+			}),
+			catchError((err) => {
+				this.isLoading.set(false)
+				return throwError(() => err)
+			})
+		)
+	}
+
+	update(id: string, updatedBuild: Partial<Build>): Observable<ApiResponse<Build>> {
+		this.isLoading.set(true)
+
+		return this.http.patch<ApiResponse<Build>>(`${this.apiUrl}/${id}`, updatedBuild, { withCredentials: true }).pipe(
+			tap((res) => {
+				const updated = res.data
+				this.builds.update((list) => list.map((c) => (c._id === id ? updated : c)))
+
+				this.selectedBuild.set(updated)
+				this.isLoading.set(false)
+			}),
+			catchError((err) => {
+				this.isLoading.set(false)
+				return throwError(() => err)
+			})
+		)
+	}
+
+	delete(id: string): Observable<ApiResponse<Build>> {
+		this.isLoading.set(true)
+
+		return this.http.delete<ApiResponse<Build>>(`${this.apiUrl}/${id}`, { withCredentials: true }).pipe(
+			tap(() => {
+				this.builds.update((list) => list.filter((c) => c._id !== id))
+				this.isLoading.set(false)
+			}),
+			catchError((err) => {
+				this.isLoading.set(false)
+				return throwError(() => err)
+			})
+		)
+	}
+}

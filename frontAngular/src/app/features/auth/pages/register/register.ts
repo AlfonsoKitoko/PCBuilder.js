@@ -26,7 +26,7 @@ export default class Register {
 			lastName: [, [Validators.minLength(2), Validators.maxLength(50)]],
 			email: [, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
 			password: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
-			passwordRepeat: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
+			passwordRepeat: [, [Validators.required]],
 			birthDate: [, [this.validator.nofutureDateValidator]],
 		},
 		{ validators: [this.validator.passwordMatchValidator()] },
