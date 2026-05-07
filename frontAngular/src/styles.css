@@ -1,68 +1,146 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
-
 @import 'tailwindcss';
 
+@plugin "daisyui";
+
+/* --- TEMAS DAISYUI --- */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: #F9F9FF;
+  --color-base-200: #f8f8f8;
+  --color-base-300: #eeeeee;
+  --color-base-content: #18181b;
+  --color-primary: #4f10f2;
+  --color-primary-content: #ffffff;
+  --color-secondary: #52FFAD;
+  --color-secondary-content: #0f172a;
+  --color-accent: #00D1FF;
+  --color-accent-content: #084d49;
+  --color-neutral: #1E1B4B;
+  --color-neutral-content: #e4e4e7;
+  --color-info: #06B6D4;
+  --color-info-content: #042e49;
+  --color-success: #00C878;
+  --color-success-content: #004c39;
+  --color-warning: #f59e0b;
+  --color-warning-content: #793205;
+  --color-error: #ff005a;
+  --color-error-content: #4d0218;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: false;
+  color-scheme: "dark";
+  --color-base-100: #1d232a;
+  --color-base-200: #191e24;
+  --color-base-300: #15191e;
+  --color-base-content: #ecf9ff;
+  --color-primary: #605dff;
+  --color-primary-content: #edf1fe;
+  --color-secondary: #f43098;
+  --color-secondary-content: #f9e4f0;
+  --color-accent: #00d3bb;
+  --color-accent-content: #084d49;
+  --color-neutral: #09090b;
+  --color-neutral-content: #e4e4e7;
+  --color-info: #00bafe;
+  --color-info-content: #042e49;
+  --color-success: #00d390;
+  --color-success-content: #004c39;
+  --color-warning: #fcb700;
+  --color-warning-content: #793205;
+  --color-error: #ff627d;
+  --color-error-content: #4d0218;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
 @theme {
-	/* NÚCLEO: El azul-índigo del logo */
-	--color-brand-primary: #4f10f2;
-	/* ACENTO: Verde menta del logo */
-	--color-brand-success: #52ffad;
-	/* CONTRASTE: Rosa/Fucsia */
-	--color-brand-danger: #ff005a;
+  /* Vinculamos tus nombres de marca a las variables de los temas actuales */
+  --color-brand-primary: var(--color-primary);
+  --color-brand-success: var(--color-secondary);
+  --color-brand-danger: var(--color-error);
 
-	/* Un azul profundo pero con color, no negro. Ideal para hovers y textos fuertes */
-	--color-brand-dark: #2a0eb3;
-	/* Un tono intermedio para bordes o elementos secundarios */
-	--color-brand-soft: #e8e4ff;
-	/* Un verde esmeralda vibrante para textos de éxito */
-	--color-brand-muted: #00c878;
-	/* FONDO: Blanco con tinte azulado muy sutil */
-	--color-brand-surface: #f9f9ff;
+  /* Mantengo estas constantes o las referencio a base */
+  --color-brand-soft: var(--color-base-200);
+  --color-brand-surface: var(--color-base-100);
+  --color-brand-dark: var(--color-neutral);
 
-	--font-sans: 'Rubik', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Rubik', ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
-	body {
-		@apply bg-brand-surface font-sans text-slate-900 antialiased;
+  body {
+    /* bg-base-100 y text-base-content cambian automáticamente con el tema */
+    @apply bg-base-100 font-sans text-base-content antialiased transition-colors duration-300;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+  }
 
-		font-optical-sizing: auto;
-		text-rendering: optimizeLegibility;
-	}
+	input[type="number"] {
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+  }
 
-	h1,
-	h2,
-	h3 {
-		@apply text-brand-primary font-bold;
-	}
+  /* Para Chrome/Safari/Edge por si acaso */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
 
-	.container {
-		@apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
-	}
+  h1, h2, h3 {
+    @apply text-primary font-bold;
+  }
+
+  .container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
 }
 
 @layer components {
-	/* BOTÓN PRINCIPAL: Violeta eléctrico */
-	.btn-primary {
-		@apply bg-brand-primary hover:bg-brand-dark cursor-pointer rounded-md px-4 py-2 text-center font-medium text-white transition-all hover:shadow-[0_0_15px_rgba(90,48,242,0.4)] active:scale-95 disabled:opacity-50;
-	}
+  /* BOTÓN PRINCIPAL: Usamos la base de daisyUI y añadimos tus efectos */
+  .btn-primary {
+    @apply btn btn-primary border-none text-white transition-all active:scale-95;
+  }
 
-	/* BOTÓN DE ÉXITO/COMPRA: Verde neón (Atrae mucho la vista) */
-	.btn-success {
-		@apply bg-brand-success hover:bg-brand-muted cursor-pointer rounded-md px-4 py-2 text-center font-bold text-slate-900 transition-all active:scale-95;
-	}
+  /* BOTÓN DE ÉXITO: Secondary en tu paleta de Daisy */
+  .btn-success {
+    @apply btn btn-secondary border-none font-bold active:scale-95;
+  }
 
-	/* BOTÓN DANGER: Tu color de contraste #FF005A */
-	.btn-danger {
-		@apply bg-brand-danger cursor-pointer rounded-md px-4 py-2 text-center font-medium text-white transition-all hover:opacity-90 active:scale-95;
-	}
+  /* BOTÓN DANGER: Error en tu paleta de Daisy */
+  .btn-danger {
+    @apply btn btn-error border-none text-white active:scale-95;
+  }
 
-	.input-field {
-		@apply focus:ring-brand-primary/20 focus:border-brand-primary w-full rounded-md border border-slate-300 bg-white px-3 py-2 transition-all focus:ring-2 focus:outline-none;
-	}
+  /* INPUT: Estilo DaisyUI optimizado */
+  .input-field {
+    @apply input input-md w-full focus:outline-primary transition-all;
+    border-width: 1px;
+  }
 
-	/* Tabla con cabecera en el violeta más suave para no cansar la vista */
-	.main-table th {
-		@apply bg-brand-soft/10 text-brand-dark border-brand-soft/20 border-b px-4 py-3 text-xs font-bold tracking-wider uppercase;
-	}
+  /* TABLA: Optimizada para el modo oscuro automático */
+  .main-table th {
+    @apply bg-base-200 text-primary border-base-300 border-b px-4 py-3 text-xs font-bold tracking-wider uppercase;
+  }
 }
