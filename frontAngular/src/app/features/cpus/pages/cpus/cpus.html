@@ -7,14 +7,28 @@
 			</p>
 		</div>
 
-		<div class="relative w-full md:w-64">
-			<input
-				class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
-				[value]="tableHandler.searchTerm()"
-				(input)="tableHandler.searchTerm.set($any($event.target).value)"
-				type="text"
-				placeholder="Filtrar CPUs..."
-			/>
+		<div class="flex w-full items-center gap-2 md:w-auto">
+			<div class="relative flex-1 md:w-64">
+				<input
+					class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
+					[value]="tableHandler.searchTerm()"
+					(input)="tableHandler.searchTerm.set($any($event.target).value)"
+					type="text"
+					placeholder="Filtrar CPUs..."
+				/>
+			</div>
+
+			@if (canManage()) {
+				<a
+					class="btn btn-primary btn-sm h-9 rounded-lg px-3 text-xs font-bold uppercase shadow-sm"
+					[routerLink]="['/cpu/new']"
+				>
+					<svg class="mr-1.5 h-4 w-4 fill-current" viewBox="0 0 24 24">
+						<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+					</svg>
+					<span class="hidden sm:inline">Crear</span>
+				</a>
+			}
 		</div>
 	</header>
 
@@ -54,37 +68,10 @@
 					</th>
 					<th
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
-						(click)="tableHandler.toggleSort('thread_count')"
-					>
-						Hilos
-						@if (tableHandler.sortCol() === 'thread_count') {
-							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
-						}
-					</th>
-					<th
-						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('base_freq')"
 					>
 						Freq. Base
 						@if (tableHandler.sortCol() === 'base_freq') {
-							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
-						}
-					</th>
-					<th
-						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
-						(click)="tableHandler.toggleSort('boost_freq')"
-					>
-						Freq. Boost
-						@if (tableHandler.sortCol() === 'boost_freq') {
-							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
-						}
-					</th>
-					<th
-						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
-						(click)="tableHandler.toggleSort('microarchitecture')"
-					>
-						Microarquitectura
-						@if (tableHandler.sortCol() === 'microarchitecture') {
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
@@ -98,15 +85,6 @@
 						}
 					</th>
 					<th
-						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
-						(click)="tableHandler.toggleSort('integrated_graphics')"
-					>
-						Gráfica Integrada
-						@if (tableHandler.sortCol() === 'integrated_graphics') {
-							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
-						}
-					</th>
-					<th
 						class="hover:text-primary cursor-pointer p-3 pr-6 text-right transition-colors"
 						(click)="tableHandler.toggleSort('price')"
 					>
@@ -115,22 +93,22 @@
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
+					<th class="w-56 p-3 text-center text-[9px] font-bold tracking-widest uppercase">Acciones</th>
 				</tr>
 			</thead>
 			<tbody class="divide-base-300 divide-y dark:divide-white/5">
 				@for (cpu of tableHandler.filteredData(); track cpu._id) {
-					<tr
-						class="group hover:bg-base-200/50 cursor-pointer transition-colors"
-						(click)="goToDetail(cpu._id, cpu.slug)"
-					>
+					<tr class="group hover:bg-base-200/50 transition-colors">
 						<td class="p-3 align-middle">
-							<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
-								<img
-									class="h-full w-full object-contain"
-									[src]="getImageUrl('cpu', cpu.slug)"
-									(error)="$any($event.target).src = getImageUrl(undefined)"
-								/>
-							</div>
+							<a class="block" [routerLink]="['/cpu', cpu._id, cpu.slug]">
+								<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
+									<img
+										class="h-full w-full object-contain"
+										[src]="getImageUrl('cpu', cpu.slug)"
+										(error)="$any($event.target).src = getImageUrl(undefined)"
+									/>
+								</div>
+							</a>
 						</td>
 						<td class="p-3 align-middle text-sm font-bold tracking-tighter uppercase">
 							<span
@@ -140,28 +118,44 @@
 								{{ cpu.manufacturer }}
 							</span>
 						</td>
-						<td class="text-primary p-3 align-middle text-sm font-bold group-hover:underline">
-							{{ cpu.manufacturer }} {{ cpu.model }}
+						<td class="p-3 align-middle">
+							<a class="text-primary text-sm font-bold hover:underline" [routerLink]="['/cpu', cpu._id, cpu.slug]">
+								{{ cpu.model }}
+							</a>
 						</td>
-						<td class="p-3 align-middle text-sm font-semibold">{{ cpu.core_count }} Núcleos</td>
-						<td class="p-3 align-middle text-sm font-semibold">{{ cpu.thread_count }} Hilos</td>
+						<td class="p-3 align-middle text-sm font-semibold">{{ cpu.core_count }}C / {{ cpu.thread_count }}T</td>
 						<td class="p-3 align-middle text-sm font-semibold">
 							{{ (cpu.base_freq || 0) / 1000 | number: '1.2-2' }} GHz
 						</td>
-						<td class="p-3 align-middle text-sm font-semibold">
-							{{ (cpu.boost_freq || 0) / 1000 | number: '1.2-2' }} GHz
-						</td>
-						<td class="text-base-content/60 p-3 align-middle text-xs font-medium">{{ cpu.microarchitecture }}</td>
 						<td class="text-base-content/60 p-3 align-middle text-xs font-medium">{{ cpu.tdp }} W</td>
-						<td class="p-3 align-middle text-xs font-medium">
-							@if (cpu.hasIntegrated && cpu.integrated_graphics) {
-								<span class="text-success font-bold">{{ cpu.integrated_graphics }}</span>
-							} @else {
-								<span class="opacity-40">Ninguna</span>
-							}
-						</td>
 						<td class="p-3 pr-6 text-right align-middle font-black tracking-tighter">
 							{{ cpu.price / 100 | currency: 'EUR' }}
+						</td>
+						<td class="p-3 pr-4 text-right align-middle">
+							<div class="flex justify-end gap-2">
+								<button
+									class="btn btn-primary btn-xs h-8 px-3 font-bold tracking-wider uppercase"
+									(click)="$event.stopPropagation(); quickAddToBuild($event, cpu)"
+								>
+									<svg class="mr-1 h-3 w-3 fill-current" viewBox="0 0 24 24">
+										<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+									</svg>
+									Agregar
+								</button>
+								@if (canManage()) {
+									<button
+										class="btn btn-error btn-outline btn-xs h-8 px-3 font-bold tracking-wider uppercase"
+										(click)="$event.stopPropagation(); deleteCpu($event, cpu)"
+									>
+										<svg class="mr-1 h-3 w-3 fill-current" viewBox="0 0 24 24">
+											<path
+												d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95 1.414-1.414z"
+											/>
+										</svg>
+										Eliminar
+									</button>
+								}
+							</div>
 						</td>
 					</tr>
 				}
@@ -172,9 +166,9 @@
 	<div class="border-base-300 block border-t lg:hidden dark:border-white/10">
 		<div class="flex flex-col">
 			@for (cpu of tableHandler.filteredData(); track cpu._id) {
-				<div
+				<a
 					class="group border-base-300 bg-base-100 hover:bg-base-200/50 flex cursor-pointer gap-4 border-b p-3 transition-colors dark:border-white/10 dark:bg-transparent"
-					(click)="goToDetail(cpu._id, cpu.slug)"
+					[routerLink]="['/cpu', cpu._id, cpu.slug]"
 				>
 					<div
 						class="ring-base-300 flex h-16 w-16 shrink-0 items-center justify-center rounded bg-white p-1.5 ring-1 dark:ring-white/10"
@@ -189,60 +183,57 @@
 
 					<div class="flex flex-1 flex-col gap-1">
 						<div class="flex items-baseline justify-between">
-							<h3 class="text-primary text-base font-bold decoration-1 underline-offset-2 group-hover:underline">
+							<h3 class="text-primary text-sm font-bold group-hover:underline">
 								<span
 									class="mr-1 uppercase"
 									[class.text-blue-600]="cpu.manufacturer === 'INTEL'"
 									[class.text-red-600]="cpu.manufacturer === 'AMD'"
+									>{{ cpu.manufacturer }}</span
 								>
-									{{ cpu.manufacturer }}
-								</span>
 								{{ cpu.model }}
 							</h3>
-							<span class="text-base-content text-base font-black tracking-tighter">
-								{{ cpu.price / 100 | currency: 'EUR' }}
-							</span>
+							<span class="text-base-content text-base font-black tracking-tighter">{{
+								cpu.price / 100 | currency: 'EUR'
+							}}</span>
 						</div>
 
-						<div class="text-base-content/70 flex flex-wrap items-center gap-x-4 text-[11px] font-medium">
-							<span class="flex gap-1"
-								><span class="text-base-content/40 font-bold uppercase">Núcleos:</span>
-								{{ cpu.core_count }} núcleos</span
+						<div class="flex items-center justify-between">
+							<div class="text-base-content/70 flex flex-wrap items-center gap-x-3 text-[11px] font-medium">
+								<span>{{ cpu.core_count }}C/{{ cpu.thread_count }}T</span>
+								<span>{{ (cpu.boost_freq || 0) / 1000 | number: '1.2-2' }}GHz</span>
+								<span>{{ cpu.tdp }}W</span>
+							</div>
+							<button
+								class="btn btn-primary btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
+								(click)="$event.stopPropagation(); $event.preventDefault(); quickAddToBuild($event, cpu)"
 							>
-							<span class="flex gap-1"
-								><span class="text-base-content/40 font-bold uppercase">Hilos:</span> {{ cpu.thread_count }} hilos</span
-							>
-							<span class="flex gap-1"
-								><span class="text-base-content/40 font-bold uppercase">Freq. Base:</span>
-								{{ (cpu.base_freq || 0) / 1000 | number: '1.2-2' }} GHz</span
-							>
-							<span class="flex gap-1"
-								><span class="text-base-content/40 font-bold uppercase">Freq. Boost:</span>
-								{{ (cpu.boost_freq || 0) / 1000 | number: '1.2-2' }} GHz</span
-							>
+								<svg class="mr-0.5 h-2.5 w-2.5 fill-current" viewBox="0 0 24 24">
+									<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+								</svg>
+								Agregar
+							</button>
 						</div>
 
-						<div class="text-base-content/50 flex flex-wrap items-center gap-x-4 text-[10px] font-medium">
-							<span class="flex gap-1"><span class="font-bold uppercase">Socket:</span> {{ cpu.socket }}</span>
-							<span class="flex gap-1"
-								><span class="font-bold uppercase">Arquitectura:</span> {{ cpu.microarchitecture }}</span
-							>
-							<span class="flex gap-1"><span class="font-bold uppercase">TDP:</span> {{ cpu.tdp }} W</span>
-							<span class="flex gap-1">
-								<span class="font-bold uppercase">Graf. Integrada:</span>
-								@if (cpu.hasIntegrated && cpu.integrated_graphics) {
-									<span class="text-success/80 font-bold uppercase">{{ cpu.integrated_graphics }}</span>
-								} @else {
-									<span>Ninguna</span>
-								}
-							</span>
+						<div class="flex items-center justify-between">
+							<div class="text-base-content/50 text-[10px] font-medium italic">
+								{{ cpu.socket }} • {{ cpu.microarchitecture }}
+							</div>
+							@if (canManage()) {
+								<button
+									class="btn btn-error btn-ghost btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
+									(click)="$event.stopPropagation(); $event.preventDefault(); deleteCpu($event, cpu)"
+								>
+									<svg class="mr-0.5 h-2.5 w-2.5 fill-current" viewBox="0 0 24 24">
+										<path
+											d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95 1.414-1.414z"
+										/>
+									</svg>
+									Eliminar
+								</button>
+							}
 						</div>
 					</div>
-				</div>
-			} @empty {
-				<div class="py-12 text-center text-xs font-medium italic opacity-30">
-					No hay coincidencias para "{{ tableHandler.searchTerm() }}"
-				</div>
+				</a>
 			}
 		</div>
 	</div>

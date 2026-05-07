@@ -6,6 +6,7 @@ import { cpuManufacturer } from '../../../../shared/constants/index.constant';
 import { userProfile } from '../../../../shared/models/user.model'; //
 import { AuthService } from '../../../../shared/services/auth.service';
 import { CpuService } from '../../../../shared/services/cpu.service';
+import { ModalService } from '../../../../shared/services/modal.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
@@ -22,6 +23,7 @@ export default class NewEdit implements OnInit {
 	private readonly cpuService = inject(CpuService);
 	private readonly authService = inject(AuthService);
 	private readonly router = inject(Router);
+	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
 
 	readonly getImageUrl = getImageUrl;
@@ -35,7 +37,6 @@ export default class NewEdit implements OnInit {
 
 	cpuManufacturers = Object.values(cpuManufacturer);
 
-	// TODO
 	form: FormGroup = this.fb.group({
 		manufacturer: ['', [Validators.required]],
 		model: ['', [Validators.required]],
@@ -90,35 +91,46 @@ export default class NewEdit implements OnInit {
 		}
 	}
 
-	onSubmit() {
+	async onSubmit() {
 		if (this.form.invalid || !this.canManage()) {
 			this.form.markAllAsTouched();
 			return;
 		}
 
-		this.isLoading.set(true);
+		const action = this.isEditMode() ? 'actualizar' : 'crear';
 
-		// Transformamos de vuelta para MongoDB (Euros -> Céntimos, L -> cL)
-		const rawValue = this.form.getRawValue();
-		const data = {
-			...rawValue,
-			price: Math.round(rawValue.price * 100),
-			base_freq: Math.round(rawValue.base_freq * 1000),
-			boost_freq: Math.round(rawValue.boost_freq * 1000),
-		};
-
-		const request = this.isEditMode() ? this.cpuService.update(this.id()!, data) : this.cpuService.create(data);
-
-		request.subscribe({
-			next: () => {
-				const msg = this.isEditMode() ? 'Cambios guardados' : 'Procesador (CPU) creada correctamente';
-				this.toast.show(msg, 'success');
-				this.router.navigate(['/cpu/all']);
-			},
-			error: (err) => {
-				this.isLoading.set(false);
-				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			},
+		const confirmed = await this.modal.confirm({
+			title: `¿Confirmar ${action}?`,
+			message: `¿Estás seguro de que deseas ${action} esta caja?`,
+			confirmLabel: 'Aceptar',
+			cancelLabel: 'Cancelat',
 		});
+
+		if (confirmed) {
+			this.isLoading.set(true);
+
+			// Transformamos de vuelta para MongoDB (Euros -> Céntimos, L -> cL)
+			const rawValue = this.form.getRawValue();
+			const data = {
+				...rawValue,
+				price: rawValue.price * 100,
+				base_freq: rawValue.base_freq * 1000,
+				boost_freq: rawValue.boost_freq * 1000,
+			};
+
+			const request = this.isEditMode() ? this.cpuService.update(this.id()!, data) : this.cpuService.create(data);
+
+			request.subscribe({
+				next: () => {
+					const msg = this.isEditMode() ? 'Cambios guardados' : 'Procesador (CPU) creada correctamente';
+					this.toast.show(msg, 'success');
+					this.router.navigate(['/cpu/all']);
+				},
+				error: (err) => {
+					this.isLoading.set(false);
+					this.toast.show(err.error?.message || 'Error en la operación', 'error');
+				},
+			});
+		}
 	}
 }

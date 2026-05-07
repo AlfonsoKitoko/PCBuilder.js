@@ -3,6 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
+import { BuildService } from '../../../../shared/services/build.service';
 import { CpuService } from '../../../../shared/services/cpu.service';
 import { ModalService } from '../../../../shared/services/modal.service';
 import { ToastService } from '../../../../shared/services/toast.service';
@@ -18,6 +19,7 @@ export default class Cpus {
 	private readonly router = inject(Router);
 	private readonly cpuService = inject(CpuService);
 	private readonly authService = inject(AuthService);
+	private readonly buildService = inject(BuildService);
 	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
 	readonly getImageUrl = getImageUrl;
@@ -45,12 +47,49 @@ export default class Cpus {
 	user = computed(() => this.authService.user());
 	managementRoles = [userProfile.ADMIN];
 
+	canManage = computed(() => {
+		const user = this.authService.user();
+		return user && this.managementRoles.includes(user.profile as userProfile);
+	});
+
 	ngOnInit() {
 		this.cpuService.getAll();
+	}
+	quickAddToBuild(event: Event, item: any) {
+		event.stopPropagation();
+
+		if (item) {
+			this.buildService.addPart('cpu', item);
+
+			this.toast.show(`${item.manufacturer} ${item.model} añadido a la build`, 'success');
+
+			const buildId = this.buildService.currentBuild()._id;
+
+			if (buildId) this.router.navigate(['/build/edit', buildId]);
+			else this.router.navigate(['/build/new']);
+		}
 	}
 
 	goToDetail(id: string | undefined, slug: string | undefined) {
 		if (!id) return;
 		this.router.navigate(['/cpu', id, slug]);
+	}
+
+	async deleteCpu(event: Event, item: any) {
+		event.stopPropagation();
+
+		const confirmed = await this.modal.confirm({
+			title: '¿Eliminar?',
+			message: `¿Quieres eliminar ${item.model}?`,
+			confirmLabel: 'Borrar',
+			cancelLabel: 'Volver',
+		});
+
+		if (confirmed) {
+			this.cpuService.delete(item._id).subscribe({
+				next: () => this.toast.show('Componente borrado', 'success'),
+				error: () => this.toast.show('No se pudo eliminar', 'error'),
+			});
+		}
 	}
 }

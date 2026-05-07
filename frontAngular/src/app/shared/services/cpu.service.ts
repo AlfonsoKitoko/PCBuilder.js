@@ -1,18 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { Cpu } from '../models/cpu.model';
+import { PartService } from './part.service';
 
 @Injectable({ providedIn: 'root' })
 export class CpuService {
 	private http = inject(HttpClient);
+	private partService = inject(PartService);
 	private apiUrl = `${environment.apiUrl}/cpu`;
 
 	cpus = signal<Cpu[]>([]);
 	selectedCpu = signal<Cpu | null>(null);
 	isLoading = signal(false);
+	partType = computed(() => this.partService.parts().find((p) => p.slug === 'cpu'));
 
 	getAll() {
 		this.isLoading.set(true);
@@ -51,7 +54,19 @@ export class CpuService {
 	create(newCpu: Cpu): Observable<ApiResponse<Cpu>> {
 		this.isLoading.set(true);
 
-		return this.http.post<ApiResponse<Cpu>>(this.apiUrl, newCpu, { withCredentials: true }).pipe(
+		const idPart = this.partType()?._id;
+
+		if (!idPart) {
+			console.error('Error: No se ha encontrado el ID de la categoria "cpu"');
+			return throwError(() => new Error('Categoría no inicializada'));
+		}
+
+		const cpuWithType = {
+			...newCpu,
+			partType: idPart,
+		};
+
+		return this.http.post<ApiResponse<Cpu>>(this.apiUrl, cpuWithType, { withCredentials: true }).pipe(
 			tap((res) => {
 				this.cpus.update((c) => [...c, res.data]);
 				this.isLoading.set(false);
