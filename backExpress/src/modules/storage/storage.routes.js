@@ -6,9 +6,12 @@ import { restrictTo } from '../../middlewares/profile.mw.js'
 const router = Router()
 
 router.get('/', storageController.findAllStorages)
-router.get('/:id', storageController.findStorageById)
-// Sólo el ADMIN puede crear, modificar o eliminar STORAGEs
+// Sólo ADMIN
 router.post('/', protect, restrictTo('ADMIN'), storageController.createStorage)
+
+router.get('/:id', storageController.findStorageById)
+
+// Sólo ADMIN
 router.patch('/:id', protect, restrictTo('ADMIN'), storageController.updateStorageById)
 router.delete('/:id', protect, restrictTo('ADMIN'), storageController.deleteStorageById)
 

@@ -25,22 +25,22 @@ router.get('/', (req, res) => {
 
 // ++ Autenticación y Usuarios ++
 router.use('/auth', authRoutes)
-router.use('/users', userRoutes)
+router.use('/user', userRoutes)
 
 // ++ Builds ++
 router.use('/builds', buildRoutes)
 
 // ++ Catálogo de Partes (CRUD de piezas) ++
-router.use('/cases', caseRoutes)
-router.use('/cpus', cpuRoutes)
-router.use('/gpus', gpuRoutes)
-router.use('/rams', ramRoutes)
-router.use('/mobos', moboRoutes)
-router.use('/oss', osRoutes)
-router.use('/psus', psuRoutes)
+router.use('/case', caseRoutes)
+router.use('/cpu', cpuRoutes)
+router.use('/gpu', gpuRoutes)
+router.use('/ram', ramRoutes)
+router.use('/mobo', moboRoutes)
+router.use('/os', osRoutes)
+router.use('/psu', psuRoutes)
 router.use('/storage', storageRoutes)
 
 // ++ Categorías Maestras ++
-router.use('/parts', partRoutes)
+router.use('/categories', partRoutes)
 
 export default router

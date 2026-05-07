@@ -6,9 +6,12 @@ import { restrictTo } from '../../middlewares/profile.mw.js'
 const router = Router()
 
 router.get('/', psuController.findAllPsus)
-router.get('/:id', psuController.findPsuById)
-// Sólo el ADMIN puede crear, modificar o eliminar PSUs
+// Sólo ADMIN
 router.post('/', protect, restrictTo('ADMIN'), psuController.createPsu)
+
+router.get('/:id', psuController.findPsuById)
+
+// Sólo ADMIN
 router.patch('/:id', protect, restrictTo('ADMIN'), psuController.updatePsuById)
 router.delete('/:id', protect, restrictTo('ADMIN'), psuController.deletePsuById)
 

@@ -6,9 +6,12 @@ import { restrictTo } from '../../middlewares/profile.mw.js'
 const router = Router()
 
 router.get('/', cpuController.findAllCpus)
-router.get('/:id', cpuController.findCpuById)
-// Sólo el ADMIN puede crear, modificar o eliminar CPUs
+// Sólo ADMIN
 router.post('/', protect, restrictTo('ADMIN'), cpuController.createCpu)
+
+router.get('/:id', cpuController.findCpuById)
+
+// Sólo ADMIN
 router.patch('/:id', protect, restrictTo('ADMIN'), cpuController.updateCpuById)
 router.delete('/:id', protect, restrictTo('ADMIN'), cpuController.deleteCpuById)
 

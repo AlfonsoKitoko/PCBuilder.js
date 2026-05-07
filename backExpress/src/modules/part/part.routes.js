@@ -6,9 +6,13 @@ import { restrictTo } from '../../middlewares/profile.mw.js'
 const router = Router()
 
 router.get('/', partController.findAllParts)
-router.get('/:id', partController.findPartById)
-// Sólo el ADMIN puede crear, modificar o eliminar PARTs
+// Sólo ADMIN
 router.post('/', protect, restrictTo('ADMIN'), partController.createPart)
+// Búsqueda por slug
+router.get('/:slug', partController.findPartBySlug)
+// router.get('/:id', partController.findPartById)
+
+// Sólo el ADMIN
 router.patch('/:id', protect, restrictTo('ADMIN'), partController.updatePartById)
 router.delete('/:id', protect, restrictTo('ADMIN'), partController.deletePartById)
 

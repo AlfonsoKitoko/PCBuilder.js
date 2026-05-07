@@ -6,9 +6,12 @@ import { restrictTo } from '../../middlewares/profile.mw.js'
 const router = Router()
 
 router.get('/', caseController.findAllCases)
-router.get('/:id', caseController.findCaseById)
-// Sólo el ADMIN puede crear, modificar o eliminar CASEs
+// Sólo ADMIN
 router.post('/', protect, restrictTo('ADMIN'), caseController.createCase)
+
+router.get('/:id', caseController.findCaseById)
+
+// Sólo ADMIN
 router.patch('/:id', protect, restrictTo('ADMIN'), caseController.updateCaseById)
 router.delete('/:id', protect, restrictTo('ADMIN'), caseController.deleteCaseById)
 

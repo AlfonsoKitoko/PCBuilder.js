@@ -6,9 +6,12 @@ import { restrictTo } from '../../middlewares/profile.mw.js'
 const router = Router()
 
 router.get('/', gpuController.findAllGpus)
-router.get('/:id', gpuController.findGpuById)
-// Sólo el ADMIN puede crear, modificar o eliminar GPUs
+// Sólo ADMIN
 router.post('/', protect, restrictTo('ADMIN'), gpuController.createGpu)
+
+router.get('/:id', gpuController.findGpuById)
+
+// Sólo ADMIN
 router.patch('/:id', protect, restrictTo('ADMIN'), gpuController.updateGpuById)
 router.delete('/:id', protect, restrictTo('ADMIN'), gpuController.deleteGpuById)
 
