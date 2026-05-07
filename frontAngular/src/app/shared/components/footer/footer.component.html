@@ -1,15 +1,13 @@
-<footer class="border-t border-slate-100 bg-white py-10">
+<footer class="border-base-300 bg-base-100 border-t py-10 font-sans transition-colors duration-300">
 	<div class="container flex flex-col items-center justify-between gap-6 md:flex-row">
-		<div class="flex items-center gap-2">
-			<img src="pcbuilder_logo.png" alt="pcbuilder-logo" />
-		</div>
+		<p class="text-base-content/60 text-sm font-medium">
+			&copy; {{ currentYear }} <a class="text-primary hover:text-primary-focus cursor-pointer font-bold transition-all" href="/"> PcBuilder </a>. Todos los derechos reservados.
+		</p>
 
-		<p class="text-sm font-medium text-slate-500">&copy; {{ currentYear }} PcBuilder. Todos los derechos reservados.</p>
-
-		<div class="flex gap-6 text-slate-400">
-			<a class="hover:text-brand-primary transition-colors" href="#">Términos</a>
-			<a class="hover:text-brand-primary transition-colors" href="#">Privacidad</a>
-			<a class="hover:text-brand-primary transition-colors" href="#">Contacto</a>
+		<div class="text-base-content/40 flex gap-6 text-sm font-medium">
+			<a class="hover:text-primary cursor-pointer transition-colors" href="#">Términos</a>
+			<a class="hover:text-primary cursor-pointer transition-colors" href="#">Privacidad</a>
+			<a class="hover:text-primary cursor-pointer transition-colors" href="#">Contacto</a>
 		</div>
 	</div>
 </footer>
