@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
 import { ModalService } from '../../../../shared/services/modal.service';
@@ -24,8 +25,12 @@ export default class Storage {
 	readonly getImageUrl = getImageUrl;
 
 	storage = this.storageService.selectedStorage;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.storageService.isLoading;
+
+	managementRoles = [userProfile.ADMIN];
+
+	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -54,6 +59,28 @@ export default class Storage {
 			} else {
 				this.router.navigate(['/build/new']);
 			}
+		}
+	}
+
+	async deleteStorage() {
+		const currentStorage = this.storage();
+		if (!currentStorage) return;
+
+		const confirmed = await this.modal.confirm({
+			title: '¿Eliminar Componente?',
+			message: `¿Quieres borrar permanentemente ${currentStorage.manufacturer} ${currentStorage.model}?`,
+			confirmLabel: 'Eliminar',
+			cancelLabel: 'Cancelar',
+		});
+
+		if (confirmed) {
+			this.storageService.delete(currentStorage._id!).subscribe({
+				next: () => {
+					this.toast.show('Disco Duro eliminado', 'success');
+					this.router.navigate(['/storage/all']);
+				},
+				error: () => this.toast.show('Error al elminiar', 'error'),
+			});
 		}
 	}
 }

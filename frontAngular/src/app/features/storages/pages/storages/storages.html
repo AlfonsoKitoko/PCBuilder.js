@@ -7,14 +7,28 @@
 			</p>
 		</div>
 
-		<div class="relative w-full md:w-64">
-			<input
-				class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
-				[value]="tableHandler.searchTerm()"
-				(input)="tableHandler.searchTerm.set($any($event.target).value)"
-				type="text"
-				placeholder="Filtrar discos..."
-			/>
+		<div class="flex w-full items-center gap-2 md:w-auto">
+			<div class="relative flex-1 md:w-64">
+				<input
+					class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
+					[value]="tableHandler.searchTerm()"
+					(input)="tableHandler.searchTerm.set($any($event.target).value)"
+					type="text"
+					placeholder="Filtrar discos..."
+				/>
+			</div>
+
+			@if (canManage()) {
+				<a
+					class="btn btn-primary btn-sm h-9 rounded-lg px-3 text-xs font-bold uppercase shadow-sm"
+					[routerLink]="['/storage/new']"
+				>
+					<svg class="mr-1.5 h-4 w-4 fill-current" viewBox="0 0 24 24">
+						<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+					</svg>
+					<span class="hidden sm:inline">Crear</span>
+				</a>
+			}
 		</div>
 	</header>
 
@@ -52,7 +66,6 @@
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
-					<th class="p-3 text-left">Precio/GB</th>
 					<th
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('type')"
@@ -62,9 +75,6 @@
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
-					<th class="p-3 text-left">Caché</th>
-					<th class="p-3 text-left">Factor-Forma</th>
-					<th class="p-3 text-left">Interfaz</th>
 					<th
 						class="hover:text-primary cursor-pointer p-3 pr-6 text-right transition-colors"
 						(click)="tableHandler.toggleSort('price')"
@@ -74,50 +84,81 @@
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
+					<th class="w-56 p-3 text-center text-[9px] font-bold tracking-widest uppercase">Acciones</th>
 				</tr>
 			</thead>
 			<tbody class="divide-base-300 divide-y dark:divide-white/5">
 				@for (storage of tableHandler.filteredData(); track storage._id) {
-					<tr
-						class="group hover:bg-base-200/50 cursor-pointer transition-colors"
-						(click)="goToDetail(storage._id, storage.slug)"
-					>
+					<tr class="group hover:bg-base-200/50 transition-colors">
 						<td class="p-3 align-middle">
-							<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
-								<img
-									class="h-full w-full object-contain"
-									[src]="getImageUrl('storage', storage.slug)"
-									(error)="$any($event.target).src = getImageUrl(undefined)"
-								/>
-							</div>
+							<a class="block" [routerLink]="['/storage', storage._id, storage.slug]">
+								<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
+									<img
+										class="h-full w-full object-contain"
+										[src]="getImageUrl('storage', storage.slug)"
+										(error)="$any($event.target).src = getImageUrl(undefined)"
+									/>
+								</div>
+							</a>
 						</td>
 						<td class="text-base-content/70 p-3 align-middle text-sm font-bold tracking-tighter uppercase">
 							{{ storage.manufacturer }}
 						</td>
-						<td class="text-primary p-3 align-middle text-sm font-bold group-hover:underline">
-							{{ storage.model }}
+						<td class="p-3 align-middle">
+							<a
+								class="text-primary text-sm font-bold hover:underline"
+								[routerLink]="['/storage', storage._id, storage.slug]"
+							>
+								{{ storage.model }}
+							</a>
 						</td>
-						<td class="p-3 align-middle text-sm font-black">
-							{{ storage.capacity >= 1024 ? storage.capacity / 1024 + ' TB' : storage.capacity + ' GB' }}
-						</td>
-						<td class="text-base-content/50 p-3 align-middle text-[10px] font-bold">
-							{{ storage.price / 100 / storage.capacity | currency: 'EUR' : 'symbol' : '1.3-3' }}/GB
+						<td class="p-3 align-middle">
+							<div class="text-sm font-black">
+								{{ storage.capacity >= 1024 ? storage.capacity / 1024 + ' TB' : storage.capacity + ' GB' }}
+							</div>
+							<div class="text-base-content/40 text-[9px] font-bold uppercase">
+								{{ storage.price / 100 / storage.capacity | currency: 'EUR' : 'symbol' : '1.3-3' }}/GB
+							</div>
 						</td>
 						<td class="p-3 align-middle text-xs font-semibold uppercase">
-							<span class="flex items-center gap-1">
+							<div class="flex items-center gap-1">
 								{{ storage.type }}
 								@if (storage.nvme) {
 									<span class="text-success text-[9px] font-black italic">NVME</span>
 								}
-							</span>
-						</td>
-						<td class="p-3 align-middle text-xs font-medium">{{ storage.cache }} MB</td>
-						<td class="p-3 align-middle text-xs font-medium">{{ storage.form_factor }}</td>
-						<td class="text-base-content/60 p-3 align-middle text-[10px] font-bold uppercase">
-							{{ storage.interface }}
+							</div>
+							<div class="text-base-content/50 text-[9px] font-normal lowercase">
+								{{ storage.interface }} • {{ storage.form_factor }}
+							</div>
 						</td>
 						<td class="p-3 pr-6 text-right align-middle font-black tracking-tighter">
 							{{ storage.price / 100 | currency: 'EUR' }}
+						</td>
+						<td class="p-3 pr-4 text-right align-middle">
+							<div class="flex justify-end gap-2">
+								<button
+									class="btn btn-primary btn-xs h-8 px-3 font-bold tracking-wider uppercase"
+									(click)="$event.stopPropagation(); quickAddToBuild($event, storage)"
+								>
+									<svg class="mr-1 h-3 w-3 fill-current" viewBox="0 0 24 24">
+										<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+									</svg>
+									Agregar
+								</button>
+								@if (canManage()) {
+									<button
+										class="btn btn-error btn-outline btn-xs h-8 px-3 font-bold tracking-wider uppercase"
+										(click)="$event.stopPropagation(); deleteStorage($event, storage)"
+									>
+										<svg class="mr-1 h-3 w-3 fill-current" viewBox="0 0 24 24">
+											<path
+												d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95 1.414-1.414z"
+											/>
+										</svg>
+										Eliminar
+									</button>
+								}
+							</div>
 						</td>
 					</tr>
 				}
@@ -128,15 +169,15 @@
 	<div class="border-base-300 block border-t lg:hidden dark:border-white/10">
 		<div class="flex flex-col">
 			@for (storage of tableHandler.filteredData(); track storage._id) {
-				<div
+				<a
 					class="group border-base-300 bg-base-100 hover:bg-base-200/50 flex cursor-pointer gap-4 border-b p-3 transition-colors dark:border-white/10 dark:bg-transparent"
-					(click)="goToDetail(storage._id, storage.slug)"
+					[routerLink]="['/storage', storage._id, storage.slug]"
 				>
 					<div
 						class="ring-base-300 flex h-16 w-16 shrink-0 items-center justify-center rounded bg-white p-1.5 ring-1 dark:ring-white/10"
 					>
 						<img
-							class="h- ull w-full object-contain"
+							class="h-full w-full object-contain"
 							[src]="getImageUrl('storage', storage.slug)"
 							[alt]="storage.model"
 							(error)="$any($event.target).src = getImageUrl(undefined)"
@@ -145,34 +186,60 @@
 
 					<div class="flex flex-1 flex-col gap-1">
 						<div class="flex items-baseline justify-between">
-							<h3 class="text-primary text-base leading-none font-bold group-hover:underline">
+							<h3 class="text-primary text-sm font-bold group-hover:underline">
 								<span class="text-base-content/40 mr-1 text-[10px] font-black uppercase">{{
 									storage.manufacturer
 								}}</span>
 								{{ storage.model }}
 							</h3>
-							<span class="text-base-content text-base font-black tracking-tighter">
-								{{ storage.price / 100 | currency: 'EUR' }}
-							</span>
+							<span class="text-base-content text-base font-black tracking-tighter">{{
+								storage.price / 100 | currency: 'EUR'
+							}}</span>
 						</div>
 
-						<div class="text-base-content/70 flex flex-wrap items-center gap-x-4 text-[11px] font-medium">
-							<span class="text-base-content flex gap-1 font-bold">
-								{{ storage.capacity >= 1024 ? storage.capacity / 1024 + ' TB' : storage.capacity + ' GB' }}
-							</span>
-							<span class="flex gap-1 uppercase opacity-60">{{ storage.type }}</span>
-							<span class="text-base-content/40 text-[10px] italic">
-								{{ storage.price / 100 / storage.capacity | currency: 'EUR' : 'symbol' : '1.3-3' }}/GB
-							</span>
+						<div class="flex items-center justify-between">
+							<div class="text-base-content/70 flex flex-wrap items-center gap-x-3 text-[11px] font-medium">
+								<span class="text-base-content font-bold">{{
+									storage.capacity >= 1024 ? storage.capacity / 1024 + ' TB' : storage.capacity + ' GB'
+								}}</span>
+								<span class="uppercase opacity-60"
+									>{{ storage.type }}
+									@if (storage.nvme) {
+										(NVME)
+									}
+								</span>
+							</div>
+							<button
+								class="btn btn-primary btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
+								(click)="$event.stopPropagation(); $event.preventDefault(); quickAddToBuild($event, storage)"
+							>
+								<svg class="mr-0.5 h-2.5 w-2.5 fill-current" viewBox="0 0 24 24">
+									<path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" />
+								</svg>
+								Agregar
+							</button>
 						</div>
 
-						<div class="text-base-content/40 flex items-center gap-x-4 text-[10px] font-bold tracking-widest uppercase">
-							<span>{{ storage.form_factor }}</span>
-							<span>{{ storage.interface }}</span>
-							<span>{{ storage.cache }}MB Caché</span>
+						<div class="flex items-center justify-between">
+							<div class="text-base-content/40 text-[10px] font-bold tracking-widest uppercase">
+								{{ storage.form_factor }} • {{ storage.interface }}
+							</div>
+							@if (canManage()) {
+								<button
+									class="btn btn-error btn-ghost btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
+									(click)="$event.stopPropagation(); $event.preventDefault(); deleteStorage($event, storage)"
+								>
+									<svg class="mr-0.5 h-2.5 w-2.5 fill-current" viewBox="0 0 24 24">
+										<path
+											d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95 1.414-1.414z"
+										/>
+									</svg>
+									Eliminar
+								</button>
+							}
 						</div>
 					</div>
-				</div>
+				</a>
 			} @empty {
 				<div class="py-12 text-center text-xs font-medium italic opacity-30">
 					No hay coincidencias para "{{ tableHandler.searchTerm() }}"
