@@ -1,9 +1,59 @@
-import { Component } from '@angular/core'
+import { CommonModule, CurrencyPipe } from '@angular/common'
+import { Component, inject } from '@angular/core'
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { RamService } from '../../../../shared/services/ram.service'
+import { AuthService } from '../../../../shared/services/auth.service'
+import { ModalService } from '../../../../shared/services/modal.service'
+import { ToastService } from '../../../../shared/services/toast.service'
+import { getImageUrl } from '../../../../shared/utils/image-mapper'
+import { BuildService } from '../../../../shared/services/build.service'
 
 @Component({
 	selector: 'app-ram',
-	imports: [],
-	templateUrl: './ram.html',
-	styles: ``,
+	imports: [CommonModule, RouterModule, CurrencyPipe],
+	templateUrl: './ram.html'
 })
-export default class Ram { }
+export default class Ram {
+	private readonly route = inject(ActivatedRoute)
+	private readonly router = inject(Router)
+	private readonly ramService = inject(RamService)
+	private readonly authService = inject(AuthService)
+	private readonly buildService = inject(BuildService)
+	private readonly modal = inject(ModalService)
+	private readonly toast = inject(ToastService)
+	readonly getImageUrl = getImageUrl
+
+	ram = this.ramService.selectedRam
+	currentUser = this.authService.user
+	isLoading = this.ramService.isLoading
+
+	ngOnInit() {
+		const id = this.route.snapshot.paramMap.get('id')
+		if (id) this.loadRam(id)
+	}
+
+	loadRam(id: string) {
+		this.ramService.getById(id).subscribe({
+			error: (err) => {
+				this.toast.show('Error al cargar CPU', 'error')
+				this.router.navigate(['ram/all'])
+			}
+		})
+	}
+addToBuild(){
+		const currentRam = this.ram()
+		if(currentRam){
+			this.buildService.addPart('ram',currentRam)
+
+			this.toast.show(`${currentRam.model} añadido a la build`,'success')
+
+			const buildId = this.buildService.currentBuild()._id
+
+    if (buildId) {
+      this.router.navigate(['/build/edit', buildId])
+    } else {
+      this.router.navigate(['/build/new'])
+    }
+		}
+	}
+}
