@@ -1,128 +1,188 @@
-<div class="container mx-auto p-4 max-w-7xl">
-  <header class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div>
-      <h1 class="text-xl font-bold tracking-tight text-base-content uppercase">Archivo de Chasis</h1>
-      <p class="text-[10px] text-base-content/50 font-bold uppercase tracking-widest mt-1">
-        {{ tableHandler.filteredData().length }} resultados encontrados
-      </p>
-    </div>
+<div class="container mx-auto max-w-7xl p-4">
+	<header class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+		<div>
+			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Archivo de Chasis</h1>
+			<p class="text-base-content/50 mt-1 text-[10px] font-bold tracking-widest uppercase">
+				{{ tableHandler.filteredData().length }} resultados encontrados
+			</p>
+		</div>
 
-    <div class="relative w-full md:w-64">
-      <input
-        type="text"
-        [value]="tableHandler.searchTerm()"
-        (input)="tableHandler.searchTerm.set($any($event.target).value)"
-        placeholder="Filtrar cajas..."
-        class="input input-bordered input-sm w-full rounded-lg bg-base-100 h-9 text-xs focus:border-primary"
-      />
-    </div>
-  </header>
+		<div class="relative w-full md:w-64">
+			<input
+				class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
+				[value]="tableHandler.searchTerm()"
+				(input)="tableHandler.searchTerm.set($any($event.target).value)"
+				type="text"
+				placeholder="Filtrar cajas..."
+			/>
+		</div>
+	</header>
 
-  <div class="hidden lg:block border-t border-base-300 dark:border-white/10">
-    <table class="w-full border-collapse">
-      <thead class="bg-base-200/30">
-        <tr class="text-[9px] font-bold uppercase tracking-widest text-base-content/50 border-b border-base-300 dark:border-white/10">
-          <th class="p-3 w-20"></th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('model')">
-            Modelo @if(tableHandler.sortCol() === 'model'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('case_type')">
-            Tipo @if(tableHandler.sortCol() === 'case_type'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('form_factor')">
-            Factor Forma @if(tableHandler.sortCol() === 'form_factor'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('volume')">
-            Volumen @if(tableHandler.sortCol() === 'volume'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('color')">
-            Color @if(tableHandler.sortCol() === 'color'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left">Bahías</th>
-          <th class="p-3 text-right pr-6 cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('price')">
-            Precio @if(tableHandler.sortCol() === 'price'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-base-300 dark:divide-white/5">
-        @for (item of tableHandler.filteredData(); track item._id) {
-          <tr (click)="goToDetail(item._id, item.slug)" class="group hover:bg-base-200/50 transition-colors cursor-pointer">
-            <td class="p-3 align-middle">
-              <div class="h-14 w-14 bg-white p-1 ring-1 ring-base-300 rounded dark:ring-white/10">
-                <img
-								[src]="getImageUrl('case', item.slug)"
-								class="h-full w-full object-contain"
-								(error)="$any($event.target).src=getImageUrl(undefined)" />
-              </div>
-            </td>
-            <td class="p-3 align-middle text-sm font-bold text-primary group-hover:underline">
-              {{ item.manufacturer }} {{ item.model }}
-            </td>
-            <td class="p-3 align-middle text-xs font-semibold">{{ item.case_type }}</td>
-            <td class="p-3 align-middle text-xs font-semibold uppercase">{{ item.form_factor }}</td>
-            <td class="p-3 align-middle text-xs font-medium text-base-content/60">{{ item.volume / 100 | number:'1.1-1' }} L</td>
-            <td class="p-3 align-middle text-xs font-medium text-base-content/60">{{ item.color }}</td>
-            <td class="p-3 align-middle text-[10px] font-medium text-base-content/50 italic">
-              <div class="flex flex-wrap gap-x-2">
-                @for (bay of item.internal_bays | keyvalue; track bay.key) {
-                  @if (bay.value) {
-                    <span>{{ bay.value }}x{{ bay.key }}</span>
-                  }
-                }
-              </div>
-            </td>
-            <td class="p-3 text-right align-middle pr-6 font-black tracking-tighter">
-              {{ item.price / 100 | currency: 'EUR' }}
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+	<div class="border-base-300 hidden border-t lg:block dark:border-white/10">
+		<table class="w-full border-collapse">
+			<thead class="bg-base-200/30">
+				<tr
+					class="text-base-content/50 border-base-300 border-b text-[9px] font-bold tracking-widest uppercase dark:border-white/10"
+				>
+					<th class="w-20 p-3"></th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('model')"
+					>
+						Modelo
+						@if (tableHandler.sortCol() === 'model') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('case_type')"
+					>
+						Tipo
+						@if (tableHandler.sortCol() === 'case_type') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('form_factor')"
+					>
+						Factor Forma
+						@if (tableHandler.sortCol() === 'form_factor') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('volume')"
+					>
+						Volumen
+						@if (tableHandler.sortCol() === 'volume') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('color')"
+					>
+						Color
+						@if (tableHandler.sortCol() === 'color') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th class="p-3 text-left">Bahías</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 pr-6 text-right transition-colors"
+						(click)="tableHandler.toggleSort('price')"
+					>
+						Precio
+						@if (tableHandler.sortCol() === 'price') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+				</tr>
+			</thead>
+			<tbody class="divide-base-300 divide-y dark:divide-white/5">
+				@for (item of tableHandler.filteredData(); track item._id) {
+					<tr
+						class="group hover:bg-base-200/50 cursor-pointer transition-colors"
+						(click)="goToDetail(item._id, item.slug)"
+					>
+						<td class="p-3 align-middle">
+							<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
+								<img
+									class="h-full w-full object-contain"
+									[src]="getImageUrl('case', item.slug)"
+									(error)="$any($event.target).src = getImageUrl(undefined)"
+								/>
+							</div>
+						</td>
+						<td class="text-primary p-3 align-middle text-sm font-bold group-hover:underline">
+							{{ item.manufacturer }} {{ item.model }}
+						</td>
+						<td class="p-3 align-middle text-xs font-semibold">{{ item.case_type }}</td>
+						<td class="p-3 align-middle text-xs font-semibold uppercase">{{ item.form_factor }}</td>
+						<td class="text-base-content/60 p-3 align-middle text-xs font-medium">
+							{{ item.volume / 100 | number: '1.1-1' }} L
+						</td>
+						<td class="text-base-content/60 p-3 align-middle text-xs font-medium">{{ item.color }}</td>
+						<td class="text-base-content/50 p-3 align-middle text-[10px] font-medium italic">
+							<div class="flex flex-wrap gap-x-2">
+								@for (bay of item.internal_bays | keyvalue; track bay.key) {
+									@if (bay.value) {
+										<span>{{ bay.value }}x{{ bay.key }}</span>
+									}
+								}
+							</div>
+						</td>
+						<td class="p-3 pr-6 text-right align-middle font-black tracking-tighter">
+							{{ item.price / 100 | currency: 'EUR' }}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
 
-  <div class="block lg:hidden border-t border-base-300 dark:border-white/10">
-    <div class="flex flex-col">
-      @for (item of tableHandler.filteredData(); track item._id) {
-        <div (click)="goToDetail(item._id, item.slug)" class="group flex gap-4 border-b border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200/50 dark:border-white/10 dark:bg-transparent cursor-pointer">
-          <div class="flex h-16 w-16 shrink-0 items-center justify-center bg-white p-1.5 ring-1 ring-base-300 rounded dark:ring-white/10">
-            <img
-						[src]="getImageUrl('case', item.slug)"
-						[alt]="item.model" class="h-full w-full object-contain"
-						(error)="$any($event.target).src=getImageUrl(undefined)" />
-          </div>
+	<div class="border-base-300 block border-t lg:hidden dark:border-white/10">
+		<div class="flex flex-col">
+			@for (item of tableHandler.filteredData(); track item._id) {
+				<div
+					class="group border-base-300 bg-base-100 hover:bg-base-200/50 flex cursor-pointer gap-4 border-b p-3 transition-colors dark:border-white/10 dark:bg-transparent"
+					(click)="goToDetail(item._id, item.slug)"
+				>
+					<div
+						class="ring-base-300 flex h-16 w-16 shrink-0 items-center justify-center rounded bg-white p-1.5 ring-1 dark:ring-white/10"
+					>
+						<img
+							class="h-full w-full object-contain"
+							[src]="getImageUrl('case', item.slug)"
+							[alt]="item.model"
+							(error)="$any($event.target).src = getImageUrl(undefined)"
+						/>
+					</div>
 
-          <div class="flex flex-1 flex-col gap-1">
-            <div class="flex items-baseline justify-between">
-              <h3 class="text-base font-bold text-primary group-hover:underline decoration-1 underline-offset-2">
-                {{ item.manufacturer }} {{ item.model }}
-              </h3>
-              <span class="text-base font-black text-base-content tracking-tighter">
-                {{ item.price / 100 | currency: 'EUR' }}
-              </span>
-            </div>
+					<div class="flex flex-1 flex-col gap-1">
+						<div class="flex items-baseline justify-between">
+							<h3 class="text-primary text-base font-bold decoration-1 underline-offset-2 group-hover:underline">
+								{{ item.manufacturer }} {{ item.model }}
+							</h3>
+							<span class="text-base-content text-base font-black tracking-tighter">
+								{{ item.price / 100 | currency: 'EUR' }}
+							</span>
+						</div>
 
-            <div class="flex flex-wrap items-center gap-x-4 text-[11px] font-medium text-base-content/70">
-              <span class="flex gap-1"><span class="text-base-content/40 font-bold uppercase">Tipo:</span> {{ item.case_type }}</span>
-              <span class="flex gap-1"><span class="text-base-content/40 font-bold uppercase">Factor:</span> {{ item.form_factor }}</span>
-              <span class="flex gap-1"><span class="text-base-content/40 font-bold uppercase">Volumen:</span> {{ item.volume / 100 | number:'1.1-1' }}L</span>
-            </div>
+						<div class="text-base-content/70 flex flex-wrap items-center gap-x-4 text-[11px] font-medium">
+							<span class="flex gap-1"
+								><span class="text-base-content/40 font-bold uppercase">Tipo:</span> {{ item.case_type }}</span
+							>
+							<span class="flex gap-1"
+								><span class="text-base-content/40 font-bold uppercase">Factor:</span> {{ item.form_factor }}</span
+							>
+							<span class="flex gap-1"
+								><span class="text-base-content/40 font-bold uppercase">Volumen:</span>
+								{{ item.volume / 100 | number: '1.1-1' }}L</span
+							>
+						</div>
 
-            <div class="flex flex-wrap items-center gap-x-4 text-[10px] font-medium text-base-content/50">
-              <span class="flex gap-1"><span class="uppercase font-bold">Color:</span> {{ item.color }}</span>
-              <span class="flex gap-1">
-                <span class="uppercase font-bold">Bahías:</span>
-                @for (bay of item.internal_bays | keyvalue; track bay.key) {
-                  @if (bay.value) { <span class="ml-1">{{ bay.value }}x{{ bay.key }}</span> }
-                }
-              </span>
-            </div>
-          </div>
-        </div>
-      } @empty {
-        <div class="py-12 text-center text-xs font-medium opacity-30 italic">
-          No hay coincidencias para "{{ tableHandler.searchTerm() }}"
-        </div>
-      }
-    </div>
-  </div>
+						<div class="text-base-content/50 flex flex-wrap items-center gap-x-4 text-[10px] font-medium">
+							<span class="flex gap-1"><span class="font-bold uppercase">Color:</span> {{ item.color }}</span>
+							<span class="flex gap-1">
+								<span class="font-bold uppercase">Bahías:</span>
+								@for (bay of item.internal_bays | keyvalue; track bay.key) {
+									@if (bay.value) {
+										<span class="ml-1">{{ bay.value }}x{{ bay.key }}</span>
+									}
+								}
+							</span>
+						</div>
+					</div>
+				</div>
+			} @empty {
+				<div class="py-12 text-center text-xs font-medium italic opacity-30">
+					No hay coincidencias para "{{ tableHandler.searchTerm() }}"
+				</div>
+			}
+		</div>
+	</div>
 </div>

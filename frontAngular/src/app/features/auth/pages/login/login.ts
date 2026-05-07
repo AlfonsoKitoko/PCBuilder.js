@@ -46,7 +46,9 @@ export default class Login {
 			},
 			error: (err) => {
 				this.isLoading.set(false);
-				this.errorMessage.set(err.error?.message || 'Error al iniciar sesión. Por favor, inténtalo de nuevo en unos minutos.');
+				this.errorMessage.set(
+					err.error?.message || 'Error al iniciar sesión. Por favor, inténtalo de nuevo en unos minutos.',
+				);
 			},
 		});
 	}

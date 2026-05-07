@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las cajas -> /case
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles caja (ID) -> /case/idCase/caseSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/case/case') },
-]
+];

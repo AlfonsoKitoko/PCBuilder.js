@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las cpus -> /cpu
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles cpu (ID) -> /cpu/idCpu/cpuSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/cpu/cpu') },
-]
+];

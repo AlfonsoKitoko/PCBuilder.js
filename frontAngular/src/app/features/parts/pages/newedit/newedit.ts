@@ -1,9 +1,9 @@
-import { Component } from '@angular/core'
+import { Component } from '@angular/core';
 
 @Component({
 	selector: 'app-new',
 	imports: [],
-		templateUrl: './newedit.html',
+	templateUrl: './newedit.html',
 	styles: ``,
 })
-export default class NewEdit { }
+export default class NewEdit {}

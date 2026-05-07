@@ -1,134 +1,183 @@
-<div class="container mx-auto p-4 max-w-7xl">
-  <header class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div>
-      <h1 class="text-xl font-bold tracking-tight text-base-content uppercase">Archivo de Almacenamiento</h1>
-      <p class="text-[10px] text-base-content/50 font-bold uppercase tracking-widest mt-1">
-        {{ tableHandler.filteredData().length }} resultados encontrados
-      </p>
-    </div>
+<div class="container mx-auto max-w-7xl p-4">
+	<header class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+		<div>
+			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Archivo de Almacenamiento</h1>
+			<p class="text-base-content/50 mt-1 text-[10px] font-bold tracking-widest uppercase">
+				{{ tableHandler.filteredData().length }} resultados encontrados
+			</p>
+		</div>
 
-    <div class="relative w-full md:w-64">
-      <input
-        type="text"
-        [value]="tableHandler.searchTerm()"
-        (input)="tableHandler.searchTerm.set($any($event.target).value)"
-        placeholder="Filtrar discos..."
-        class="input input-bordered input-sm w-full rounded-lg bg-base-100 h-9 text-xs focus:border-primary"
-      />
-    </div>
-  </header>
+		<div class="relative w-full md:w-64">
+			<input
+				class="input input-bordered input-sm bg-base-100 focus:border-primary h-9 w-full rounded-lg text-xs"
+				[value]="tableHandler.searchTerm()"
+				(input)="tableHandler.searchTerm.set($any($event.target).value)"
+				type="text"
+				placeholder="Filtrar discos..."
+			/>
+		</div>
+	</header>
 
-  <div class="hidden lg:block border-t border-base-300 dark:border-white/10">
-    <table class="w-full border-collapse">
-      <thead class="bg-base-200/30">
-        <tr class="text-[9px] font-bold uppercase tracking-widest text-base-content/50 border-b border-base-300 dark:border-white/10">
-          <th class="p-3 w-20"></th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('manufacturer')">
-            Fabricante @if(tableHandler.sortCol() === 'manufacturer'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('model')">
-            Modelo @if(tableHandler.sortCol() === 'model'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('capacity')">
-            Capacidad @if(tableHandler.sortCol() === 'capacity'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left">Precio/GB</th>
-          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('type')">
-            Tipo @if(tableHandler.sortCol() === 'type'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-          <th class="p-3 text-left">Caché</th>
-          <th class="p-3 text-left">Factor-Forma</th>
-          <th class="p-3 text-left">Interfaz</th>
-          <th class="p-3 text-right pr-6 cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('price')">
-            Precio @if(tableHandler.sortCol() === 'price'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
-          </th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-base-300 dark:divide-white/5">
-        @for (storage of tableHandler.filteredData(); track storage._id) {
-          <tr (click)="goToDetail(storage._id, storage.slug)" class="group hover:bg-base-200/50 transition-colors cursor-pointer">
-            <td class="p-3 align-middle">
-              <div class="h-14 w-14 bg-white p-1 ring-1 ring-base-300 rounded dark:ring-white/10">
-                <img
-									[src]="getImageUrl('storage', storage.slug)"
+	<div class="border-base-300 hidden border-t lg:block dark:border-white/10">
+		<table class="w-full border-collapse">
+			<thead class="bg-base-200/30">
+				<tr
+					class="text-base-content/50 border-base-300 border-b text-[9px] font-bold tracking-widest uppercase dark:border-white/10"
+				>
+					<th class="w-20 p-3"></th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('manufacturer')"
+					>
+						Fabricante
+						@if (tableHandler.sortCol() === 'manufacturer') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('model')"
+					>
+						Modelo
+						@if (tableHandler.sortCol() === 'model') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('capacity')"
+					>
+						Capacidad
+						@if (tableHandler.sortCol() === 'capacity') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th class="p-3 text-left">Precio/GB</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('type')"
+					>
+						Tipo
+						@if (tableHandler.sortCol() === 'type') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th class="p-3 text-left">Caché</th>
+					<th class="p-3 text-left">Factor-Forma</th>
+					<th class="p-3 text-left">Interfaz</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 pr-6 text-right transition-colors"
+						(click)="tableHandler.toggleSort('price')"
+					>
+						Precio
+						@if (tableHandler.sortCol() === 'price') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+				</tr>
+			</thead>
+			<tbody class="divide-base-300 divide-y dark:divide-white/5">
+				@for (storage of tableHandler.filteredData(); track storage._id) {
+					<tr
+						class="group hover:bg-base-200/50 cursor-pointer transition-colors"
+						(click)="goToDetail(storage._id, storage.slug)"
+					>
+						<td class="p-3 align-middle">
+							<div class="ring-base-300 h-14 w-14 rounded bg-white p-1 ring-1 dark:ring-white/10">
+								<img
 									class="h-full w-full object-contain"
-									(error)="$any($event.target).src=getImageUrl(undefined)" />
-              </div>
-            </td>
-            <td class="p-3 align-middle text-sm font-bold uppercase tracking-tighter text-base-content/70">
-              {{ storage.manufacturer }}
-            </td>
-            <td class="p-3 align-middle text-sm font-bold text-primary group-hover:underline">
-              {{ storage.model }}
-            </td>
-            <td class="p-3 align-middle text-sm font-black">
-              {{ storage.capacity >= 1024 ? (storage.capacity / 1024) + ' TB' : storage.capacity + ' GB' }}
-            </td>
-            <td class="p-3 align-middle text-[10px] font-bold text-base-content/50">
-                {{ (storage.price / 100 / storage.capacity) | currency: 'EUR':'symbol':'1.3-3' }}/GB
-            </td>
-            <td class="p-3 align-middle text-xs font-semibold uppercase">
-                <span class="flex items-center gap-1">
-                    {{ storage.type }}
-                    @if(storage.nvme) { <span class="text-[9px] text-success font-black italic">NVME</span> }
-                </span>
-            </td>
-            <td class="p-3 align-middle text-xs font-medium">{{ storage.cache }} MB</td>
-            <td class="p-3 align-middle text-xs font-medium">{{ storage.form_factor }}</td>
-            <td class="p-3 align-middle text-[10px] font-bold text-base-content/60 uppercase">{{ storage.interface }}</td>
-            <td class="p-3 text-right align-middle pr-6 font-black tracking-tighter">
-              {{ storage.price / 100 | currency: 'EUR' }}
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+									[src]="getImageUrl('storage', storage.slug)"
+									(error)="$any($event.target).src = getImageUrl(undefined)"
+								/>
+							</div>
+						</td>
+						<td class="text-base-content/70 p-3 align-middle text-sm font-bold tracking-tighter uppercase">
+							{{ storage.manufacturer }}
+						</td>
+						<td class="text-primary p-3 align-middle text-sm font-bold group-hover:underline">
+							{{ storage.model }}
+						</td>
+						<td class="p-3 align-middle text-sm font-black">
+							{{ storage.capacity >= 1024 ? storage.capacity / 1024 + ' TB' : storage.capacity + ' GB' }}
+						</td>
+						<td class="text-base-content/50 p-3 align-middle text-[10px] font-bold">
+							{{ storage.price / 100 / storage.capacity | currency: 'EUR' : 'symbol' : '1.3-3' }}/GB
+						</td>
+						<td class="p-3 align-middle text-xs font-semibold uppercase">
+							<span class="flex items-center gap-1">
+								{{ storage.type }}
+								@if (storage.nvme) {
+									<span class="text-success text-[9px] font-black italic">NVME</span>
+								}
+							</span>
+						</td>
+						<td class="p-3 align-middle text-xs font-medium">{{ storage.cache }} MB</td>
+						<td class="p-3 align-middle text-xs font-medium">{{ storage.form_factor }}</td>
+						<td class="text-base-content/60 p-3 align-middle text-[10px] font-bold uppercase">
+							{{ storage.interface }}
+						</td>
+						<td class="p-3 pr-6 text-right align-middle font-black tracking-tighter">
+							{{ storage.price / 100 | currency: 'EUR' }}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
 
-  <div class="block lg:hidden border-t border-base-300 dark:border-white/10">
-    <div class="flex flex-col">
-      @for (storage of tableHandler.filteredData(); track storage._id) {
-        <div (click)="goToDetail(storage._id, storage.slug)" class="group flex gap-4 border-b border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200/50 dark:border-white/10 dark:bg-transparent cursor-pointer">
-          <div class="flex h-16 w-16 shrink-0 items-center justify-center bg-white p-1.5 ring-1 ring-base-300 rounded dark:ring-white/10">
-            <img
+	<div class="border-base-300 block border-t lg:hidden dark:border-white/10">
+		<div class="flex flex-col">
+			@for (storage of tableHandler.filteredData(); track storage._id) {
+				<div
+					class="group border-base-300 bg-base-100 hover:bg-base-200/50 flex cursor-pointer gap-4 border-b p-3 transition-colors dark:border-white/10 dark:bg-transparent"
+					(click)="goToDetail(storage._id, storage.slug)"
+				>
+					<div
+						class="ring-base-300 flex h-16 w-16 shrink-0 items-center justify-center rounded bg-white p-1.5 ring-1 dark:ring-white/10"
+					>
+						<img
+							class="h- ull w-full object-contain"
 							[src]="getImageUrl('storage', storage.slug)"
-							[alt]="storage.model" class="h-
-							ull w-full object-contain" (error)="$any($event.target).src=getImageUrl(undefined)" />
-          </div>
+							[alt]="storage.model"
+							(error)="$any($event.target).src = getImageUrl(undefined)"
+						/>
+					</div>
 
-          <div class="flex flex-1 flex-col gap-1">
-            <div class="flex items-baseline justify-between">
-              <h3 class="text-base font-bold text-primary group-hover:underline leading-none">
-                <span class="text-[10px] uppercase text-base-content/40 mr-1 font-black">{{ storage.manufacturer }}</span>
-                {{ storage.model }}
-              </h3>
-              <span class="text-base font-black text-base-content tracking-tighter">
-                {{ storage.price / 100 | currency: 'EUR' }}
-              </span>
-            </div>
+					<div class="flex flex-1 flex-col gap-1">
+						<div class="flex items-baseline justify-between">
+							<h3 class="text-primary text-base leading-none font-bold group-hover:underline">
+								<span class="text-base-content/40 mr-1 text-[10px] font-black uppercase">{{
+									storage.manufacturer
+								}}</span>
+								{{ storage.model }}
+							</h3>
+							<span class="text-base-content text-base font-black tracking-tighter">
+								{{ storage.price / 100 | currency: 'EUR' }}
+							</span>
+						</div>
 
-            <div class="flex flex-wrap items-center gap-x-4 text-[11px] font-medium text-base-content/70">
-              <span class="flex gap-1 font-bold text-base-content">
-                {{ storage.capacity >= 1024 ? (storage.capacity / 1024) + ' TB' : storage.capacity + ' GB' }}
-              </span>
-              <span class="flex gap-1 uppercase opacity-60">{{ storage.type }}</span>
-              <span class="text-[10px] text-base-content/40 italic">
-                {{ (storage.price / 100 / storage.capacity) | currency: 'EUR':'symbol':'1.3-3' }}/GB
-              </span>
-            </div>
+						<div class="text-base-content/70 flex flex-wrap items-center gap-x-4 text-[11px] font-medium">
+							<span class="text-base-content flex gap-1 font-bold">
+								{{ storage.capacity >= 1024 ? storage.capacity / 1024 + ' TB' : storage.capacity + ' GB' }}
+							</span>
+							<span class="flex gap-1 uppercase opacity-60">{{ storage.type }}</span>
+							<span class="text-base-content/40 text-[10px] italic">
+								{{ storage.price / 100 / storage.capacity | currency: 'EUR' : 'symbol' : '1.3-3' }}/GB
+							</span>
+						</div>
 
-            <div class="flex items-center gap-x-4 text-[10px] font-bold uppercase tracking-widest text-base-content/40">
-              <span>{{ storage.form_factor }}</span>
-              <span>{{ storage.interface }}</span>
-              <span>{{ storage.cache }}MB Caché</span>
-            </div>
-          </div>
-        </div>
-      } @empty {
-        <div class="py-12 text-center text-xs font-medium opacity-30 italic">
-          No hay coincidencias para "{{ tableHandler.searchTerm() }}"
-        </div>
-      }
-    </div>
-  </div>
+						<div class="text-base-content/40 flex items-center gap-x-4 text-[10px] font-bold tracking-widest uppercase">
+							<span>{{ storage.form_factor }}</span>
+							<span>{{ storage.interface }}</span>
+							<span>{{ storage.cache }}MB Caché</span>
+						</div>
+					</div>
+				</div>
+			} @empty {
+				<div class="py-12 text-center text-xs font-medium italic opacity-30">
+					No hay coincidencias para "{{ tableHandler.searchTerm() }}"
+				</div>
+			}
+		</div>
+	</div>
 </div>

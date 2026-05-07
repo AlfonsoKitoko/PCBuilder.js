@@ -7,7 +7,9 @@
 
 		<form class="grid grid-cols-1 gap-6 md:grid-cols-2" [formGroup]="registerForm" (ngSubmit)="onRegister()">
 			<div class="md:col-span-2">
-				<label class="label-form text-base-content" for="username">Nombre de Usuario <span class="text-error">*</span></label>
+				<label class="label-form text-base-content" for="username"
+					>Nombre de Usuario <span class="text-error">*</span></label
+				>
 				<input
 					class="input-field"
 					id="username"
@@ -44,7 +46,9 @@
 			</div>
 
 			<div class="md:col-span-2">
-				<label class="label-form text-base-content" for="email">Correo electrónico <span class="text-error">*</span></label>
+				<label class="label-form text-base-content" for="email"
+					>Correo electrónico <span class="text-error">*</span></label
+				>
 				<input
 					class="input-field"
 					id="email"
@@ -61,7 +65,13 @@
 
 			<div class="md:col-span-2">
 				<label class="label-form text-base-content" for="birthDate">Fecha de Nacimiento</label>
-				<input class="input-field" id="birthDate" [class.input-error]="registerForm.get('birthDate')?.invalid && registerForm.get('birthDate')?.touched" type="date" formControlName="birthDate" />
+				<input
+					class="input-field"
+					id="birthDate"
+					[class.input-error]="registerForm.get('birthDate')?.invalid && registerForm.get('birthDate')?.touched"
+					type="date"
+					formControlName="birthDate"
+				/>
 			</div>
 
 			<div>
@@ -81,11 +91,16 @@
 			</div>
 
 			<div>
-				<label class="label-form text-base-content" for="passwordRepeat">Repetir contraseña <span class="text-error">*</span></label>
+				<label class="label-form text-base-content" for="passwordRepeat"
+					>Repetir contraseña <span class="text-error">*</span></label
+				>
 				<input
 					class="input-field"
 					id="passwordRepeat"
-					[class.input-error]="(registerForm.get('passwordRepeat')?.invalid || registerForm.hasError('noMatch')) && registerForm.get('passwordRepeat')?.touched"
+					[class.input-error]="
+						(registerForm.get('passwordRepeat')?.invalid || registerForm.hasError('noMatch')) &&
+						registerForm.get('passwordRepeat')?.touched
+					"
 					type="password"
 					formControlName="passwordRepeat"
 					autocomplete="new-password"
@@ -97,7 +112,9 @@
 			</div>
 
 			@if (errorMessage()) {
-				<div class="animate-in slide-in-from-right-full bg-neutral text-neutral-content fixed right-10 bottom-10 z-50 flex items-center gap-4 rounded-2xl p-5 shadow-2xl">
+				<div
+					class="animate-in slide-in-from-right-full bg-neutral text-neutral-content fixed right-10 bottom-10 z-50 flex items-center gap-4 rounded-2xl p-5 shadow-2xl"
+				>
 					<div class="bg-error h-2 w-2 animate-pulse rounded-full"></div>
 					<p class="text-sm font-medium">{{ errorMessage() }}</p>
 					<button class="ml-2 opacity-50 hover:opacity-100" (click)="errorMessage.set(null)" type="button">✕</button>
@@ -105,13 +122,23 @@
 			}
 
 			<div class="mt-4 md:col-span-2">
-				<button class="btn btn-primary group h-auto w-full py-4" [disabled]="registerForm.invalid || isLoading()" type="submit">
+				<button
+					class="btn btn-primary group h-auto w-full py-4"
+					[disabled]="registerForm.invalid || isLoading()"
+					type="submit"
+				>
 					@if (isLoading()) {
 						<span class="loading loading-spinner"></span>
 						<span>Creando cuenta...</span>
 					} @else {
 						<span class="text-lg">Crear mi cuenta</span>
-						<svg class="h-5 w-5 transition-transform group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<svg
+							class="h-5 w-5 transition-transform group-hover:translate-x-1"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
 						</svg>
 					}

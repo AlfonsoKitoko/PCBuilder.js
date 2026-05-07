@@ -1,33 +1,73 @@
 <div class="toast toast-end toast-bottom z-100 gap-3 p-6">
-  @for (toast of toastService.toasts(); track toast.id) {
-    <div
-      class="flex min-w-[320px] items-center justify-between rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-md transition-all duration-500 animate-in fade-in slide-in-from-right-10"
-      [ngClass]="{
-        'border-success/20 bg-success/10 text-success': toast.type === 'success',
-        'border-error/20 bg-error/10 text-error': toast.type === 'error',
-        'border-info/20 bg-info/10 text-info': toast.type === 'info'
-      }"
-    >
-      <div class="flex items-center gap-3">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-current/10">
-          @if (toast.type === 'success') {
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-          } @else if (toast.type === 'error') {
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-          } @else {
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          }
-        </div>
+	@for (toast of toastService.toasts(); track toast.id) {
+		<div
+			class="animate-in fade-in slide-in-from-right-10 flex min-w-[320px] items-center justify-between rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-md transition-all duration-500"
+			[ngClass]="{
+				'border-success/20 bg-success/10 text-success': toast.type === 'success',
+				'border-error/20 bg-error/10 text-error': toast.type === 'error',
+				'border-info/20 bg-info/10 text-info': toast.type === 'info',
+			}"
+		>
+			<div class="flex items-center gap-3">
+				<div class="flex h-8 w-8 items-center justify-center rounded-full bg-current/10">
+					@if (toast.type === 'success') {
+						<svg
+							class="h-5 w-5"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							stroke-width="2.5"
+						>
+							<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+						</svg>
+					} @else if (toast.type === 'error') {
+						<svg
+							class="h-5 w-5"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							stroke-width="2.5"
+						>
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					} @else {
+						<svg
+							class="h-5 w-5"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							stroke-width="2.5"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+							/>
+						</svg>
+					}
+				</div>
 
-        <span class="text-sm font-semibold tracking-tight">{{ toast.message }}</span>
-      </div>
+				<span class="text-sm font-semibold tracking-tight">{{ toast.message }}</span>
+			</div>
 
-      <button
-        (click)="toastService.remove(toast.id)"
-        class="hover:bg-current/10 flex h-7 w-7 items-center justify-center rounded-full transition-colors opacity-50 hover:opacity-100"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-      </button>
-    </div>
-  }
+			<button
+				class="flex h-7 w-7 items-center justify-center rounded-full opacity-50 transition-colors hover:bg-current/10 hover:opacity-100"
+				(click)="toastService.remove(toast.id)"
+			>
+				<svg
+					class="h-4 w-4"
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="3"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</div>
+	}
 </div>

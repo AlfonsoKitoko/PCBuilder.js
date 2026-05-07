@@ -1,139 +1,160 @@
-<div class="container mx-auto p-4 max-w-5xl">
-  @if (mobo(); as item) {
-    <header class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 text-center md:text-left">
-      <div class="flex flex-col">
-        <nav class="text-[10px] uppercase tracking-widest text-base-content/40 mb-2 font-bold">
-          Archivo de Placas Base / {{ item.manufacturer }}
-        </nav>
-        <h1 class="text-3xl md:text-5xl font-black tracking-tighter uppercase text-base-content leading-none">
-          {{ item.manufacturer }} <span class="text-primary">{{ item.model }}</span>
-        </h1>
-      </div>
-      <div class="md:text-right">
-        <span class="text-3xl font-black tracking-tighter text-primary md:text-base-content">
-          {{ item.price / 100 | currency: 'EUR' }}
-        </span>
-      </div>
-    </header>
+<div class="container mx-auto max-w-5xl p-4">
+	@if (mobo(); as item) {
+		<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
+			<div class="flex flex-col">
+				<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
+					Archivo de Placas Base / {{ item.manufacturer }}
+				</nav>
+				<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
+					{{ item.manufacturer }} <span class="text-primary">{{ item.model }}</span>
+				</h1>
+			</div>
+			<div class="md:text-right">
+				<span class="text-primary md:text-base-content text-3xl font-black tracking-tighter">
+					{{ item.price / 100 | currency: 'EUR' }}
+				</span>
+			</div>
+		</header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-      <div class="lg:col-span-4 flex flex-col gap-4">
-        <div class="mx-auto w-full max-w-70 lg:max-w-none aspect-square bg-white rounded-2xl ring-1 ring-base-300 dark:ring-white/10 p-6 flex items-center justify-center shadow-sm">
-          <img [src]="getImageUrl('mobo', item.slug)"
-               [alt]="item.model"
-               class="max-h-50 lg:max-h-full w-full object-contain"
-              (error)="$any($event.target).src=getImageUrl(undefined)" />
-        </div>
+		<div class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12">
+			<div class="flex flex-col gap-4 lg:col-span-4">
+				<div
+					class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
+				>
+					<img
+						class="max-h-50 w-full object-contain lg:max-h-full"
+						[src]="getImageUrl('mobo', item.slug)"
+						[alt]="item.model"
+						(error)="$any($event.target).src = getImageUrl(undefined)"
+					/>
+				</div>
 
-        <div class="bg-base-200/50 rounded-xl p-5 border border-base-300 dark:border-white/5">
-          <button (click)="addToBuild()" class="btn btn-primary btn-block rounded-lg uppercase font-bold tracking-wider shadow-lg shadow-primary/20">
-            Añadir a la Build
-          </button>
-        </div>
-      </div>
+				<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
+					<button
+						class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
+						(click)="addToBuild()"
+					>
+						Añadir a la Build
+					</button>
+				</div>
+			</div>
 
-      <div class="lg:col-span-8 flex flex-col gap-4">
-        <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-          <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Especificaciones Técnicas</h2>
-          </div>
-          <div class="divide-y divide-base-300 dark:divide-white/5">
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Socket</span>
-              <span class="font-bold text-primary uppercase">{{ item.socket }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Factor de Forma</span>
-              <span class="font-bold">{{ item.form_factor }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Chipset</span>
-              <span class="font-bold">{{ item.chipset }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Memoria RAM</span>
-              <span class="font-bold">{{ item.ram_slots }}x {{ item.ram_type }}</span>
-            </div>
-          </div>
-        </section>
+			<div class="flex flex-col gap-4 lg:col-span-8">
+				<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+					<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+						<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
+							Especificaciones Técnicas
+						</h2>
+					</div>
+					<div class="divide-base-300 divide-y dark:divide-white/5">
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Socket</span>
+							<span class="text-primary font-bold uppercase">{{ item.socket }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Factor de Forma</span>
+							<span class="font-bold">{{ item.form_factor }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Chipset</span>
+							<span class="font-bold">{{ item.chipset }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Memoria RAM</span>
+							<span class="font-bold">{{ item.ram_slots }}x {{ item.ram_type }}</span>
+						</div>
+					</div>
+				</section>
 
-        <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-          <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Conectores Internos</h2>
-          </div>
-          <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            @for (cat of item.internal_connectors | keyvalue; track cat.key) {
-              <div>
-                <span class="text-[10px] font-bold uppercase text-base-content/40 block mb-1">{{ cat.key.replace('_', ' ') }}</span>
-                <div class="flex flex-wrap gap-2">
-                  @for (sub of $any(cat.value) | keyvalue; track sub.key) {
-                    @if (sub.value) {
-                      <span class="text-xs font-semibold bg-base-200 px-2 py-1 rounded border border-base-300 dark:border-white/5">
-                        <span class="text-primary">{{ sub.value }}x</span> {{ sub.key }}
-                      </span>
-                    }
-                  }
-                </div>
-              </div>
-            }
-          </div>
-        </section>
+				<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+					<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+						<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Conectores Internos</h2>
+					</div>
+					<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+						@for (cat of item.internal_connectors | keyvalue; track cat.key) {
+							<div>
+								<span class="text-base-content/40 mb-1 block text-[10px] font-bold uppercase">{{
+									cat.key.replace('_', ' ')
+								}}</span>
+								<div class="flex flex-wrap gap-2">
+									@for (sub of $any(cat.value) | keyvalue; track sub.key) {
+										@if (sub.value) {
+											<span
+												class="bg-base-200 border-base-300 rounded border px-2 py-1 text-xs font-semibold dark:border-white/5"
+											>
+												<span class="text-primary">{{ sub.value }}x</span> {{ sub.key }}
+											</span>
+										}
+									}
+								</div>
+							</div>
+						}
+					</div>
+				</section>
 
-        <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-          <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">I/O y Conectividad</h2>
-          </div>
-          <div class="divide-y divide-base-300 dark:divide-white/5">
-            <div class="p-4">
-              <span class="text-base-content/50 font-medium text-sm block mb-3">Panel Trasero</span>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                @for (io of item.rear_io | keyvalue; track io.key) {
-                  <div class="text-[11px] leading-tight">
-                    <div class="opacity-40 font-bold uppercase mb-0.5">{{ io.key.replace('_', ' ') }}</div>
-                    @if (io.key === 'audio_jacks') {
-                      <span class="font-bold">{{ io.value }}</span>
-                    } @else {
-                      @for (sub of $any(io.value) | keyvalue; track sub.key) {
-                        @if (sub.value) {
-                          <div class="font-bold"><span class="text-primary">{{ sub.value }}x</span> {{ sub.key }}</div>
-                        }
-                      }
-                    }
-                  </div>
-                }
-              </div>
-            </div>
+				<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+					<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+						<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">I/O y Conectividad</h2>
+					</div>
+					<div class="divide-base-300 divide-y dark:divide-white/5">
+						<div class="p-4">
+							<span class="text-base-content/50 mb-3 block text-sm font-medium">Panel Trasero</span>
+							<div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+								@for (io of item.rear_io | keyvalue; track io.key) {
+									<div class="text-[11px] leading-tight">
+										<div class="mb-0.5 font-bold uppercase opacity-40">{{ io.key.replace('_', ' ') }}</div>
+										@if (io.key === 'audio_jacks') {
+											<span class="font-bold">{{ io.value }}</span>
+										} @else {
+											@for (sub of $any(io.value) | keyvalue; track sub.key) {
+												@if (sub.value) {
+													<div class="font-bold">
+														<span class="text-primary">{{ sub.value }}x</span> {{ sub.key }}
+													</div>
+												}
+											}
+										}
+									</div>
+								}
+							</div>
+						</div>
 
-            <div class="flex flex-wrap justify-between p-4 text-sm gap-4">
-              <div class="flex flex-col gap-1">
-                <span class="text-base-content/50 font-medium">Inalámbrica</span>
-                <div class="flex items-center gap-2">
-                  @if (item.wireless?.['wifi']) {
-                    <span class="badge badge-success badge-outline font-bold text-[10px] uppercase">{{ item.wireless['wifi'] }}</span>
-                  } @else {
-                    <span class="badge badge-ghost opacity-40 font-bold text-[10px] uppercase">Sin Wi-Fi</span>
-                  }
+						<div class="flex flex-wrap justify-between gap-4 p-4 text-sm">
+							<div class="flex flex-col gap-1">
+								<span class="text-base-content/50 font-medium">Inalámbrica</span>
+								<div class="flex items-center gap-2">
+									@if (item.wireless?.['wifi']) {
+										<span class="badge badge-success badge-outline text-[10px] font-bold uppercase">{{
+											item.wireless['wifi']
+										}}</span>
+									} @else {
+										<span class="badge badge-ghost text-[10px] font-bold uppercase opacity-40">Sin Wi-Fi</span>
+									}
 
-                  @if (item.wireless?.['bluetooth']) {
-                    <span class="badge badge-info badge-outline font-bold text-[10px] uppercase">BT {{ item.wireless['bluetooth'] }}</span>
-                  } @else {
-                    <span class="badge badge-ghost opacity-40 font-bold text-[10px] uppercase">Sin Bluetooth</span>
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+									@if (item.wireless?.['bluetooth']) {
+										<span class="badge badge-info badge-outline text-[10px] font-bold uppercase"
+											>BT {{ item.wireless['bluetooth'] }}</span
+										>
+									} @else {
+										<span class="badge badge-ghost text-[10px] font-bold uppercase opacity-40">Sin Bluetooth</span>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
 
-        <div class="mt-4 p-4 opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] flex flex-wrap gap-x-6 gap-y-2 border-t border-base-300 dark:border-white/5">
-          <span>ID: {{ item._id }}</span>
-          <span>Tipo: {{ item.partType.name }}</span>
-        </div>
-      </div>
-    </div>
-  } @else {
-    <div class="min-h-[60vh] flex items-center justify-center">
-      <span class="loading loading-ring loading-lg text-primary/50"></span>
-    </div>
-  }
+				<div
+					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
+				>
+					<span>ID: {{ item._id }}</span>
+					<span>Tipo: {{ item.partType.name }}</span>
+				</div>
+			</div>
+		</div>
+	} @else {
+		<div class="flex min-h-[60vh] items-center justify-center">
+			<span class="loading loading-ring loading-lg text-primary/50"></span>
+		</div>
+	}
 </div>

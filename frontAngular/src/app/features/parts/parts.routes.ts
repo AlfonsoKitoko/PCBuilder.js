@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las partes -> /categories
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles parte (ID) -> /categories/idPart/partSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/part/part') },
-]
+];

@@ -1,13 +1,13 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common'
-import { Component, computed, inject, input, OnInit } from '@angular/core'
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Router, RouterModule } from '@angular/router'
-import { RamService } from '../../../../shared/services/ram.service'
-import { AuthService } from '../../../../shared/services/auth.service'
-import { ToastService } from '../../../../shared/services/toast.service'
-import { ramType, ramSize } from '../../../../shared/constants/index.constant'
-import { userProfile } from '../../../../shared/models/user.model' //
-import { getImageUrl } from '../../../../shared/utils/image-mapper'
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { ramSize, ramType } from '../../../../shared/constants/index.constant';
+import { userProfile } from '../../../../shared/models/user.model'; //
+import { AuthService } from '../../../../shared/services/auth.service';
+import { RamService } from '../../../../shared/services/ram.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
 	selector: 'app-newedit',
@@ -15,46 +15,46 @@ import { getImageUrl } from '../../../../shared/utils/image-mapper'
 	templateUrl: './newedit.html',
 })
 export default class NewEdit implements OnInit {
-	id = input<string>()
-	slug = input<string>()
+	id = input<string>();
+	slug = input<string>();
 
-	private readonly fb = inject(FormBuilder)
-	private readonly ramService = inject(RamService)
-	private readonly authService = inject(AuthService)
-	private readonly router = inject(Router)
-	private readonly toast = inject(ToastService)
+	private readonly fb = inject(FormBuilder);
+	private readonly ramService = inject(RamService);
+	private readonly authService = inject(AuthService);
+	private readonly router = inject(Router);
+	private readonly toast = inject(ToastService);
 
-	readonly getImageUrl = getImageUrl
+	readonly getImageUrl = getImageUrl;
 
-	isLoading = this.ramService.isLoading
-	isEditMode = computed(() => !!this.id())
-	selectedRam = this.ramService.selectedRam
+	isLoading = this.ramService.isLoading;
+	isEditMode = computed(() => !!this.id());
+	selectedRam = this.ramService.selectedRam;
 
 	// Configuración de roles permitidos (igual que en tu archivo de Builds)
-	managementRoles = [userProfile.ADMIN] //
+	managementRoles = [userProfile.ADMIN]; //
 
-	ramTypes = Object.values(ramType)
-	ramSizes = Object.values(ramSize)
+	ramTypes = Object.values(ramType);
+	ramSizes = Object.values(ramSize);
 
 	form: FormGroup = this.fb.group({
 		manufacturer: ['', [Validators.required]],
 		model: ['', [Validators.required]],
-		ram_type: ['',[Validators.required]],
+		ram_type: ['', [Validators.required]],
 		modules: this.fb.group({
-			size:[0,[Validators.required]],
-			quantity:[0,[Validators.required,Validators.min(1)]],
+			size: [0, [Validators.required]],
+			quantity: [0, [Validators.required, Validators.min(1)]],
 		}),
-		speed: [0,[Validators.required]],
-		cas_latency: [0,[Validators.required]],
-		voltage: [0,[Validators.required]],
+		speed: [0, [Validators.required]],
+		cas_latency: [0, [Validators.required]],
+		voltage: [0, [Validators.required]],
 		price: [0, [Validators.required, Validators.min(0)]],
-	})
+	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva
 	canManage = computed(() => {
 		const user = this.authService.user();
 		return user && this.managementRoles.includes(user.profile as userProfile);
-	})
+	});
 
 	ngOnInit() {
 		if (!this.canManage()) {
@@ -72,14 +72,14 @@ export default class NewEdit implements OnInit {
 					const data = {
 						...res.data,
 						price: res.data.price / 100, // Céntimos -> Euros
-						modules: res.data.modules && res.data.modules.length > 0 ? res.data.modules[0] : {size: '', quantity: 1}
+						modules: res.data.modules && res.data.modules.length > 0 ? res.data.modules[0] : { size: '', quantity: 1 },
 					};
 					this.form.patchValue(data);
 				},
 				error: () => {
 					this.toast.show('Error al buscar la RAM (RAM)', 'error');
 					this.router.navigate(['/ram/all']);
-				}
+				},
 			});
 		}
 	}
@@ -100,9 +100,7 @@ export default class NewEdit implements OnInit {
 			modules: [rawValue.modules],
 		};
 
-		const request = this.isEditMode()
-			? this.ramService.update(this.id()!, data)
-			: this.ramService.create(data);
+		const request = this.isEditMode() ? this.ramService.update(this.id()!, data) : this.ramService.create(data);
 
 		request.subscribe({
 			next: () => {
@@ -113,7 +111,7 @@ export default class NewEdit implements OnInit {
 			error: (err) => {
 				this.isLoading.set(false);
 				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			}
+			},
 		});
 	}
 }

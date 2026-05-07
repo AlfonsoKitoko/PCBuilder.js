@@ -1,13 +1,13 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common'
-import { Component, computed, inject, input, OnInit } from '@angular/core'
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Router, RouterModule } from '@angular/router'
-import { StorageService } from '../../../../shared/services/storage.service'
-import { AuthService } from '../../../../shared/services/auth.service'
-import { ToastService } from '../../../../shared/services/toast.service'
-import { storageType, storageFormFactor, storageInterface } from '../../../../shared/constants/index.constant'
-import { userProfile } from '../../../../shared/models/user.model' //
-import { getImageUrl } from '../../../../shared/utils/image-mapper'
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { storageFormFactor, storageInterface, storageType } from '../../../../shared/constants/index.constant';
+import { userProfile } from '../../../../shared/models/user.model'; //
+import { AuthService } from '../../../../shared/services/auth.service';
+import { StorageService } from '../../../../shared/services/storage.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
 	selector: 'app-newedit',
@@ -15,27 +15,27 @@ import { getImageUrl } from '../../../../shared/utils/image-mapper'
 	templateUrl: './newedit.html',
 })
 export default class NewEdit implements OnInit {
-	id = input<string>()
-	slug = input<string>()
+	id = input<string>();
+	slug = input<string>();
 
-	private readonly fb = inject(FormBuilder)
-	private readonly storageService = inject(StorageService)
-	private readonly authService = inject(AuthService)
-	private readonly router = inject(Router)
-	private readonly toast = inject(ToastService)
+	private readonly fb = inject(FormBuilder);
+	private readonly storageService = inject(StorageService);
+	private readonly authService = inject(AuthService);
+	private readonly router = inject(Router);
+	private readonly toast = inject(ToastService);
 
-	readonly getImageUrl = getImageUrl
+	readonly getImageUrl = getImageUrl;
 
-	isLoading = this.storageService.isLoading
-	isEditMode = computed(() => !!this.id())
-	selectedStorage = this.storageService.selectedStorage
+	isLoading = this.storageService.isLoading;
+	isEditMode = computed(() => !!this.id());
+	selectedStorage = this.storageService.selectedStorage;
 
 	// Configuración de roles permitidos (igual que en tu archivo de Builds)
-	managementRoles = [userProfile.ADMIN] //
+	managementRoles = [userProfile.ADMIN]; //
 
-	storageTypes = Object.values(storageType)
-	storageFormFactors = Object.values(storageFormFactor)
-	storageInterfaces = Object.values(storageInterface)
+	storageTypes = Object.values(storageType);
+	storageFormFactors = Object.values(storageFormFactor);
+	storageInterfaces = Object.values(storageInterface);
 
 	form: FormGroup = this.fb.group({
 		manufacturer: [, [Validators.required]],
@@ -47,13 +47,13 @@ export default class NewEdit implements OnInit {
 		cache: [, [Validators.required]],
 		nvme: [, [Validators.required]],
 		price: [, [Validators.required, Validators.min(0)]],
-	})
+	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva
 	canManage = computed(() => {
 		const user = this.authService.user();
 		return user && this.managementRoles.includes(user.profile as userProfile);
-	})
+	});
 
 	ngOnInit() {
 		if (!this.canManage()) {
@@ -77,7 +77,7 @@ export default class NewEdit implements OnInit {
 				error: () => {
 					this.toast.show('Error al buscar la Disco Duro (Storage)', 'error');
 					this.router.navigate(['/storage/all']);
-				}
+				},
 			});
 		}
 	}
@@ -97,9 +97,7 @@ export default class NewEdit implements OnInit {
 			price: Math.round(rawValue.price * 100),
 		};
 
-		const request = this.isEditMode()
-			? this.storageService.update(this.id()!, data)
-			: this.storageService.create(data);
+		const request = this.isEditMode() ? this.storageService.update(this.id()!, data) : this.storageService.create(data);
 
 		request.subscribe({
 			next: () => {
@@ -110,7 +108,7 @@ export default class NewEdit implements OnInit {
 			error: (err) => {
 				this.isLoading.set(false);
 				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			}
+			},
 		});
 	}
 }

@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las psus -> /psus
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles psu (ID) -> /psus/idPsu/psuSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/psu/psu') },
-]
+];

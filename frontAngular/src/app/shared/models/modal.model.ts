@@ -1,11 +1,13 @@
 export interface ModalOptions {
-	title: string
-	message: string
-	confirmLabel?: string
-	cancelLabel?: string
-	type?: ModalType
+	title: string;
+	message: string;
+	confirmLabel?: string;
+	cancelLabel?: string;
+	type?: ModalType;
 }
 
-export type ModalType = 'confirm' | 'danger' | 'info'
+export type ModalType = 'confirm' | 'danger' | 'info';
 
-export interface ModalResult { confirmed: boolean }
+export interface ModalResult {
+	confirmed: boolean;
+}

@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las gpus -> /gpu
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles gpu (ID) -> /gpu/idGpu/gpuSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/gpu/gpu') },
-]
+];

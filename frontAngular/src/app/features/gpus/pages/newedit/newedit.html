@@ -1,203 +1,278 @@
-<div class="container mx-auto p-4 max-w-5xl">
-  <header class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 text-center md:text-left">
-    <div class="flex flex-col">
-      <nav class="text-[10px] uppercase tracking-widest text-base-content/40 mb-2 font-bold">
-        Gestión de Componentes / GPU / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
-      </nav>
-      <h1 class="text-3xl md:text-5xl font-black tracking-tighter uppercase text-base-content leading-none">
-        {{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Tarjeta Gráfica</span>
-      </h1>
-    </div>
-  </header>
+<div class="container mx-auto max-w-5xl p-4">
+	<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
+		<div class="flex flex-col">
+			<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
+				Gestión de Componentes / GPU / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
+			</nav>
+			<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
+				{{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Tarjeta Gráfica</span>
+			</h1>
+		</div>
+	</header>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+	<form class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12" [formGroup]="form" (ngSubmit)="onSubmit()">
+		<!-- COLUMNA IZQUIERDA: Imagen y Acciones -->
+		<div class="flex flex-col gap-4 lg:col-span-4">
+			<div
+				class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
+			>
+				@if (form.get('model')?.value) {
+					<img
+						class="max-h-50 w-full object-contain lg:max-h-full"
+						[src]="getImageUrl('gpu', slug())"
+						[alt]="form.get('model')?.value"
+						(error)="$any($event.target).src = getImageUrl(undefined)"
+					/>
+				} @else {
+					<div class="text-center opacity-20">
+						<i class="ri-rhythm-line text-6xl"></i>
+						<p class="mt-2 text-[10px] font-bold tracking-widest uppercase">Vista Previa GPU</p>
+					</div>
+				}
+			</div>
 
-    <!-- COLUMNA IZQUIERDA: Imagen y Acciones -->
-    <div class="lg:col-span-4 flex flex-col gap-4">
-      <div class="mx-auto w-full max-w-70 lg:max-w-none aspect-square bg-white rounded-2xl ring-1 ring-base-300 dark:ring-white/10 p-6 flex items-center justify-center shadow-sm">
-        @if (form.get('model')?.value) {
-          <img [src]="getImageUrl('gpu', slug())"
-               [alt]="form.get('model')?.value"
-               class="max-h-50 lg:max-h-full w-full object-contain"
-               (error)="$any($event.target).src=getImageUrl(undefined)" />
-        } @else {
-          <div class="text-center opacity-20">
-            <i class="ri-rhythm-line text-6xl"></i>
-            <p class="text-[10px] uppercase font-bold tracking-widest mt-2">Vista Previa GPU</p>
-          </div>
-        }
-      </div>
+			<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
+				<button
+					class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
+					[disabled]="form.invalid || isLoading()"
+					type="submit"
+				>
+					@if (isLoading()) {
+						<span class="loading loading-spinner loading-xs"></span>
+					}
+					{{ isEditMode() ? 'Guardar Cambios' : 'Crear GPU' }}
+				</button>
+				<a
+					class="btn btn-ghost btn-block btn-sm mt-2 text-[10px] tracking-widest uppercase opacity-50"
+					routerLink="/gpu/all"
+				>
+					Cancelar
+				</a>
+			</div>
+		</div>
 
-      <div class="bg-base-200/50 rounded-xl p-5 border border-base-300 dark:border-white/5">
-        <button type="submit"
-                [disabled]="form.invalid || isLoading()"
-                class="btn btn-primary btn-block rounded-lg uppercase font-bold tracking-wider shadow-lg shadow-primary/20">
-          @if (isLoading()) {
-            <span class="loading loading-spinner loading-xs"></span>
-          }
-          {{ isEditMode() ? 'Guardar Cambios' : 'Crear GPU' }}
-        </button>
-        <a routerLink="/gpu/all" class="btn btn-ghost btn-block btn-sm mt-2 uppercase text-[10px] tracking-widest opacity-50">
-          Cancelar
-        </a>
-      </div>
-    </div>
+		<!-- COLUMNA DERECHA: Formulario -->
+		<div class="flex flex-col gap-4 lg:col-span-8">
+			<!-- DATOS DE IDENTIFICACIÓN -->
+			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Chipset y Fabricante</h2>
+				</div>
+				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+					<div class="form-control w-full">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Ensamblador</span></label
+						>
+						<input
+							class="input input-bordered bg-base-200/30 w-full font-bold"
+							type="text"
+							formControlName="manufacturer"
+							placeholder="Ej: ASUS, MSI, EVGA"
+						/>
+					</div>
+					<div class="form-control w-full">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo</span></label
+						>
+						<input
+							class="input input-bordered bg-base-200/30 w-full"
+							type="text"
+							formControlName="model"
+							placeholder="Ej: RTX 4080 Super ROG Strix"
+						/>
+					</div>
+					<div class="form-control w-full">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Tipo de GPU</span></label
+						>
+						<!-- CAMBIADO A gpu_type -->
+						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="gpu_type">
+							@for (t of gpuTypes; track t) {
+								<option [value]="t">{{ t }}</option>
+							}
+						</select>
+					</div>
+					<div class="form-control w-full">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Interfaz</span></label
+						>
+						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="interface">
+							@for (i of interfaceTypes; track i) {
+								<option [value]="i">{{ i }}</option>
+							}
+						</select>
+					</div>
+				</div>
+			</section>
 
-    <!-- COLUMNA DERECHA: Formulario -->
-    <div class="lg:col-span-8 flex flex-col gap-4">
+			<!-- RENDIMIENTO Y MEMORIA -->
+			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Frecuencias y VRAM</h2>
+				</div>
+				<div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Base Clock</span></label
+						>
+						<div class="relative">
+							<input
+								class="input input-bordered bg-base-200/30 w-full text-center font-mono"
+								type="number"
+								formControlName="base_freq"
+								step="0.1"
+							/>
+							<span class="absolute top-1/2 right-2 -translate-y-1/2 text-[9px] font-black opacity-20">GHZ</span>
+						</div>
+					</div>
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Boost Clock</span></label
+						>
+						<div class="relative">
+							<input
+								class="input input-bordered bg-base-200/30 text-primary w-full text-center font-mono"
+								type="number"
+								formControlName="boost_freq"
+								step="0.1"
+							/>
+							<span class="absolute top-1/2 right-2 -translate-y-1/2 text-[9px] font-black opacity-20">GHZ</span>
+						</div>
+					</div>
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Memoria</span></label
+						>
+						<div class="relative">
+							<input
+								class="input input-bordered bg-base-200/30 w-full text-center font-bold"
+								type="number"
+								formControlName="memory"
+							/>
+							<span class="absolute top-1/2 right-2 -translate-y-1/2 text-[9px] font-black opacity-20">GB</span>
+						</div>
+					</div>
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Tipo VRAM</span></label
+						>
+						<!-- CAMBIADO A memory_type -->
+						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="memory_type">
+							@for (g of gddrTypes; track g) {
+								<option [value]="g">{{ g }}</option>
+							}
+						</select>
+					</div>
+				</div>
+			</section>
 
-      <!-- DATOS DE IDENTIFICACIÓN -->
-      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Chipset y Fabricante</h2>
-        </div>
-        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control w-full">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Ensamblador</span></label>
-            <input type="text" formControlName="manufacturer" placeholder="Ej: ASUS, MSI, EVGA" class="input input-bordered w-full bg-base-200/30 font-bold" />
-          </div>
-          <div class="form-control w-full">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Modelo</span></label>
-            <input type="text" formControlName="model" placeholder="Ej: RTX 4080 Super ROG Strix" class="input input-bordered w-full bg-base-200/30" />
-          </div>
-          <div class="form-control w-full">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Tipo de GPU</span></label>
-            <!-- CAMBIADO A gpu_type -->
-            <select formControlName="gpu_type" class="select select-bordered w-full bg-base-200/30 font-bold">
-                @for (t of gpuTypes; track t) {
-                    <option [value]="t">{{ t }}</option>
-                }
-            </select>
-          </div>
-          <div class="form-control w-full">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Interfaz</span></label>
-            <select formControlName="interface" class="select select-bordered w-full bg-base-200/30 font-bold">
-              @for (i of interfaceTypes; track i) {
-                  <option [value]="i">{{ i }}</option>
-              }
-            </select>
-          </div>
-        </div>
-      </section>
+			<!-- PUERTOS Y CONECTIVIDAD -->
+			<section
+				class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10"
+				formGroupName="ports"
+			>
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Puertos de Salida</h2>
+				</div>
+				<div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
+					<div class="form-control">
+						<label class="label"><span class="label-text text-[10px] font-bold uppercase opacity-50">HDMI</span></label>
+						<input class="input input-bordered bg-base-200/30 text-center" type="number" formControlName="hdmi" />
+					</div>
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">DisplayPort</span></label
+						>
+						<input
+							class="input input-bordered bg-base-200/30 text-center"
+							type="number"
+							formControlName="displayport"
+						/>
+					</div>
+					<div class="form-control">
+						<label class="label"><span class="label-text text-[10px] font-bold uppercase opacity-50">DVI</span></label>
+						<input class="input input-bordered bg-base-200/30 text-center" type="number" formControlName="dvi" />
+					</div>
+					<div class="form-control">
+						<label class="label"><span class="label-text text-[10px] font-bold uppercase opacity-50">VGA</span></label>
+						<input class="input input-bordered bg-base-200/30 text-center" type="number" formControlName="vga" />
+					</div>
+				</div>
+			</section>
 
-      <!-- RENDIMIENTO Y MEMORIA -->
-      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Frecuencias y VRAM</h2>
-        </div>
-        <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Base Clock</span></label>
-            <div class="relative">
-              <input type="number" formControlName="base_freq" step="0.1" class="input input-bordered w-full bg-base-200/30 font-mono text-center" />
-              <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black opacity-20">GHZ</span>
-            </div>
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Boost Clock</span></label>
-            <div class="relative">
-              <input type="number" formControlName="boost_freq" step="0.1" class="input input-bordered w-full bg-base-200/30 font-mono text-center text-primary" />
-              <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black opacity-20">GHZ</span>
-            </div>
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Memoria</span></label>
-            <div class="relative">
-              <input type="number" formControlName="memory" class="input input-bordered w-full bg-base-200/30 text-center font-bold" />
-              <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-black opacity-20">GB</span>
-            </div>
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Tipo VRAM</span></label>
-            <!-- CAMBIADO A memory_type -->
-            <select formControlName="memory_type" class="select select-bordered w-full bg-base-200/30 font-bold">
-              @for (g of gddrTypes; track g) {
-                  <option [value]="g">{{ g }}</option>
-              }
-            </select>
-          </div>
-        </div>
-      </section>
+			<!-- ENERGÍA Y TECNOLOGÍA -->
+			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
+						Energía y Sincronización
+					</h2>
+				</div>
+				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-3">
+					<div class="form-control">
+						<label class="label"><span class="label-text text-[10px] font-bold uppercase opacity-50">TDP</span></label>
+						<div class="relative">
+							<input
+								class="input input-bordered bg-base-200/30 w-full text-center font-bold"
+								type="number"
+								formControlName="tdp"
+							/>
+							<span class="absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold opacity-30">W</span>
+						</div>
+					</div>
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Alimentación Ext.</span></label
+						>
+						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="external_power">
+							@for (p of externalPowers; track p) {
+								<option [value]="p">{{ p }}</option>
+							}
+						</select>
+					</div>
+					<div class="form-control">
+						<label class="label"><span class="label-text text-[10px] font-bold uppercase opacity-50">Sync</span></label>
+						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="frame_sync">
+							@for (s of syncTypes; track s) {
+								<option [value]="s">{{ s }}</option>
+							}
+						</select>
+					</div>
+				</div>
+			</section>
 
-      <!-- PUERTOS Y CONECTIVIDAD -->
-      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden" formGroupName="ports">
-        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Puertos de Salida</h2>
-        </div>
-        <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">HDMI</span></label>
-            <input type="number" formControlName="hdmi" class="input input-bordered bg-base-200/30 text-center" />
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">DisplayPort</span></label>
-            <input type="number" formControlName="displayport" class="input input-bordered bg-base-200/30 text-center" />
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">DVI</span></label>
-            <input type="number" formControlName="dvi" class="input input-bordered bg-base-200/30 text-center" />
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">VGA</span></label>
-            <input type="number" formControlName="vga" class="input input-bordered bg-base-200/30 text-center" />
-          </div>
-        </div>
-      </section>
+			<!-- COMERCIAL -->
+			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Datos Comerciales</h2>
+				</div>
+				<div class="p-4">
+					<div class="form-control max-w-xs">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Precio</span></label
+						>
+						<div class="relative">
+							<input
+								class="input input-bordered bg-base-200/30 text-primary h-14 w-full text-xl font-bold"
+								type="number"
+								formControlName="price"
+								step="0.01"
+							/>
+							<span class="text-primary absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold opacity-30"
+								>EUR</span
+							>
+						</div>
+					</div>
+				</div>
+			</section>
 
-      <!-- ENERGÍA Y TECNOLOGÍA -->
-      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Energía y Sincronización</h2>
-        </div>
-        <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">TDP</span></label>
-            <div class="relative">
-              <input type="number" formControlName="tdp" class="input input-bordered w-full bg-base-200/30 text-center font-bold" />
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold opacity-30">W</span>
-            </div>
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Alimentación Ext.</span></label>
-            <select formControlName="external_power" class="select select-bordered w-full bg-base-200/30 font-bold">
-              @for (p of externalPowers; track p) {
-                  <option [value]="p">{{ p }}</option>
-              }
-            </select>
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Sync</span></label>
-            <select formControlName="frame_sync" class="select select-bordered w-full bg-base-200/30 font-bold">
-              @for (s of syncTypes; track s) {
-                  <option [value]="s">{{ s }}</option>
-              }
-            </select>
-          </div>
-        </div>
-      </section>
-
-      <!-- COMERCIAL -->
-      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Datos Comerciales</h2>
-        </div>
-        <div class="p-4">
-          <div class="form-control max-w-xs">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Precio</span></label>
-            <div class="relative">
-              <input type="number" formControlName="price" step="0.01" class="input input-bordered w-full bg-base-200/30 font-bold text-primary text-xl h-14" />
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold opacity-30 text-primary">EUR</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      @if (isEditMode()) {
-        <div class="mt-4 p-4 opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] flex flex-wrap gap-x-6 gap-y-2 border-t border-base-300 dark:border-white/5">
-          <span>UUID: {{ id() }}</span>
-          <span>Status: Modo Edición</span>
-        </div>
-      }
-    </div>
-  </form>
+			@if (isEditMode()) {
+				<div
+					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
+				>
+					<span>UUID: {{ id() }}</span>
+					<span>Status: Modo Edición</span>
+				</div>
+			}
+		</div>
+	</form>
 </div>

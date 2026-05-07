@@ -1,107 +1,139 @@
-<nav class="border-base-300 bg-base-100/80 sticky top-0 z-50 border-b shadow-sm backdrop-blur-md transition-all dark:shadow-white/5 dark:border-white/10">
-  <div class="container flex h-16 items-center justify-between px-4 mx-auto">
+<nav
+	class="border-base-300 bg-base-100/80 sticky top-0 z-50 border-b shadow-sm backdrop-blur-md transition-all dark:border-white/10 dark:shadow-white/5"
+>
+	<div class="container mx-auto flex h-16 items-center justify-between px-4">
+		<div class="flex items-center gap-8">
+			<a class="group relative flex items-center justify-center px-4 py-2" href="/">
+				<div
+					class="absolute inset-0 -z-10 rounded-full opacity-20 blur-3xl transition-all duration-700 group-hover:scale-125 group-hover:opacity-60"
+					[ngClass]="isDarkMode() ? 'bg-primary' : 'bg-secondary'"
+				></div>
 
-    <div class="flex items-center gap-8">
-      <a class="group relative flex items-center justify-center px-4 py-2" href="/">
-        <div
-          class="absolute inset-0 -z-10 rounded-full blur-3xl transition-all duration-700 opacity-20 group-hover:opacity-60 group-hover:scale-125"
-          [ngClass]="isDarkMode() ? 'bg-primary' : 'bg-secondary'"
-        ></div>
+				<div
+					class="absolute -z-10 h-8 w-24 rounded-full opacity-20 blur-xl transition-all duration-500 group-hover:opacity-40"
+					[ngClass]="isDarkMode() ? 'bg-primary' : 'bg-secondary'"
+				></div>
 
-        <div
-          class="absolute h-8 w-24 -z-10 rounded-full blur-xl transition-all duration-500 opacity-20 group-hover:opacity-40"
-          [ngClass]="isDarkMode() ? 'bg-primary' : 'bg-secondary'"
-        ></div>
+				<div class="relative flex items-center justify-center">
+					@if (isDarkMode()) {
+						<img
+							class="h-8 w-auto object-contain brightness-125 transition-transform duration-500 group-hover:scale-105"
+							src="/pcbuilder_logo-dark.png"
+							alt="pcbuilder-logo"
+						/>
+					} @else {
+						<img
+							class="h-8 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+							src="/pcbuilder_logo-light.png"
+							alt="pcbuilder-logo"
+						/>
+					}
+				</div>
+			</a>
 
-        <div class="relative flex items-center justify-center">
-          @if (isDarkMode()) {
-            <img
-              class="h-8 w-auto object-contain brightness-125 transition-transform duration-500 group-hover:scale-105"
-              src="/pcbuilder_logo-dark.png"
-              alt="pcbuilder-logo"
-            />
-          } @else {
-            <img
-              class="h-8 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
-              src="/pcbuilder_logo-light.png"
-              alt="pcbuilder-logo"
-            />
-          }
-        </div>
-      </a>
-
-      <div class="hidden items-center gap-2 md:flex">
-        <a  class="rounded-lg px-4 py-2 text-sm font-semibold transition-all
-         text-base-content/70 hover:text-primary hover:bg-primary/10
-         dark:text-white/70 dark:hover:text-secondary dark:hover:bg-white/5"  routerLink="/build/all"
+			<div class="hidden items-center gap-2 md:flex">
+				<a
+					class="text-base-content/70 hover:text-primary hover:bg-primary/10 dark:hover:text-secondary rounded-lg px-4 py-2 text-sm font-semibold transition-all dark:text-white/70 dark:hover:bg-white/5"
+					routerLink="/build/all"
 					routerLinkActive="text-primary bg-primary/10 dark:text-secondary dark:bg-white/10"
 				>
 					Builds de los usuarios
 				</a>
 
-        @if (isManager) {
-          <a
-            class="hover:text-primary hover:bg-primary/10 text-base-content/70 rounded-lg px-4 py-2 text-sm font-semibold transition-all dark:hover:bg-white/5"
-            routerLink="/components"
-            routerLinkActive="text-primary bg-primary/10 dark:bg-white/10"
-          >
-            Inventario Hardware
-          </a>
-        }
+				@if (isManager) {
+					<a
+						class="hover:text-primary hover:bg-primary/10 text-base-content/70 rounded-lg px-4 py-2 text-sm font-semibold transition-all dark:hover:bg-white/5"
+						routerLink="/components"
+						routerLinkActive="text-primary bg-primary/10 dark:bg-white/10"
+					>
+						Inventario Hardware
+					</a>
+				}
 
-        @if (user()) {
-          <a
-            class="hover:text-primary hover:bg-primary/10 text-base-content/70 rounded-lg px-4 py-2 text-sm font-semibold transition-all dark:hover:bg-white/5"
-            routerLink="/my-builds"
-            routerLinkActive="text-primary bg-primary/10 dark:bg-white/10"
-          >
-            Mis Builds
-          </a>
-        }
-      </div>
-    </div>
+				@if (user()) {
+					<a
+						class="hover:text-primary hover:bg-primary/10 text-base-content/70 rounded-lg px-4 py-2 text-sm font-semibold transition-all dark:hover:bg-white/5"
+						routerLink="/my-builds"
+						routerLinkActive="text-primary bg-primary/10 dark:bg-white/10"
+					>
+						Mis Builds
+					</a>
+				}
+			</div>
+		</div>
 
-    <div class="flex items-center gap-4">
-      <button
-        class="group hover:bg-base-200 dark:hover:bg-white/5 relative flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 active:scale-90"
-        (click)="toggleTheme()"
-      >
-        @if (!isDarkMode()) {
-          <svg class="group-hover:text-primary text-base-content transition-colors" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-          </svg>
-        } @else {
-          <svg class="text-base-content/60 transition-all duration-300 group-hover:stroke-[3px] group-hover:text-yellow-400 group-hover:drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2" /><path d="M12 20v2" />
-            <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
-            <path d="M2 12h2" /><path d="M20 12h2" />
-            <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
-          </svg>
-        }
-      </button>
+		<div class="flex items-center gap-4">
+			<button
+				class="group hover:bg-base-200 relative flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 active:scale-90 dark:hover:bg-white/5"
+				(click)="toggleTheme()"
+			>
+				@if (!isDarkMode()) {
+					<svg
+						class="group-hover:text-primary text-base-content transition-colors"
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+					</svg>
+				} @else {
+					<svg
+						class="text-base-content/60 transition-all duration-300 group-hover:stroke-[3px] group-hover:text-yellow-400 group-hover:drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]"
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<circle cx="12" cy="12" r="4" />
+						<path d="M12 2v2" />
+						<path d="M12 20v2" />
+						<path d="m4.93 4.93 1.41 1.41" />
+						<path d="m17.66 17.66 1.41 1.41" />
+						<path d="M2 12h2" />
+						<path d="M20 12h2" />
+						<path d="m6.34 17.66-1.41 1.41" />
+						<path d="m19.07 4.93-1.41 1.41" />
+					</svg>
+				}
+			</button>
 
-      @if (user()) {
-        <div class="border-base-300 dark:border-white/10 hidden flex-col items-end border-r pr-4 sm:flex">
-          <span class="text-base-content mb-1 text-sm leading-none font-bold">Hola, {{ user()?.username }}</span>
-          <span class="text-primary text-[10px] font-bold tracking-wider uppercase opacity-80">{{ user()?.profile }}</span>
-        </div>
-        <button
-          class="text-error hover:bg-error/10 rounded-lg px-4 py-2 text-sm font-bold transition-colors"
-          (click)="logout()"
-        >
-          Salir
-        </button>
-      } @else {
-        <div class="flex items-center gap-4">
-          <a class="hover:text-primary text-base-content/70 text-sm font-bold transition-colors" routerLink="/auth/login">
-            Entrar
-          </a>
-          <a class="btn btn-primary dark:shadow-primary/20 px-6 text-sm shadow-md" routerLink="/auth/register">
-            ¡Empezar ahora!
-          </a>
-        </div>
-      }
-    </div>
-  </div>
+			@if (user()) {
+				<div class="border-base-300 hidden flex-col items-end border-r pr-4 sm:flex dark:border-white/10">
+					<span class="text-base-content mb-1 text-sm leading-none font-bold">Hola, {{ user()?.username }}</span>
+					<span class="text-primary text-[10px] font-bold tracking-wider uppercase opacity-80">{{
+						user()?.profile
+					}}</span>
+				</div>
+				<button
+					class="text-error hover:bg-error/10 rounded-lg px-4 py-2 text-sm font-bold transition-colors"
+					(click)="logout()"
+				>
+					Salir
+				</button>
+			} @else {
+				<div class="flex items-center gap-4">
+					<a
+						class="hover:text-primary text-base-content/70 text-sm font-bold transition-colors"
+						routerLink="/auth/login"
+					>
+						Entrar
+					</a>
+					<a class="btn btn-primary dark:shadow-primary/20 px-6 text-sm shadow-md" routerLink="/auth/register">
+						¡Empezar ahora!
+					</a>
+				</div>
+			}
+		</div>
+	</div>
 </nav>

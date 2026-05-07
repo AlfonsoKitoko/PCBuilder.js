@@ -1,106 +1,157 @@
-<div class="container mx-auto p-4 max-w-5xl">
-  <header class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 text-center md:text-left">
-    <div class="flex flex-col">
-      <nav class="text-[10px] uppercase tracking-widest text-base-content/40 mb-2 font-bold">
-        Administración / Usuarios / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
-      </nav>
-      <h1 class="text-3xl md:text-5xl font-black tracking-tighter uppercase text-base-content leading-none">
-        {{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Usuario</span>
-      </h1>
-    </div>
-  </header>
+<div class="container mx-auto max-w-5xl p-4">
+	<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
+		<div class="flex flex-col">
+			<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
+				Administración / Usuarios / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
+			</nav>
+			<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
+				{{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Usuario</span>
+			</h1>
+		</div>
+	</header>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+	<form class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12" [formGroup]="form" (ngSubmit)="onSubmit()">
+		<!-- COLUMNA IZQUIERDA: Avatar y Rol -->
+		<div class="flex flex-col gap-4 lg:col-span-4">
+			<div
+				class="bg-base-200 ring-base-300 relative mx-auto flex aspect-square w-full max-w-70 flex-col items-center justify-center overflow-hidden rounded-2xl p-8 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
+			>
+				<div class="z-10 text-center">
+					<i class="ri-user-3-fill text-primary/20 text-8xl"></i>
+					<p class="mt-4 text-[10px] font-bold tracking-[0.2em] uppercase opacity-40">Avatar del Usuario</p>
+				</div>
+				<!-- Decoración de fondo basada en el perfil -->
+				<div class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-5">
+					<span class="text-[120px] font-black uppercase italic select-none">{{ form.get('profile')?.value }}</span>
+				</div>
+			</div>
 
-    <!-- COLUMNA IZQUIERDA: Avatar y Rol -->
-    <div class="lg:col-span-4 flex flex-col gap-4">
-      <div class="mx-auto w-full max-w-70 lg:max-w-none aspect-square bg-base-200 rounded-2xl ring-1 ring-base-300 dark:ring-white/10 p-8 flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
-        <div class="z-10 text-center">
-            <i class="ri-user-3-fill text-8xl text-primary/20"></i>
-            <p class="text-[10px] uppercase font-bold tracking-[0.2em] mt-4 opacity-40">Avatar del Usuario</p>
-        </div>
-        <!-- Decoración de fondo basada en el perfil -->
-        <div class="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
-            <span class="text-[120px] font-black italic uppercase select-none">{{ form.get('profile')?.value }}</span>
-        </div>
-      </div>
+			<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
+				<div class="form-control mb-4">
+					<label class="label"
+						><span class="label-text text-[10px] font-bold uppercase opacity-50">Rol de Acceso</span></label
+					>
+					<select
+						class="select select-bordered bg-base-100 border-primary/20 focus:border-primary w-full font-bold"
+						formControlName="profile"
+					>
+						@for (p of userProfiles; track p) {
+							<option [value]="p">{{ p }}</option>
+						}
+					</select>
+				</div>
 
-      <div class="bg-base-200/50 rounded-xl p-5 border border-base-300 dark:border-white/5">
-        <div class="form-control mb-4">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Rol de Acceso</span></label>
-            <select formControlName="profile" class="select select-bordered w-full bg-base-100 font-bold border-primary/20 focus:border-primary">
-              @for (p of userProfiles; track p) { <option [value]="p">{{ p }}</option> }
-            </select>
-        </div>
+				<button
+					class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
+					[disabled]="form.invalid || isLoading()"
+					type="submit"
+				>
+					@if (isLoading()) {
+						<span class="loading loading-spinner loading-xs"></span>
+					}
+					{{ isEditMode() ? 'Actualizar Datos' : 'Crear Usuario' }}
+				</button>
+				<a
+					class="btn btn-ghost btn-block btn-sm mt-2 text-[10px] tracking-widest uppercase opacity-50"
+					routerLink="/user/all"
+				>
+					Cancelar
+				</a>
+			</div>
+		</div>
 
-        <button type="submit"
-                [disabled]="form.invalid || isLoading()"
-                class="btn btn-primary btn-block rounded-lg uppercase font-bold tracking-wider shadow-lg shadow-primary/20">
-          @if (isLoading()) {
-            <span class="loading loading-spinner loading-xs"></span>
-          }
-          {{ isEditMode() ? 'Actualizar Datos' : 'Crear Usuario' }}
-        </button>
-        <a routerLink="/user/all" class="btn btn-ghost btn-block btn-sm mt-2 uppercase text-[10px] tracking-widest opacity-50">
-          Cancelar
-        </a>
-      </div>
-    </div>
+		<!-- COLUMNA DERECHA: Datos del Formulario -->
+		<div class="flex flex-col gap-4 lg:col-span-8">
+			<!-- CREDENCIALES -->
+			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Cuenta y Seguridad</h2>
+				</div>
+				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Nombre de Usuario</span></label
+						>
+						<input
+							class="input input-bordered bg-base-200/30 w-full font-bold"
+							type="text"
+							formControlName="username"
+							placeholder="username123"
+						/>
+					</div>
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Contraseña</span>
+							@if (isEditMode()) {
+								<span class="label-text-alt text-warning text-[9px] uppercase">Opcional al editar</span>
+							}
+						</label>
+						<input
+							class="input input-bordered bg-base-200/30 w-full"
+							type="password"
+							formControlName="password"
+							placeholder="••••••••"
+						/>
+					</div>
+					<div class="form-control md:col-span-2">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Correo Electrónico</span></label
+						>
+						<input
+							class="input input-bordered bg-base-200/30 w-full"
+							type="email"
+							formControlName="email"
+							placeholder="usuario@ejemplo.com"
+						/>
+					</div>
+				</div>
+			</section>
 
-    <!-- COLUMNA DERECHA: Datos del Formulario -->
-    <div class="lg:col-span-8 flex flex-col gap-4">
+			<!-- DATOS PERSONALES -->
+			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Información Personal</h2>
+				</div>
+				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Nombre</span></label
+						>
+						<input
+							class="input input-bordered bg-base-200/30 w-full"
+							type="text"
+							formControlName="firstName"
+							placeholder="Nombre"
+						/>
+					</div>
+					<div class="form-control">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Apellidos</span></label
+						>
+						<input
+							class="input input-bordered bg-base-200/30 w-full"
+							type="text"
+							formControlName="lastName"
+							placeholder="Apellidos"
+						/>
+					</div>
+					<div class="form-control md:col-span-2">
+						<label class="label"
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Fecha de Nacimiento</span></label
+						>
+						<input class="input input-bordered bg-base-200/30 w-full" type="date" formControlName="birthDate" />
+					</div>
+				</div>
+			</section>
 
-      <!-- CREDENCIALES -->
-      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Cuenta y Seguridad</h2>
-        </div>
-        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Nombre de Usuario</span></label>
-            <input type="text" formControlName="username" class="input input-bordered w-full bg-base-200/30 font-bold" placeholder="username123" />
-          </div>
-          <div class="form-control">
-            <label class="label">
-                <span class="label-text text-[10px] uppercase font-bold opacity-50">Contraseña</span>
-                @if (isEditMode()) { <span class="label-text-alt text-[9px] text-warning uppercase">Opcional al editar</span> }
-            </label>
-            <input type="password" formControlName="password" class="input input-bordered w-full bg-base-200/30" placeholder="••••••••" />
-          </div>
-          <div class="form-control md:col-span-2">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Correo Electrónico</span></label>
-            <input type="email" formControlName="email" class="input input-bordered w-full bg-base-200/30" placeholder="usuario@ejemplo.com" />
-          </div>
-        </div>
-      </section>
-
-      <!-- DATOS PERSONALES -->
-      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Información Personal</h2>
-        </div>
-        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Nombre</span></label>
-            <input type="text" formControlName="firstName" class="input input-bordered w-full bg-base-200/30" placeholder="Nombre" />
-          </div>
-          <div class="form-control">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Apellidos</span></label>
-            <input type="text" formControlName="lastName" class="input input-bordered w-full bg-base-200/30" placeholder="Apellidos" />
-          </div>
-          <div class="form-control md:col-span-2">
-            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Fecha de Nacimiento</span></label>
-            <input type="date" formControlName="birthDate" class="input input-bordered w-full bg-base-200/30" />
-          </div>
-        </div>
-      </section>
-
-      @if (isEditMode()) {
-        <div class="mt-4 p-4 opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] flex flex-wrap gap-x-6 gap-y-2 border-t border-base-300 dark:border-white/5">
-          <span>User ID: {{ id() }}</span>
-          <span>Status: {{ form.get('profile')?.value }}</span>
-        </div>
-      }
-    </div>
-  </form>
+			@if (isEditMode()) {
+				<div
+					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
+				>
+					<span>User ID: {{ id() }}</span>
+					<span>Status: {{ form.get('profile')?.value }}</span>
+				</div>
+			}
+		</div>
+	</form>
 </div>

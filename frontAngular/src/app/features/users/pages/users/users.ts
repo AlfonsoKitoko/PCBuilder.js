@@ -1,12 +1,12 @@
-import { CommonModule, CurrencyPipe } from '@angular/common'
-import { Component, computed, inject } from '@angular/core'
-import { Router, RouterModule } from '@angular/router'
-import { UserService } from '../../../../shared/services/user.service'
-import { AuthService } from '../../../../shared/services/auth.service'
-import { ModalService } from '../../../../shared/services/modal.service'
-import { ToastService } from '../../../../shared/services/toast.service'
-import { useTableHandler } from '../../../../shared/utils/table-handler.util'
-import { userProfile } from '../../../../shared/models/user.model'
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { userProfile } from '../../../../shared/models/user.model';
+import { AuthService } from '../../../../shared/services/auth.service';
+import { ModalService } from '../../../../shared/services/modal.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { UserService } from '../../../../shared/services/user.service';
+import { useTableHandler } from '../../../../shared/utils/table-handler.util';
 
 @Component({
 	selector: 'app-users',
@@ -14,29 +14,34 @@ import { userProfile } from '../../../../shared/models/user.model'
 	templateUrl: './users.html',
 })
 export default class Users {
-	private readonly router = inject(Router)
-	private readonly userService = inject(UserService)
-	private readonly authService = inject(AuthService)
-	private readonly modal = inject(ModalService)
-	private readonly toast = inject(ToastService)
+	private readonly router = inject(Router);
+	private readonly userService = inject(UserService);
+	private readonly authService = inject(AuthService);
+	private readonly modal = inject(ModalService);
+	private readonly toast = inject(ToastService);
 
-	tableHandler = useTableHandler(
-		this.userService.users, [
-		'username', 'firstName', 'lastName',
-		'email', 'birthDate', 'profile'
-	])
+	tableHandler = useTableHandler(this.userService.users, [
+		'username',
+		'firstName',
+		'lastName',
+		'email',
+		'birthDate',
+		'profile',
+	]);
 
-	users = this.tableHandler.filteredData
-	searchTerm = this.tableHandler.searchTerm
-	isLoading = this.userService.isLoading
+	users = this.tableHandler.filteredData;
+	searchTerm = this.tableHandler.searchTerm;
+	isLoading = this.userService.isLoading;
 
-	user = computed(() => this.authService.user())
-	managementRoles = [userProfile.ADMIN]
+	user = computed(() => this.authService.user());
+	managementRoles = [userProfile.ADMIN];
 
-	ngOnInit() { this.userService.getAll() }
+	ngOnInit() {
+		this.userService.getAll();
+	}
 
 	goToDetail(id: string | undefined) {
-		if (!id) return
-		this.router.navigate(['/user', id])
+		if (!id) return;
+		this.router.navigate(['/user', id]);
 	}
 }

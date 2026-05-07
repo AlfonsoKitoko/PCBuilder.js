@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las oss -> /os
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles os (ID) -> /os/idOs/osSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/os/os') },
-]
+];

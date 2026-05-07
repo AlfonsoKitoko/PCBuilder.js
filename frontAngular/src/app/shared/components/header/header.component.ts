@@ -1,16 +1,15 @@
-import { CommonModule } from "@angular/common"
-import { Component, inject } from "@angular/core"
-import { NavbarComponent } from "../navbar/navbar.component"
-import { AuthService } from "../../services/auth.service"
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
 	selector: 'app-header',
 	imports: [CommonModule, NavbarComponent],
-	templateUrl: './header.component.html'
+	templateUrl: './header.component.html',
 })
-
 export class HeaderComponent {
-	private authService = inject(AuthService)
+	private authService = inject(AuthService);
 
-	user = this.authService.user
+	user = this.authService.user;
 }

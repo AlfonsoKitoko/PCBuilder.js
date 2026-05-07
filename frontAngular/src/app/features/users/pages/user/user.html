@@ -1,90 +1,106 @@
-<div class="container mx-auto p-4 max-w-5xl">
-  @if (user(); as user) {
-    <header class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 text-center md:text-left">
-      <div class="flex flex-col">
-        <nav class="text-[10px] uppercase tracking-widest text-base-content/40 mb-2 font-bold font-mono">
-          Sistema / Control de Acceso / {{ user.profile }}
-        </nav>
-        <h1 class="text-3xl md:text-5xl font-black tracking-tighter uppercase text-base-content leading-none">
-          Perfil de <span class="text-primary italic">{{ user.username }}</span>
-        </h1>
-      </div>
-      <div class="md:text-right">
-        <span class="badge badge-lg badge-primary font-black uppercase tracking-widest rounded-md text-[10px] h-auto py-2">
-          Status: Activo
-        </span>
-      </div>
-    </header>
+<div class="container mx-auto max-w-5xl p-4">
+	@if (user(); as user) {
+		<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
+			<div class="flex flex-col">
+				<nav class="text-base-content/40 mb-2 font-mono text-[10px] font-bold tracking-widest uppercase">
+					Sistema / Control de Acceso / {{ user.profile }}
+				</nav>
+				<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
+					Perfil de <span class="text-primary italic">{{ user.username }}</span>
+				</h1>
+			</div>
+			<div class="md:text-right">
+				<span
+					class="badge badge-lg badge-primary h-auto rounded-md py-2 text-[10px] font-black tracking-widest uppercase"
+				>
+					Status: Activo
+				</span>
+			</div>
+		</header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-      <!-- Columna Avatar/Acciones -->
-      <div class="lg:col-span-4 flex flex-col gap-4">
-        <div class="mx-auto w-full max-w-70 lg:max-w-none aspect-square bg-base-200 rounded-2xl ring-1 ring-base-300 dark:ring-white/10 p-10 flex items-center justify-center shadow-sm relative overflow-hidden group">
-          <!-- Icono de usuario estilizado -->
-          <i class="ri-user-3-line text-[120px] text-primary/10 group-hover:scale-110 transition-transform duration-500"></i>
-          <div class="absolute bottom-6 left-6 right-6 text-center">
-            <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Identidad Digital</span>
-          </div>
-        </div>
+		<div class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12">
+			<!-- Columna Avatar/Acciones -->
+			<div class="flex flex-col gap-4 lg:col-span-4">
+				<div
+					class="bg-base-200 ring-base-300 group relative mx-auto flex aspect-square w-full max-w-70 items-center justify-center overflow-hidden rounded-2xl p-10 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
+				>
+					<!-- Icono de usuario estilizado -->
+					<i
+						class="ri-user-3-line text-primary/10 text-[120px] transition-transform duration-500 group-hover:scale-110"
+					></i>
+					<div class="absolute right-6 bottom-6 left-6 text-center">
+						<span class="text-[10px] font-black tracking-[0.3em] uppercase opacity-40">Identidad Digital</span>
+					</div>
+				</div>
 
-        <div class="bg-base-200/50 rounded-xl p-5 border border-base-300 dark:border-white/5 flex flex-col gap-2">
-          <button class="btn btn-primary btn-block rounded-lg uppercase font-bold tracking-wider shadow-lg shadow-primary/20">
-            <i class="ri-edit-line"></i> Editar Perfil
-          </button>
-          <button class="btn btn-ghost btn-block btn-sm uppercase text-[9px] font-black tracking-widest opacity-50 hover:opacity-100">
-            Resetear Contraseña
-          </button>
-        </div>
-      </div>
+				<div class="bg-base-200/50 border-base-300 flex flex-col gap-2 rounded-xl border p-5 dark:border-white/5">
+					<button
+						class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
+					>
+						<i class="ri-edit-line"></i> Editar Perfil
+					</button>
+					<button
+						class="btn btn-ghost btn-block btn-sm text-[9px] font-black tracking-widest uppercase opacity-50 hover:opacity-100"
+					>
+						Resetear Contraseña
+					</button>
+				</div>
+			</div>
 
-      <!-- Columna Información -->
-      <div class="lg:col-span-8 flex flex-col gap-4">
-        <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-          <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60 font-mono">Dossier de Identificación</h2>
-          </div>
-          <div class="divide-y divide-base-300 dark:divide-white/5 font-mono">
+			<!-- Columna Información -->
+			<div class="flex flex-col gap-4 lg:col-span-8">
+				<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+					<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+						<h2 class="text-base-content/60 font-mono text-[10px] font-black tracking-widest uppercase">
+							Dossier de Identificación
+						</h2>
+					</div>
+					<div class="divide-base-300 divide-y font-mono dark:divide-white/5">
+						<div class="group flex justify-between p-4 text-sm">
+							<span class="text-base-content/40 text-[10px] font-bold uppercase">Username</span>
+							<span class="text-primary font-black italic">{{ user.username }}</span>
+						</div>
 
-            <div class="flex justify-between p-4 text-sm group">
-              <span class="text-base-content/40 font-bold uppercase text-[10px]">Username</span>
-              <span class="font-black text-primary italic">{{ user.username }}</span>
-            </div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/40 text-[10px] font-bold uppercase">Nombre Completo</span>
+							<span class="font-bold tracking-tight uppercase">{{ user.firstName }} {{ user.lastName }}</span>
+						</div>
 
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/40 font-bold uppercase text-[10px]">Nombre Completo</span>
-              <span class="font-bold uppercase tracking-tight">{{ user.firstName }} {{ user.lastName }}</span>
-            </div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/40 text-[10px] font-bold uppercase">Dirección Email</span>
+							<span class="text-primary decoration-primary/30 font-bold lowercase underline">{{ user.email }}</span>
+						</div>
 
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/40 font-bold uppercase text-[10px]">Dirección Email</span>
-              <span class="font-bold lowercase text-primary underline decoration-primary/30">{{ user.email }}</span>
-            </div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/40 text-[10px] font-bold uppercase">F. Nacimiento</span>
+							<span class="font-bold tracking-widest">{{ user.birthDate | date: 'fullDate' | uppercase }}</span>
+						</div>
 
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/40 font-bold uppercase text-[10px]">F. Nacimiento</span>
-              <span class="font-bold tracking-widest">{{ user.birthDate | date:'fullDate' | uppercase }}</span>
-            </div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/40 text-[10px] font-bold uppercase">Privilegios</span>
+							<span class="badge badge-outline border-primary/30 text-primary text-[10px] font-black">{{
+								user.profile
+							}}</span>
+						</div>
+					</div>
+				</section>
 
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/40 font-bold uppercase text-[10px]">Privilegios</span>
-              <span class="badge badge-outline font-black text-[10px] border-primary/30 text-primary">{{ user.profile }}</span>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- Metadata de Auditoría -->
-        <div class="mt-4 p-4 opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] flex flex-wrap gap-x-8 gap-y-2 border-t border-base-300 dark:border-white/5 font-mono">
-          <span class="flex items-center gap-1"><i class="ri-fingerprint-line"></i> UID: {{ user._id }}</span>
-          <span class="flex items-center gap-1"><i class="ri-shield-check-line"></i> SECURITY: LEVEL_01</span>
-          <span class="flex items-center gap-1"><i class="ri-calendar-line"></i> REGISTRO: SYS_2026</span>
-        </div>
-      </div>
-    </div>
-  } @else {
-    <div class="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-      <span class="loading loading-ring loading-lg text-primary"></span>
-      <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 animate-pulse">Sincronizando base de datos...</span>
-    </div>
-  }
+				<!-- Metadata de Auditoría -->
+				<div
+					class="border-base-300 mt-4 flex flex-wrap gap-x-8 gap-y-2 border-t p-4 font-mono text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
+				>
+					<span class="flex items-center gap-1"><i class="ri-fingerprint-line"></i> UID: {{ user._id }}</span>
+					<span class="flex items-center gap-1"><i class="ri-shield-check-line"></i> SECURITY: LEVEL_01</span>
+					<span class="flex items-center gap-1"><i class="ri-calendar-line"></i> REGISTRO: SYS_2026</span>
+				</div>
+			</div>
+		</div>
+	} @else {
+		<div class="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+			<span class="loading loading-ring loading-lg text-primary"></span>
+			<span class="animate-pulse text-[10px] font-black tracking-[0.4em] uppercase opacity-30"
+				>Sincronizando base de datos...</span
+			>
+		</div>
+	}
 </div>

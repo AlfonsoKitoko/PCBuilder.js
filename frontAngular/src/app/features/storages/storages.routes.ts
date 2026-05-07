@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las storages -> /storage
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles storage (ID) -> /storage/idStorage/storageSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/storage/storage') },
-]
+];

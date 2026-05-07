@@ -1,13 +1,13 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common'
-import { Component, computed, inject, input, OnInit } from '@angular/core'
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Router, RouterModule } from '@angular/router'
-import { PsuService } from '../../../../shared/services/psu.service'
-import { AuthService } from '../../../../shared/services/auth.service'
-import { ToastService } from '../../../../shared/services/toast.service'
-import { connectors, effRating, modular, psuType } from '../../../../shared/constants/index.constant'
-import { userProfile } from '../../../../shared/models/user.model' //
-import { getImageUrl } from '../../../../shared/utils/image-mapper'
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { connectors, effRating, modular, psuType } from '../../../../shared/constants/index.constant';
+import { userProfile } from '../../../../shared/models/user.model'; //
+import { AuthService } from '../../../../shared/services/auth.service';
+import { PsuService } from '../../../../shared/services/psu.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
 	selector: 'app-newedit',
@@ -15,36 +15,36 @@ import { getImageUrl } from '../../../../shared/utils/image-mapper'
 	templateUrl: './newedit.html',
 })
 export default class NewEdit implements OnInit {
-	id = input<string>()
-	slug = input<string>()
+	id = input<string>();
+	slug = input<string>();
 
-	private readonly fb = inject(FormBuilder)
-	private readonly psuService = inject(PsuService)
-	private readonly authService = inject(AuthService)
-	private readonly router = inject(Router)
-	private readonly toast = inject(ToastService)
+	private readonly fb = inject(FormBuilder);
+	private readonly psuService = inject(PsuService);
+	private readonly authService = inject(AuthService);
+	private readonly router = inject(Router);
+	private readonly toast = inject(ToastService);
 
-	readonly getImageUrl = getImageUrl
+	readonly getImageUrl = getImageUrl;
 
-	isLoading = this.psuService.isLoading
-	isEditMode = computed(() => !!this.id())
-	selectedPsu = this.psuService.selectedPsu
+	isLoading = this.psuService.isLoading;
+	isEditMode = computed(() => !!this.id());
+	selectedPsu = this.psuService.selectedPsu;
 
 	// Configuración de roles permitidos (igual que en tu archivo de Builds)
-	managementRoles = [userProfile.ADMIN] //
+	managementRoles = [userProfile.ADMIN]; //
 
-	 psuTypes = Object.values(psuType)
-	 effRatings = Object.values(effRating)
-	 modulars = Object.values(modular)
-	 connectors = Object.values(connectors)
+	psuTypes = Object.values(psuType);
+	effRatings = Object.values(effRating);
+	modulars = Object.values(modular);
+	connectors = Object.values(connectors);
 
 	form: FormGroup = this.fb.group({
 		manufacturer: ['', [Validators.required]],
 		model: ['', [Validators.required]],
-		psu_type: ['',[Validators.required]],
-		wattage: [0,[Validators.required]],
-		eff_rating: [0,[Validators.required]],
-		modular: ['',[Validators.required]],
+		psu_type: ['', [Validators.required]],
+		wattage: [0, [Validators.required]],
+		eff_rating: [0, [Validators.required]],
+		modular: ['', [Validators.required]],
 		connectors: this.fb.group({
 			atx_24pin: [0],
 			eps_8pin: [0],
@@ -57,13 +57,13 @@ export default class NewEdit implements OnInit {
 			molex_4pin: [0],
 		}),
 		price: [0, [Validators.required, Validators.min(0)]],
-	})
+	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva
 	canManage = computed(() => {
 		const user = this.authService.user();
 		return user && this.managementRoles.includes(user.profile as userProfile);
-	})
+	});
 
 	ngOnInit() {
 		if (!this.canManage()) {
@@ -87,7 +87,7 @@ export default class NewEdit implements OnInit {
 				error: () => {
 					this.toast.show('Error al buscar la Fuente de Alimentación (PSU)', 'error');
 					this.router.navigate(['/psu/all']);
-				}
+				},
 			});
 		}
 	}
@@ -109,9 +109,7 @@ export default class NewEdit implements OnInit {
 			boost_freq: Math.round(rawValue.boost_freq * 1000),
 		};
 
-		const request = this.isEditMode()
-			? this.psuService.update(this.id()!, data)
-			: this.psuService.create(data);
+		const request = this.isEditMode() ? this.psuService.update(this.id()!, data) : this.psuService.create(data);
 
 		request.subscribe({
 			next: () => {
@@ -122,7 +120,7 @@ export default class NewEdit implements OnInit {
 			error: (err) => {
 				this.isLoading.set(false);
 				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			}
+			},
 		});
 	}
 }

@@ -1,110 +1,123 @@
-<div class="container mx-auto p-4 max-w-5xl">
-  @if (gpu(); as gpu) {
-    <header class="mb-6 flex flex-col md:flex-row md:gpus-end justify-between gap-4 text-center md:text-left">
-      <div class="flex flex-col">
-        <nav class="text-[10px] uppercase tracking-widest text-base-content/40 mb-2 font-bold">
-          Archivo de Tarjetas Gráficas / {{ gpu.manufacturer }}
-        </nav>
-        <h1 class="text-3xl md:text-5xl font-black tracking-tighter uppercase text-base-content leading-none">
-          {{ gpu.manufacturer }} <span class="text-primary">{{ gpu.model }}</span>
-        </h1>
-      </div>
-      <div class="md:text-right">
-        <span class="text-3xl font-black tracking-tighter text-primary md:text-base-content">
-          {{ gpu.price / 100 | currency: 'EUR' }}
-        </span>
-      </div>
-    </header>
+<div class="container mx-auto max-w-5xl p-4">
+	@if (gpu(); as gpu) {
+		<header class="md:gpus-end mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:text-left">
+			<div class="flex flex-col">
+				<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
+					Archivo de Tarjetas Gráficas / {{ gpu.manufacturer }}
+				</nav>
+				<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
+					{{ gpu.manufacturer }} <span class="text-primary">{{ gpu.model }}</span>
+				</h1>
+			</div>
+			<div class="md:text-right">
+				<span class="text-primary md:text-base-content text-3xl font-black tracking-tighter">
+					{{ gpu.price / 100 | currency: 'EUR' }}
+				</span>
+			</div>
+		</header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-      <div class="lg:col-span-4 flex flex-col gap-4">
-        <div class="mx-auto w-full max-w-70 lg:max-w-none aspect-square bg-white rounded-2xl ring-1 ring-base-300 dark:ring-white/10 p-6 flex gpus-center justify-center shadow-sm">
-          <img [src]="getImageUrl('gpu', gpu.slug)"
-               [alt]="gpu.model"
-               class="max-h-50 lg:max-h-full w-full object-contain"
-               (error)="$any($event.target).src=getImageUrl(undefined)" />
-        </div>
+		<div class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12">
+			<div class="flex flex-col gap-4 lg:col-span-4">
+				<div
+					class="ring-base-300 gpus-center mx-auto flex aspect-square w-full max-w-70 justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
+				>
+					<img
+						class="max-h-50 w-full object-contain lg:max-h-full"
+						[src]="getImageUrl('gpu', gpu.slug)"
+						[alt]="gpu.model"
+						(error)="$any($event.target).src = getImageUrl(undefined)"
+					/>
+				</div>
 
-        <div class="bg-base-200/50 rounded-xl p-5 border border-base-300 dark:border-white/5">
-          <button (click)="addToBuild()" class="btn btn-primary btn-block rounded-lg uppercase font-bold tracking-wider shadow-lg shadow-primary/20">
-            Añadir a la Build
-          </button>
-        </div>
-      </div>
+				<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
+					<button
+						class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
+						(click)="addToBuild()"
+					>
+						Añadir a la Build
+					</button>
+				</div>
+			</div>
 
-      <div class="lg:col-span-8 flex flex-col gap-4">
-        <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
-          <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
-            <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Especificaciones Técnicas</h2>
-          </div>
-          <div class="divide-y divide-base-300 dark:divide-white/5">
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Fabricante</span>
-              <span class="font-bold">{{ gpu.manufacturer }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Modelo</span>
-              <span class="font-bold">{{ gpu.model }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Tipo de GPU</span>
-              <span [class.text-green-600]="gpu.gpu_type === 'NVIDIA'"
-                      [class.text-red-600]="gpu.gpu_type === 'AMD RADEON'"
-                      [class.text-blue-600]="gpu.gpu_type === 'INTEL'"
-                      class="text-base font-bold uppercase mr-1">
-                  {{ gpu.gpu_type }}
-                </span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Memoria</span>
-              <span class="font-bold">{{ gpu.memory }} GB {{ gpu.memory_type }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Frecuencia Base</span>
-              <span class="font-bold">{{ (gpu.base_freq || 0) / 1000 | number:'1.2-2' }} GHz</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Frecuencia Boost</span>
-              <span class="font-bold text-primary">{{ (gpu.boost_freq || 0) / 1000 | number:'1.2-2' }} GHz</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Interfaz</span>
-              <span class="font-bold uppercase">{{ gpu.interface }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Frame Sync</span>
-              <span class="font-bold">{{ gpu.frame_sync }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">TDP</span>
-              <span class="font-bold">{{ gpu.tdp }} W</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Alimentación Externa</span>
-              <span class="font-bold">{{ gpu.external_power }}</span>
-            </div>
-            <div class="flex justify-between p-4 text-sm">
-              <span class="text-base-content/50 font-medium">Puertos</span>
-              <div class="text-right">
-                @for (port of gpu.ports | keyvalue; track port.key) {
-                  @if (port.value) {
-                    <div class="font-bold italic">{{ port.key }}: {{ port.value }}</div>
-                  }
-                }
-              </div>
-            </div>
-          </div>
-        </section>
+			<div class="flex flex-col gap-4 lg:col-span-8">
+				<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+					<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+						<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
+							Especificaciones Técnicas
+						</h2>
+					</div>
+					<div class="divide-base-300 divide-y dark:divide-white/5">
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Fabricante</span>
+							<span class="font-bold">{{ gpu.manufacturer }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Modelo</span>
+							<span class="font-bold">{{ gpu.model }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Tipo de GPU</span>
+							<span
+								class="mr-1 text-base font-bold uppercase"
+								[class.text-green-600]="gpu.gpu_type === 'NVIDIA'"
+								[class.text-red-600]="gpu.gpu_type === 'AMD RADEON'"
+								[class.text-blue-600]="gpu.gpu_type === 'INTEL'"
+							>
+								{{ gpu.gpu_type }}
+							</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Memoria</span>
+							<span class="font-bold">{{ gpu.memory }} GB {{ gpu.memory_type }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Frecuencia Base</span>
+							<span class="font-bold">{{ (gpu.base_freq || 0) / 1000 | number: '1.2-2' }} GHz</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Frecuencia Boost</span>
+							<span class="text-primary font-bold">{{ (gpu.boost_freq || 0) / 1000 | number: '1.2-2' }} GHz</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Interfaz</span>
+							<span class="font-bold uppercase">{{ gpu.interface }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Frame Sync</span>
+							<span class="font-bold">{{ gpu.frame_sync }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">TDP</span>
+							<span class="font-bold">{{ gpu.tdp }} W</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Alimentación Externa</span>
+							<span class="font-bold">{{ gpu.external_power }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Puertos</span>
+							<div class="text-right">
+								@for (port of gpu.ports | keyvalue; track port.key) {
+									@if (port.value) {
+										<div class="font-bold italic">{{ port.key }}: {{ port.value }}</div>
+									}
+								}
+							</div>
+						</div>
+					</div>
+				</section>
 
-        <div class="mt-4 p-4 opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] flex flex-wrap gap-x-6 gap-y-2 border-t border-base-300 dark:border-white/5">
-          <span>ID: {{ gpu._id }}</span>
-          <span>Tipo: {{ gpu.partType.name }}</span>
-        </div>
-      </div>
-    </div>
-  } @else {
-    <div class="min-h-[60vh] flex gpus-center justify-center">
-      <span class="loading loading-ring loading-lg text-primary/50"></span>
-    </div>
-  }
+				<div
+					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
+				>
+					<span>ID: {{ gpu._id }}</span>
+					<span>Tipo: {{ gpu.partType.name }}</span>
+				</div>
+			</div>
+		</div>
+	} @else {
+		<div class="gpus-center flex min-h-[60vh] justify-center">
+			<span class="loading loading-ring loading-lg text-primary/50"></span>
+		</div>
+	}
 </div>

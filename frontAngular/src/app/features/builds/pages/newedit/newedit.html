@@ -1,296 +1,422 @@
-<div class="container mx-auto p-4 max-w-6xl" [formGroup]="form">
-  <header class="mb-8 border-b border-base-300 pb-6">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-      <div class="flex-1 w-full">
-        <input type="text"
-               formControlName="name"
-               placeholder="NOMBRE DE LA BUILD"
-               class="input input-ghost p-0 text-3xl font-black tracking-tighter uppercase text-primary focus:bg-transparent focus:outline-none w-full" />
+<div class="container mx-auto max-w-6xl p-4" [formGroup]="form">
+	<header class="border-base-300 mb-8 border-b pb-6">
+		<div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+			<div class="w-full flex-1">
+				<input
+					class="input input-ghost text-primary w-full p-0 text-3xl font-black tracking-tighter uppercase focus:bg-transparent focus:outline-none"
+					type="text"
+					formControlName="name"
+					placeholder="NOMBRE DE LA BUILD"
+				/>
 
-        <div class="flex items-center gap-3 mt-2">
-          <span class="text-xs font-bold bg-base-200 px-2 py-1 rounded text-base-content/60 uppercase tracking-widest">
-            Build ID: {{ id() || 'BORRADOR' }}
-          </span>
-          <span class="text-sm font-medium text-base-content/50 italic uppercase">Modo Edición</span>
-        </div>
-      </div>
+				<div class="mt-2 flex items-center gap-3">
+					<span class="bg-base-200 text-base-content/60 rounded px-2 py-1 text-xs font-bold tracking-widest uppercase">
+						Build ID: {{ id() || 'BORRADOR' }}
+					</span>
+					<span class="text-base-content/50 text-sm font-medium uppercase italic">Modo Edición</span>
+				</div>
+			</div>
 
-      <div class="text-right flex items-end gap-8">
-        <div>
-          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-base-content/40">Consumo Estimado</p>
-          <p class="text-2xl font-black tracking-tighter text-info text-right">{{ stats().totalWattage }}W</p>
-        </div>
-        <div>
-          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-base-content/40">Coste Total Estimado</p>
-          <p class="text-4xl font-black tracking-tighter text-success">{{ stats().totalPrice / 100 | currency: 'EUR' }}</p>
-        </div>
-      </div>
-    </div>
+			<div class="flex items-end gap-8 text-right">
+				<div>
+					<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Consumo Estimado</p>
+					<p class="text-info text-right text-2xl font-black tracking-tighter">{{ stats().totalWattage }}W</p>
+				</div>
+				<div>
+					<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Coste Total Estimado</p>
+					<p class="text-success text-4xl font-black tracking-tighter">
+						{{ stats().totalPrice / 100 | currency: 'EUR' }}
+					</p>
+				</div>
+			</div>
+		</div>
 
-    <div class="mt-6">
-      <textarea formControlName="description"
-                placeholder="Añade una descripción..."
-                class="textarea textarea-bordered bg-base-200/50 w-full text-sm italic border-base-300/50 rounded-xl leading-relaxed focus:outline-primary/30"
-                rows="2"></textarea>
-    </div>
-  </header>
+		<div class="mt-6">
+			<textarea
+				class="textarea textarea-bordered bg-base-200/50 border-base-300/50 focus:outline-primary/30 w-full rounded-xl text-sm leading-relaxed italic"
+				formControlName="description"
+				placeholder="Añade una descripción..."
+				rows="2"
+			></textarea>
+		</div>
+	</header>
 
-  <div class="overflow-x-auto">
-    <table class="w-full border-collapse">
-      <thead>
-        <tr class="text-[10px] font-black uppercase tracking-[0.15em] text-base-content/40 border-b-2 border-base-300">
-          <th class="p-4 text-left w-32">Componente</th>
-          <th class="p-4 text-left">Selección</th>
-          <th class="p-4 text-right w-32">Precio</th>
-          <th class="p-4 text-center w-16">Acción</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-base-300">
+	<div class="overflow-x-auto">
+		<table class="w-full border-collapse">
+			<thead>
+				<tr class="text-base-content/40 border-base-300 border-b-2 text-[10px] font-black tracking-[0.15em] uppercase">
+					<th class="w-32 p-4 text-left">Componente</th>
+					<th class="p-4 text-left">Selección</th>
+					<th class="w-32 p-4 text-right">Precio</th>
+					<th class="w-16 p-4 text-center">Acción</th>
+				</tr>
+			</thead>
+			<tbody class="divide-base-300 divide-y">
+				<!-- CPU -->
+				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+					<td class="p-4 align-middle">
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">CPU</span>
+					</td>
+					<td class="p-4 align-middle">
+						<div class="flex items-center gap-4">
+							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<img class="h-full w-full object-contain" [src]="getImageUrl('cpu', slots().cpu?.slug)" />
+							</div>
+							@if (slots().cpu; as part) {
+								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+							} @else {
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									(click)="goToSelect('cpu')"
+								>
+									+ Seleccionar CPU
+								</button>
+							}
+						</div>
+					</td>
+					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
+						{{ slots().cpu ? (slots().cpu!.price / 100 | currency: 'EUR') : '---' }}
+					</td>
+					<td class="p-4 text-center align-middle">
+						@if (slots().cpu) {
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('cpu')"
+							>
+								✕
+							</button>
+						}
+					</td>
+				</tr>
 
-        <!-- CPU -->
-        <tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
-          <td class="p-4 align-middle"><span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">CPU</span></td>
-          <td class="p-4 align-middle">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-                <img [src]="getImageUrl('cpu', slots().cpu?.slug)" class="h-full w-full object-contain">
-              </div>
-              @if (slots().cpu; as part) {
-                <span class="text-sm font-bold text-primary">{{ part.manufacturer }} {{ part.model }}</span>
-              } @else {
-                <button (click)="goToSelect('cpu')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar CPU</button>
-              }
-            </div>
-          </td>
-          <td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
-            {{ slots().cpu ? (slots().cpu!.price / 100 | currency: 'EUR') : '---' }}
-          </td>
-          <td class="p-4 align-middle text-center">
-            @if (slots().cpu) { <button (click)="onRemove('cpu')" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button> }
-          </td>
-        </tr>
+				<!-- PLACA BASE -->
+				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+					<td class="p-4 align-middle">
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Placa Base</span>
+					</td>
+					<td class="p-4 align-middle">
+						<div class="flex items-center gap-4">
+							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<img class="h-full w-full object-contain" [src]="getImageUrl('mobo', slots().mobo?.slug)" />
+							</div>
+							@if (slots().mobo; as part) {
+								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+							} @else {
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									(click)="goToSelect('motherboard')"
+								>
+									+ Seleccionar Placa
+								</button>
+							}
+						</div>
+					</td>
+					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
+						{{ slots().mobo ? (slots().mobo!.price / 100 | currency: 'EUR') : '---' }}
+					</td>
+					<td class="p-4 text-center align-middle">
+						@if (slots().mobo) {
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('mobo')"
+							>
+								✕
+							</button>
+						}
+					</td>
+				</tr>
 
-        <!-- PLACA BASE -->
-        <tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
-          <td class="p-4 align-middle"><span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Placa Base</span></td>
-          <td class="p-4 align-middle">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-                <img [src]="getImageUrl('mobo', slots().mobo?.slug)" class="h-full w-full object-contain">
-              </div>
-              @if (slots().mobo; as part) {
-                <span class="text-sm font-bold text-primary">{{ part.manufacturer }} {{ part.model }}</span>
-              } @else {
-                <button (click)="goToSelect('motherboard')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar Placa</button>
-              }
-            </div>
-          </td>
-          <td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
-            {{ slots().mobo ? (slots().mobo!.price / 100 | currency: 'EUR') : '---' }}
-          </td>
-          <td class="p-4 align-middle text-center">
-            @if (slots().mobo) { <button (click)="onRemove('mobo')" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button> }
-          </td>
-        </tr>
-
-        <!-- RAM (BUCLE) -->
+				<!-- RAM (BUCLE) -->
 				@for (item of slots().ram; track $index) {
-					<tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
+					<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 						<td class="p-4 align-middle">
 							@if ($first) {
-								<span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Memoria Ram</span>
+								<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Memoria Ram</span>
 							}
 						</td>
 						<td class="p-4 align-middle">
 							<div class="flex items-center gap-4">
-								<div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-									<img [src]="getImageUrl('ram', item.slug)" class="h-full w-full object-contain">
+								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+									<img class="h-full w-full object-contain" [src]="getImageUrl('ram', item.slug)" />
 								</div>
-								<span class="text-sm font-bold text-primary">
-									{{ item.manufacturer }} {{ item.model }}
-									{{ item.modules?.[0]?.quantity }}x{{ item.modules?.[0]?.size }}
+								<span class="text-primary text-sm font-bold">
+									{{ item.manufacturer }} {{ item.model }} {{ item.modules?.[0]?.quantity }}x{{
+										item.modules?.[0]?.size
+									}}
 									({{ item.speed }}MHz)
 								</span>
 							</div>
 						</td>
-						<td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
+						<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
 							{{ item.price / 100 | currency: 'EUR' }}
 						</td>
-						<td class="p-4 align-middle text-center">
-							<button (click)="onRemove('ram', $index)" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button>
+						<td class="p-4 text-center align-middle">
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('ram', $index)"
+							>
+								✕
+							</button>
 						</td>
 					</tr>
 				} @empty {
 					<!-- Fila que se muestra cuando no hay RAM seleccionada -->
-					<tr class="border-b border-base-300">
+					<tr class="border-base-300 border-b">
 						<td class="p-4 align-middle">
-							<span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Memoria Ram</span>
+							<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Memoria Ram</span>
 						</td>
 						<td class="p-4 align-middle" colspan="3">
-							<button (click)="goToSelect('ram')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar RAM</button>
+							<button
+								class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+								(click)="goToSelect('ram')"
+							>
+								+ Seleccionar RAM
+							</button>
 						</td>
 					</tr>
 				}
 				<tr class="border-none">
 					<td class="p-4"></td>
-					<td colspan="3" class="px-4 py-2">
+					<td class="px-4 py-2" colspan="3">
 						@if (slots().ram.length > 0) {
-							<button (click)="goToSelect('ram')" class="btn btn-ghost btn-xs text-primary font-bold lowercase">+ añadir otro módulo</button>
+							<button class="btn btn-ghost btn-xs text-primary font-bold lowercase" (click)="goToSelect('ram')">
+								+ añadir otro módulo
+							</button>
 						}
 					</td>
 				</tr>
 
-        <!-- STORAGE (BUCLE) -->
+				<!-- STORAGE (BUCLE) -->
 				@for (item of slots().storage; track $index) {
-					<tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
+					<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 						<td class="p-4 align-middle">
 							@if ($first) {
-								<span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Almacenamiento</span>
+								<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase"
+									>Almacenamiento</span
+								>
 							}
 						</td>
 						<td class="p-4 align-middle">
 							<div class="flex items-center gap-4">
-								<div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-									<img [src]="getImageUrl('storage', item.slug)" class="h-full w-full object-contain">
+								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+									<img class="h-full w-full object-contain" [src]="getImageUrl('storage', item.slug)" />
 								</div>
-								<span class="text-sm font-bold text-primary">
-									{{ item.manufacturer }} {{ item.model }}
-									({{ item.capacity >= 1024 ? (item.capacity/1024 + 'TB') : item.capacity + 'GB' }})
+								<span class="text-primary text-sm font-bold">
+									{{ item.manufacturer }} {{ item.model }} ({{
+										item.capacity >= 1024 ? item.capacity / 1024 + 'TB' : item.capacity + 'GB'
+									}})
 								</span>
 							</div>
 						</td>
-						<td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
+						<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
 							{{ item.price / 100 | currency: 'EUR' }}
 						</td>
-						<td class="p-4 align-middle text-center">
-							<button (click)="onRemove('storage', $index)" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button>
+						<td class="p-4 text-center align-middle">
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('storage', $index)"
+							>
+								✕
+							</button>
 						</td>
 					</tr>
 				} @empty {
 					<!-- Fila que se muestra cuando no hay discos seleccionados -->
-					<tr class="border-b border-base-300">
+					<tr class="border-base-300 border-b">
 						<td class="p-4 align-middle">
-							<span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Almacenamiento</span>
+							<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Almacenamiento</span>
 						</td>
 						<td class="p-4 align-middle" colspan="3">
-							<button (click)="goToSelect('storage')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar Disco</button>
+							<button
+								class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+								(click)="goToSelect('storage')"
+							>
+								+ Seleccionar Disco
+							</button>
 						</td>
 					</tr>
 				}
 				<tr class="border-none">
 					<td class="p-4"></td>
-					<td colspan="3" class="px-4 py-2">
+					<td class="px-4 py-2" colspan="3">
 						@if (slots().storage.length > 0) {
-							<button (click)="goToSelect('storage')" class="btn btn-ghost btn-xs text-primary font-bold lowercase">+ añadir otro disco</button>
+							<button class="btn btn-ghost btn-xs text-primary font-bold lowercase" (click)="goToSelect('storage')">
+								+ añadir otro disco
+							</button>
 						}
 					</td>
 				</tr>
 
-        <!-- GPU -->
-        <tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
-          <td class="p-4 align-middle"><span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Gráfica</span></td>
-          <td class="p-4 align-middle">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-                <img [src]="getImageUrl('gpu', slots().gpu?.slug)" class="h-full w-full object-contain">
-              </div>
-              @if (slots().gpu; as part) {
-                <span class="text-sm font-bold text-primary">{{ part.manufacturer }} {{ part.model }}</span>
-              } @else {
-                <button (click)="goToSelect('gpu')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar GPU</button>
-              }
-            </div>
-          </td>
-          <td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
-            {{ slots().gpu ? (slots().gpu!.price / 100 | currency: 'EUR') : '---' }}
-          </td>
-          <td class="p-4 align-middle text-center">
-            @if (slots().gpu) { <button (click)="onRemove('gpu')" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button> }
-          </td>
-        </tr>
+				<!-- GPU -->
+				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+					<td class="p-4 align-middle">
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Gráfica</span>
+					</td>
+					<td class="p-4 align-middle">
+						<div class="flex items-center gap-4">
+							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<img class="h-full w-full object-contain" [src]="getImageUrl('gpu', slots().gpu?.slug)" />
+							</div>
+							@if (slots().gpu; as part) {
+								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+							} @else {
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									(click)="goToSelect('gpu')"
+								>
+									+ Seleccionar GPU
+								</button>
+							}
+						</div>
+					</td>
+					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
+						{{ slots().gpu ? (slots().gpu!.price / 100 | currency: 'EUR') : '---' }}
+					</td>
+					<td class="p-4 text-center align-middle">
+						@if (slots().gpu) {
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('gpu')"
+							>
+								✕
+							</button>
+						}
+					</td>
+				</tr>
 
-        <!-- CASE -->
-        <tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
-          <td class="p-4 align-middle"><span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Chasis</span></td>
-          <td class="p-4 align-middle">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-                <img [src]="getImageUrl('case', slots().case?.slug)" class="h-full w-full object-contain">
-              </div>
-              @if (slots().case; as part) {
-                <span class="text-sm font-bold text-primary">{{ part.manufacturer }} {{ part.model }}</span>
-              } @else {
-                <button (click)="goToSelect('case')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar Caja</button>
-              }
-            </div>
-          </td>
-          <td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
-            {{ slots().case ? (slots().case!.price / 100 | currency: 'EUR') : '---' }}
-          </td>
-          <td class="p-4 align-middle text-center">
-            @if (slots().case) { <button (click)="onRemove('case')" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button> }
-          </td>
-        </tr>
+				<!-- CASE -->
+				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+					<td class="p-4 align-middle">
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Chasis</span>
+					</td>
+					<td class="p-4 align-middle">
+						<div class="flex items-center gap-4">
+							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<img class="h-full w-full object-contain" [src]="getImageUrl('case', slots().case?.slug)" />
+							</div>
+							@if (slots().case; as part) {
+								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+							} @else {
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									(click)="goToSelect('case')"
+								>
+									+ Seleccionar Caja
+								</button>
+							}
+						</div>
+					</td>
+					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
+						{{ slots().case ? (slots().case!.price / 100 | currency: 'EUR') : '---' }}
+					</td>
+					<td class="p-4 text-center align-middle">
+						@if (slots().case) {
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('case')"
+							>
+								✕
+							</button>
+						}
+					</td>
+				</tr>
 
-        <!-- PSU -->
-        <tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
-          <td class="p-4 align-middle"><span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">Fuente</span></td>
-          <td class="p-4 align-middle">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-                <img [src]="getImageUrl('psu', slots().psu?.slug)" class="h-full w-full object-contain">
-              </div>
-              @if (slots().psu; as part) {
-                <span class="text-sm font-bold text-primary">{{ part.manufacturer }} {{ part.model }} {{ part.wattage }}W ({{ part.eff_rating }})</span>
-              } @else {
-                <button (click)="goToSelect('psu')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar Fuente</button>
-              }
-            </div>
-          </td>
-          <td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
-            {{ slots().psu ? (slots().psu!.price / 100 | currency: 'EUR') : '---' }}
-          </td>
-          <td class="p-4 align-middle text-center">
-            @if (slots().psu) { <button (click)="onRemove('psu')" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button> }
-          </td>
-        </tr>
+				<!-- PSU -->
+				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+					<td class="p-4 align-middle">
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Fuente</span>
+					</td>
+					<td class="p-4 align-middle">
+						<div class="flex items-center gap-4">
+							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<img class="h-full w-full object-contain" [src]="getImageUrl('psu', slots().psu?.slug)" />
+							</div>
+							@if (slots().psu; as part) {
+								<span class="text-primary text-sm font-bold"
+									>{{ part.manufacturer }} {{ part.model }} {{ part.wattage }}W ({{ part.eff_rating }})</span
+								>
+							} @else {
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									(click)="goToSelect('psu')"
+								>
+									+ Seleccionar Fuente
+								</button>
+							}
+						</div>
+					</td>
+					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
+						{{ slots().psu ? (slots().psu!.price / 100 | currency: 'EUR') : '---' }}
+					</td>
+					<td class="p-4 text-center align-middle">
+						@if (slots().psu) {
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('psu')"
+							>
+								✕
+							</button>
+						}
+					</td>
+				</tr>
 
-        <!-- SO -->
-        <tr class="group hover:bg-base-200/50 transition-colors border-b border-base-300">
-          <td class="p-4 align-middle"><span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">SO</span></td>
-          <td class="p-4 align-middle">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
-                <img [src]="getImageUrl('os', slots().os?.slug)" class="h-full w-full object-contain">
-              </div>
-              @if (slots().os; as part) {
-                <span class="text-sm font-bold text-primary">{{ part.manufacturer }} {{ part.version }} ({{ part.mode }})</span>
-              } @else {
-                <button (click)="goToSelect('os')" class="btn btn-outline btn-primary btn-xs font-bold uppercase tracking-tighter">+ Seleccionar SO</button>
-              }
-            </div>
-          </td>
-          <td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
-            {{ slots().os ? (slots().os!.price / 100 | currency: 'EUR') : '---' }}
-          </td>
-          <td class="p-4 align-middle text-center">
-            @if (slots().os) { <button (click)="onRemove('os')" class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error font-black text-lg">✕</button> }
-          </td>
-        </tr>
+				<!-- SO -->
+				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+					<td class="p-4 align-middle">
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">SO</span>
+					</td>
+					<td class="p-4 align-middle">
+						<div class="flex items-center gap-4">
+							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<img class="h-full w-full object-contain" [src]="getImageUrl('os', slots().os?.slug)" />
+							</div>
+							@if (slots().os; as part) {
+								<span class="text-primary text-sm font-bold"
+									>{{ part.manufacturer }} {{ part.version }} ({{ part.mode }})</span
+								>
+							} @else {
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									(click)="goToSelect('os')"
+								>
+									+ Seleccionar SO
+								</button>
+							}
+						</div>
+					</td>
+					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
+						{{ slots().os ? (slots().os!.price / 100 | currency: 'EUR') : '---' }}
+					</td>
+					<td class="p-4 text-center align-middle">
+						@if (slots().os) {
+							<button
+								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+								(click)="onRemove('os')"
+							>
+								✕
+							</button>
+						}
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr class="bg-base-200/30 font-black">
+					<td class="p-4 text-right text-xs tracking-widest uppercase" colspan="2">Total configuración</td>
+					<td class="text-primary p-4 text-right text-lg">{{ stats().totalPrice / 100 | currency: 'EUR' }}</td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 
-      </tbody>
-      <tfoot>
-        <tr class="bg-base-200/30 font-black">
-          <td colspan="2" class="p-4 text-right uppercase tracking-widest text-xs">Total configuración</td>
-          <td class="p-4 text-right text-lg text-primary">{{ stats().totalPrice / 100 | currency: 'EUR' }}</td>
-          <td></td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-
-  <div class="mt-12 flex justify-end gap-4 border-t border-base-300 pt-8">
-    <button class="btn btn-ghost btn-sm text-error font-bold uppercase tracking-widest">Descartar</button>
-    <button (click)="save()" [disabled]="form.invalid" class="btn btn-primary px-10 font-black uppercase tracking-widest shadow-lg">Guardar Cambios</button>
-  </div>
+	<div class="border-base-300 mt-12 flex justify-end gap-4 border-t pt-8">
+		<button class="btn btn-ghost btn-sm text-error font-bold tracking-widest uppercase">Descartar</button>
+		<button
+			class="btn btn-primary px-10 font-black tracking-widest uppercase shadow-lg"
+			[disabled]="form.invalid"
+			(click)="save()"
+		>
+			Guardar Cambios
+		</button>
+	</div>
 </div>

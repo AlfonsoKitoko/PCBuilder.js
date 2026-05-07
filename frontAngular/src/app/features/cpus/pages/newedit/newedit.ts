@@ -1,13 +1,13 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common'
-import { Component, computed, inject, input, OnInit } from '@angular/core'
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Router, RouterModule } from '@angular/router'
-import { CpuService } from '../../../../shared/services/cpu.service'
-import { AuthService } from '../../../../shared/services/auth.service'
-import { ToastService } from '../../../../shared/services/toast.service'
-import { cpuManufacturer } from '../../../../shared/constants/index.constant'
-import { userProfile } from '../../../../shared/models/user.model' //
-import { getImageUrl } from '../../../../shared/utils/image-mapper'
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { cpuManufacturer } from '../../../../shared/constants/index.constant';
+import { userProfile } from '../../../../shared/models/user.model'; //
+import { AuthService } from '../../../../shared/services/auth.service';
+import { CpuService } from '../../../../shared/services/cpu.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
 	selector: 'app-newedit',
@@ -15,52 +15,52 @@ import { getImageUrl } from '../../../../shared/utils/image-mapper'
 	templateUrl: './newedit.html',
 })
 export default class NewEdit implements OnInit {
-	id = input<string>()
-	slug = input<string>()
+	id = input<string>();
+	slug = input<string>();
 
-	private readonly fb = inject(FormBuilder)
-	private readonly cpuService = inject(CpuService)
-	private readonly authService = inject(AuthService)
-	private readonly router = inject(Router)
-	private readonly toast = inject(ToastService)
+	private readonly fb = inject(FormBuilder);
+	private readonly cpuService = inject(CpuService);
+	private readonly authService = inject(AuthService);
+	private readonly router = inject(Router);
+	private readonly toast = inject(ToastService);
 
-	readonly getImageUrl = getImageUrl
+	readonly getImageUrl = getImageUrl;
 
-	isLoading = this.cpuService.isLoading
-	isEditMode = computed(() => !!this.id())
-	selectedCpu = this.cpuService.selectedCpu
+	isLoading = this.cpuService.isLoading;
+	isEditMode = computed(() => !!this.id());
+	selectedCpu = this.cpuService.selectedCpu;
 
 	// Configuración de roles permitidos (igual que en tu archivo de Builds)
-	managementRoles = [userProfile.ADMIN] //
+	managementRoles = [userProfile.ADMIN]; //
 
-	cpuManufacturers = Object.values(cpuManufacturer)
+	cpuManufacturers = Object.values(cpuManufacturer);
 
 	// TODO
 	form: FormGroup = this.fb.group({
 		manufacturer: ['', [Validators.required]],
 		model: ['', [Validators.required]],
-		series:['',[Validators.required]],
-		microarchitecture:['',[Validators.required]],
-		family:['',[Validators.required]],
-		socket:['',[Validators.required]],
-		core_count:[0,[Validators.required]],
-		thread_count:[0,[Validators.required]],
-		base_freq:[0,[Validators.required]],
-		boost_freq:[0,[Validators.required]],
-		l1_cache:[0],
-		l2_cache:[0,[Validators.required]],
-		l3_cache:[0,[Validators.required]],
-		tdp:[0,[Validators.required]],
-		hasIntegrated:['',[Validators.required]],
-		integrated_graphics:['',[]],
+		series: ['', [Validators.required]],
+		microarchitecture: ['', [Validators.required]],
+		family: ['', [Validators.required]],
+		socket: ['', [Validators.required]],
+		core_count: [0, [Validators.required]],
+		thread_count: [0, [Validators.required]],
+		base_freq: [0, [Validators.required]],
+		boost_freq: [0, [Validators.required]],
+		l1_cache: [0],
+		l2_cache: [0, [Validators.required]],
+		l3_cache: [0, [Validators.required]],
+		tdp: [0, [Validators.required]],
+		hasIntegrated: ['', [Validators.required]],
+		integrated_graphics: ['', []],
 		price: [0, [Validators.required, Validators.min(0)]],
-	})
+	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva
 	canManage = computed(() => {
 		const user = this.authService.user();
 		return user && this.managementRoles.includes(user.profile as userProfile);
-	})
+	});
 
 	ngOnInit() {
 		if (!this.canManage()) {
@@ -85,7 +85,7 @@ export default class NewEdit implements OnInit {
 				error: () => {
 					this.toast.show('Error al buscar el Procesador (CPU)', 'error');
 					this.router.navigate(['/cpu/all']);
-				}
+				},
 			});
 		}
 	}
@@ -107,9 +107,7 @@ export default class NewEdit implements OnInit {
 			boost_freq: Math.round(rawValue.boost_freq * 1000),
 		};
 
-		const request = this.isEditMode()
-			? this.cpuService.update(this.id()!, data)
-			: this.cpuService.create(data);
+		const request = this.isEditMode() ? this.cpuService.update(this.id()!, data) : this.cpuService.create(data);
 
 		request.subscribe({
 			next: () => {
@@ -120,7 +118,7 @@ export default class NewEdit implements OnInit {
 			error: (err) => {
 				this.isLoading.set(false);
 				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			}
+			},
 		});
 	}
 }

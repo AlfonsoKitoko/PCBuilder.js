@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las rams -> /ram
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles ram (ID) -> /ram/idRam/ramSlug
 	{ path: ':id/:slug', loadComponent: () => import('./pages/ram/ram') },
-]
+];

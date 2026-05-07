@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core'
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Router, RouterLink } from '@angular/router'
-import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../../shared/constants/patterns'
-import { AuthService } from '../../../../shared/services/auth.service'
-import { Validator } from '../../../../shared/services/validator.service'
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../../shared/constants/patterns';
+import { AuthService } from '../../../../shared/services/auth.service';
+import { Validator } from '../../../../shared/services/validator.service';
 
 @Component({
 	selector: 'app-register',
@@ -34,28 +34,28 @@ export default class Register {
 
 	onRegister() {
 		// Bloquea los intentos extra si ya está cargando
-		if (this.isLoading()) return
+		if (this.isLoading()) return;
 
 		if (this.registerForm.invalid) {
-			this.registerForm.markAllAsTouched()
-			return
+			this.registerForm.markAllAsTouched();
+			return;
 		}
 
-		this.errorMessage.set(null)
-		this.isLoading.set(true)
+		this.errorMessage.set(null);
+		this.isLoading.set(true);
 
-		const { passwordRepeat, ...registerData } = this.registerForm.value
+		const { passwordRepeat, ...registerData } = this.registerForm.value;
 
 		this.authService.register(registerData).subscribe({
 			next: () => {
-				this.isLoading.set(false)
-				this.router.navigate(['/'])
+				this.isLoading.set(false);
+				this.router.navigate(['/']);
 			},
 			error: (err) => {
-				this.isLoading.set(false)
-				this.errorMessage.set(err.error?.message || ' Error al registrarse. Por favor, inténtalo de nuevo.')
-				setTimeout(() => this.errorMessage.set(null), 5000)
+				this.isLoading.set(false);
+				this.errorMessage.set(err.error?.message || ' Error al registrarse. Por favor, inténtalo de nuevo.');
+				setTimeout(() => this.errorMessage.set(null), 5000);
 			},
-		})
+		});
 	}
 }

@@ -5,27 +5,14 @@
 	<div
 		class="animate-in slide-in-from-bottom-4 w-full max-w-md transform overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl duration-300"
 	>
-		<div
-			class="bg-brand-surface flex items-center justify-between border-b border-slate-100 px-6 py-5"
-		>
+		<div class="bg-brand-surface flex items-center justify-between border-b border-slate-100 px-6 py-5">
 			<h3 class="text-brand-primary text-xl font-extrabold">{{ data().title }}</h3>
 			<button
-				(click)="cancel.emit()"
 				class="hover:text-brand-danger cursor-pointer p-1 text-slate-400 transition-colors"
+				(click)="cancel.emit()"
 			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-6 w-6"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M6 18L18 6M6 6l12 12"
-					/>
+				<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 				</svg>
 			</button>
 		</div>
@@ -37,17 +24,17 @@
 		<div
 			class="bg-brand-surface flex flex-col-reverse gap-3 border-t border-slate-100 px-6 py-5 sm:flex-row sm:justify-end"
 		>
-			<button (click)="cancel.emit()" class="btn-outline px-6 py-2">
+			<button class="btn-outline px-6 py-2" (click)="cancel.emit()">
 				{{ data().cancelLabel || 'Cancelar' }}
 			</button>
 
 			<button
-				(click)="confirm.emit()"
+				class="px-8 py-2"
 				[ngClass]="{
 					'btn-danger': data().type === 'danger',
 					'btn-primary': data().type !== 'danger',
 				}"
-				class="px-8 py-2"
+				(click)="confirm.emit()"
 			>
 				{{ data().confirmLabel || 'Confirmar' }}
 			</button>

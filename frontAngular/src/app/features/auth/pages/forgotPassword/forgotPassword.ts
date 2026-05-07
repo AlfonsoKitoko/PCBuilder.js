@@ -41,7 +41,9 @@ export default class ForgotPassword {
 			},
 			error: (err) => {
 				this.isLoading.set(false);
-				this.errorMessage.set(err.error?.message || 'Error al mandar el correo. Por favor inténtalo de nuevo en unos minutos.');
+				this.errorMessage.set(
+					err.error?.message || 'Error al mandar el correo. Por favor inténtalo de nuevo en unos minutos.',
+				);
 			},
 		});
 	}

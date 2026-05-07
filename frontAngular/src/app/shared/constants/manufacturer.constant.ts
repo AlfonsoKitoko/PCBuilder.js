@@ -1,4 +1,4 @@
 export enum cpuManufacturer {
-	intel='INTEL',
-	amd='AMD'
+	intel = 'INTEL',
+	amd = 'AMD',
 }

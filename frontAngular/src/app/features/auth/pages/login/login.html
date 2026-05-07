@@ -28,13 +28,23 @@
 				/>
 			</div>
 
-			<button class="btn btn-primary group text-primary-content mt-2 h-auto py-3 font-bold" [disabled]="loginForm.invalid || isLoading()" type="submit">
+			<button
+				class="btn btn-primary group text-primary-content mt-2 h-auto py-3 font-bold"
+				[disabled]="loginForm.invalid || isLoading()"
+				type="submit"
+			>
 				@if (isLoading()) {
 					<span class="loading loading-spinner"></span>
 					<span>Entrando...</span>
 				} @else {
 					<span class="text-lg">Iniciar sesión</span>
-					<svg class="h-5 w-5 transition-transform group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<svg
+						class="h-5 w-5 transition-transform group-hover:translate-x-1"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
 					</svg>
 				}
@@ -51,7 +61,10 @@
 
 			<a class="btn btn-ghost btn-sm text-primary" routerLink="/auth/forgot-password"> ¿Olvidaste la contraseña? </a>
 
-			<a class="btn bg-secondary/10 border-secondary/20 text-secondary-focus hover:bg-secondary hover:text-secondary-content border-2 font-bold transition-all" routerLink="/auth/register">
+			<a
+				class="btn bg-secondary/10 border-secondary/20 text-secondary-focus hover:bg-secondary hover:text-secondary-content border-2 font-bold transition-all"
+				routerLink="/auth/register"
+			>
 				Crear una cuenta nueva
 			</a>
 		</form>

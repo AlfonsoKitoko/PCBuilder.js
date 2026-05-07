@@ -1,13 +1,13 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common'
-import { Component, computed, inject, input, OnInit } from '@angular/core'
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { Router, RouterModule } from '@angular/router'
-import { GpuService } from '../../../../shared/services/gpu.service'
-import { AuthService } from '../../../../shared/services/auth.service'
-import { ToastService } from '../../../../shared/services/toast.service'
-import { gpuType, gddrType, syncType, interfaceType, externalPower } from '../../../../shared/constants/index.constant'
-import { userProfile } from '../../../../shared/models/user.model' //
-import { getImageUrl } from '../../../../shared/utils/image-mapper'
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { externalPower, gddrType, gpuType, interfaceType, syncType } from '../../../../shared/constants/index.constant';
+import { userProfile } from '../../../../shared/models/user.model'; //
+import { AuthService } from '../../../../shared/services/auth.service';
+import { GpuService } from '../../../../shared/services/gpu.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
 	selector: 'app-newedit',
@@ -15,56 +15,56 @@ import { getImageUrl } from '../../../../shared/utils/image-mapper'
 	templateUrl: './newedit.html',
 })
 export default class NewEdit implements OnInit {
-	id = input<string>()
-	slug = input<string>()
+	id = input<string>();
+	slug = input<string>();
 
-	private readonly fb = inject(FormBuilder)
-	private readonly gpuService = inject(GpuService)
-	private readonly authService = inject(AuthService)
-	private readonly router = inject(Router)
-	private readonly toast = inject(ToastService)
+	private readonly fb = inject(FormBuilder);
+	private readonly gpuService = inject(GpuService);
+	private readonly authService = inject(AuthService);
+	private readonly router = inject(Router);
+	private readonly toast = inject(ToastService);
 
-	readonly getImageUrl = getImageUrl
+	readonly getImageUrl = getImageUrl;
 
-	isLoading = this.gpuService.isLoading
-	isEditMode = computed(() => !!this.id())
-	selectedGpu = this.gpuService.selectedGpu
+	isLoading = this.gpuService.isLoading;
+	isEditMode = computed(() => !!this.id());
+	selectedGpu = this.gpuService.selectedGpu;
 
 	// Configuración de roles permitidos (igual que en tu archivo de Builds)
-	managementRoles = [userProfile.ADMIN] //
+	managementRoles = [userProfile.ADMIN]; //
 
-	gpuTypes = Object.values(gpuType)
-	syncTypes = Object.values(syncType)
-	externalPowers = Object.values(externalPower)
-	interfaceTypes = Object.values(interfaceType)
-	gddrTypes = Object.values(gddrType)
+	gpuTypes = Object.values(gpuType);
+	syncTypes = Object.values(syncType);
+	externalPowers = Object.values(externalPower);
+	interfaceTypes = Object.values(interfaceType);
+	gddrTypes = Object.values(gddrType);
 
 	form: FormGroup = this.fb.group({
 		manufacturer: ['', [Validators.required]],
 		model: ['', [Validators.required]],
-		gpu_type: ['',[Validators.required]],
-		base_freq: [0,[Validators.required]],
-		boost_freq: [0,[Validators.required]],
-		memory: ['',[Validators.required]],
-		memory_type: ['',[Validators.required]],
-		interface: ['',[Validators.required]],
-		frame_sync: ['',[Validators.required]],
-		tdp: [0,[Validators.required]],
+		gpu_type: ['', [Validators.required]],
+		base_freq: [0, [Validators.required]],
+		boost_freq: [0, [Validators.required]],
+		memory: ['', [Validators.required]],
+		memory_type: ['', [Validators.required]],
+		interface: ['', [Validators.required]],
+		frame_sync: ['', [Validators.required]],
+		tdp: [0, [Validators.required]],
 		ports: this.fb.group({
-			vga:[0],
-			dvi:[0],
-			hdmi:[0],
-			displayport:[0],
+			vga: [0],
+			dvi: [0],
+			hdmi: [0],
+			displayport: [0],
 		}),
-		external_power: ['',[Validators.required]],
+		external_power: ['', [Validators.required]],
 		price: [0, [Validators.required, Validators.min(0)]],
-	})
+	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva
 	canManage = computed(() => {
 		const user = this.authService.user();
 		return user && this.managementRoles.includes(user.profile as userProfile);
-	})
+	});
 
 	ngOnInit() {
 		if (!this.canManage()) {
@@ -90,7 +90,7 @@ export default class NewEdit implements OnInit {
 				error: () => {
 					this.toast.show('Error al buscar la Tarjeta Gráfica (GPU)', 'error');
 					this.router.navigate(['/gpu/all']);
-				}
+				},
 			});
 		}
 	}
@@ -112,9 +112,7 @@ export default class NewEdit implements OnInit {
 			boost_freq: Math.round(rawValue.boost_freq * 1000),
 		};
 
-		const request = this.isEditMode()
-			? this.gpuService.update(this.id()!, data)
-			: this.gpuService.create(data);
+		const request = this.isEditMode() ? this.gpuService.update(this.id()!, data) : this.gpuService.create(data);
 
 		request.subscribe({
 			next: () => {
@@ -125,7 +123,7 @@ export default class NewEdit implements OnInit {
 			error: (err) => {
 				this.isLoading.set(false);
 				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			}
+			},
 		});
 	}
 }

@@ -1,10 +1,10 @@
-import { pcParts } from "../constants/index.constant"
+import { pcParts } from '../constants/index.constant';
 
 export interface Part {
-	_id?: string
-	name: pcParts
-	slug: string
+	_id?: string;
+	name: pcParts;
+	slug: string;
 
-	createdAt?: string
-	updatedAt?: string
+	createdAt?: string;
+	updatedAt?: string;
 }

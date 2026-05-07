@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router"
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	// Todas las users -> /users
@@ -12,4 +12,4 @@ export const routes: Routes = [
 
 	// Detalles user (ID) -> /users/id-user
 	{ path: ':id', loadComponent: () => import('./pages/user/user') },
-]
+];
