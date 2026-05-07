@@ -1,1 +1,150 @@
-<p>build works!</p>
+@if (build(); as build) {
+<div class="container mx-auto p-4 max-w-6xl">
+  <header class="mb-8 border-b border-base-300 pb-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <div>
+        <h1 class="text-3xl font-black tracking-tighter uppercase text-primary">{{ build.name }}</h1>
+        <div class="flex items-center gap-3 mt-2">
+          <span class="text-xs font-bold bg-base-200 px-2 py-1 rounded text-base-content/60 uppercase tracking-widest">Build ID: {{ build._id }}</span>
+          <span class="text-sm font-medium text-base-content/50 italic">Publicada por @{{ build.owner.username }}</span>
+        </div>
+      </div>
+      <div class="text-right flex items-end gap-8">
+  <!-- Wattage Estimado -->
+  <div>
+    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-base-content/40">Consumo Estimado</p>
+    <p class="text-2xl font-black tracking-tighter text-info text-right">{{ build.totalWattage }}W</p>
+  </div>
+
+  <!-- Coste Total -->
+  <div>
+    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-base-content/40">Coste Total Estimado</p>
+    <p class="text-4xl font-black tracking-tighter text-success">{{ build.totalPrice / 100 | currency: 'EUR' }}</p>
+  </div>
+</div>
+    </div>
+
+    @if(build.description) {
+      <div class="mt-6 p-4 bg-base-200/50 rounded-xl border border-base-300/50">
+        <p class="text-sm leading-relaxed text-base-content/70 italic">"{{ build.description }}"</p>
+      </div>
+    }
+  </header>
+
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="text-[10px] font-black uppercase tracking-[0.15em] text-base-content/40 border-b-2 border-base-300">
+          <th class="p-4 text-left w-32">Componente</th>
+          <th class="p-4 text-left">Selección</th>
+          <th class="p-4 text-right w-32">Precio</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-base-300">
+
+        <!-- OBLIGATORIOS -->
+        <ng-container *ngTemplateOutlet="rowTemplate; context: {
+          label: 'CPU',
+          part: build.cpu,
+          name: build.cpu.manufacturer + ' ' + build.cpu.model,
+          type: 'cpu'
+        }"></ng-container>
+
+        <ng-container *ngTemplateOutlet="rowTemplate; context: {
+          label: 'Placa Base',
+          part: build.mobo,
+          name: build.mobo.manufacturer + ' ' + build.mobo.model,
+          type: 'mobo'
+        }"></ng-container>
+
+        @for (ramPart of build.ram; track $index) {
+          <ng-container *ngTemplateOutlet="rowTemplate; context: {
+            label: $first ? 'Memoria Ram' : '',
+            part: ramPart,
+            name: ramPart.manufacturer + ' ' + ramPart.model + ' ' +
+                  (ramPart.modules?.[0]?.quantity + ' x ' + ramPart.modules?.[0]?.size) +
+                  ' (' + ramPart.speed + ' MHz) ' + ramPart.ram_type,
+            type: 'ram'
+          }"></ng-container>
+        }
+
+        @for (disk of build.storage; track $index) {
+          <ng-container *ngTemplateOutlet="rowTemplate; context: {
+            label: $first ? 'Almacenamiento' : '',
+            part: disk,
+            name: disk.manufacturer + ' ' + disk.model + ' (' + (disk.capacity >= 1024 ? (disk.capacity / 1024 + ' TB') : (disk.capacity + ' GB')) + ')',
+            type: 'storage'
+          }"></ng-container>
+        }
+
+        <!-- OPCIONAL: GPU -->
+        <ng-container *ngTemplateOutlet="rowTemplate; context: {
+          label: 'Gráfica',
+          part: build.gpu,
+          name: build.gpu ? (build.gpu.manufacturer + ' ' + build.gpu.model) : '---',
+          type: 'gpu'
+        }"></ng-container>
+
+        <!-- OBLIGATORIOS -->
+        <ng-container *ngTemplateOutlet="rowTemplate; context: {
+          label: 'Chasis',
+          part: build.case,
+          name: build.case.manufacturer + ' ' + build.case.model,
+          type: 'case'
+        }"></ng-container>
+
+        <ng-container *ngTemplateOutlet="rowTemplate; context: {
+          label: 'Fuente',
+          part: build.psu,
+          name: build.psu.manufacturer + ' ' + build.psu.model + ' ' + build.psu.wattage + 'W (' + build.psu.eff_rating + ')',
+          type: 'psu'
+        }"></ng-container>
+
+        <!-- OPCIONAL: SO -->
+        <ng-container *ngTemplateOutlet="rowTemplate; context: {
+          label: 'SO',
+          part: build.os,
+          name: build.os ? (build.os.manufacturer + ' ' + build.os.version + ' (' + build.os.mode + ')') : '---',
+          type: 'os'
+        }"></ng-container>
+
+      </tbody>
+      <tfoot>
+        <tr class="bg-base-200/30 font-black">
+          <td colspan="2" class="p-4 text-right uppercase tracking-widest text-xs">Total</td>
+          <td class="p-4 text-right text-lg text-primary">{{ build.totalPrice / 100 | currency: 'EUR' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<ng-template #rowTemplate let-label="label" let-part="part" let-name="name" let-type="type">
+  <tr (click)="part && goToDetail(part.partType?.slug, part._id, part.slug)"
+      class="group hover:bg-base-200/50 transition-colors border-b border-base-300"
+      [class.cursor-pointer]="part">
+    <td class="p-4 align-middle">
+      <span class="text-[10px] font-black uppercase tracking-widest text-base-content/40">{{ label }}</span>
+    </td>
+    <td class="p-4 align-middle">
+      <div class="flex items-center gap-4">
+        <div class="h-12 w-12 bg-white rounded border border-base-300 p-1 shrink-0">
+          <img [src]="getImageUrl(type, part?.slug)"
+               class="h-full w-full object-contain"
+               (error)="$any($event.target).src=getImageUrl(undefined)">
+        </div>
+        <span class="text-sm font-bold text-primary" [class.group-hover:underline]="part">{{ name }}</span>
+      </div>
+    </td>
+    <td class="p-4 align-middle text-right font-bold text-sm tracking-tighter">
+      {{ part ? (part.price / 100 | currency: 'EUR') : '---' }}
+    </td>
+  </tr>
+</ng-template>
+
+} @else {
+  <div class="flex flex-col items-center justify-center py-20">
+    <span class="loading loading-ring loading-lg text-primary"></span>
+    <p class="mt-4 text-xs font-bold uppercase tracking-widest opacity-30">Cargando Build...</p>
+  </div>
+}
