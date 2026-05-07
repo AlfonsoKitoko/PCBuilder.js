@@ -3,7 +3,9 @@ export interface ModalOptions {
 	message: string
 	confirmLabel?: string
 	cancelLabel?: string
-	type?: 'confirm' | 'danger' | 'info'
+	type?: ModalType
 }
+
+export type ModalType = 'confirm' | 'danger' | 'info'
 
 export interface ModalResult { confirmed: boolean }
