@@ -7,6 +7,8 @@ export interface User {
 	email: string
 	birthDate: string
 	profile: userProfile
+	slug: string
+
 	createdAt?: string
 	updatedAt?: string
 }

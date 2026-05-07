@@ -1,1 +1,111 @@
-<p>users works!</p>
+<div class="container mx-auto p-4 max-w-7xl">
+  <header class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-bold tracking-tight text-base-content uppercase">Gestión de Usuarios</h1>
+      <p class="text-[10px] text-base-content/50 font-bold uppercase tracking-widest mt-1">
+        {{ tableHandler.filteredData().length }} usuarios registrados
+      </p>
+    </div>
+
+    <div class="relative w-full md:w-64">
+      <input
+        type="text"
+        [value]="tableHandler.searchTerm()"
+        (input)="tableHandler.searchTerm.set($any($event.target).value)"
+        placeholder="Buscar usuario o email..."
+        class="input input-bordered input-sm w-full rounded-lg bg-base-100 h-9 text-xs focus:border-primary"
+      />
+    </div>
+  </header>
+
+  <!-- VISTA ESCRITORIO -->
+  <div class="hidden lg:block border-t border-base-300 dark:border-white/10">
+    <table class="w-full border-collapse">
+      <thead class="bg-base-200/30">
+        <tr class="text-[9px] font-bold uppercase tracking-widest text-base-content/50 border-b border-base-300 dark:border-white/10">
+          <th class="p-4 w-12"></th>
+          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('username')">
+            Usuario @if(tableHandler.sortCol() === 'username'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('firstName')">
+            Nombre Completo @if(tableHandler.sortCol() === 'firstName'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('email')">
+            Email @if(tableHandler.sortCol() === 'email'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('birthDate')">
+            F. Nacimiento @if(tableHandler.sortCol() === 'birthDate'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+          <th class="p-3 text-right pr-6 cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('profile')">
+            Perfil @if(tableHandler.sortCol() === 'profile'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-base-300 dark:divide-white/5">
+        @for (user of tableHandler.filteredData(); track user._id) {
+          <tr (click)="goToDetail(user._id)" class="group hover:bg-base-200/50 transition-colors cursor-pointer">
+            <td class="p-3 align-middle">
+              <div class="h-10 w-10 bg-primary/10 flex items-center justify-center rounded-full text-primary font-black text-xs border border-primary/20 uppercase">
+                {{ user.username.substring(0,2) }}
+              </div>
+            </td>
+            <td class="p-3 align-middle">
+              <div class="text-sm font-bold text-primary group-hover:underline italic underline-offset-4 tracking-tight">
+                {{ user.username }}
+              </div>
+            </td>
+            <td class="p-3 align-middle text-sm font-semibold uppercase opacity-80">
+              {{ user.firstName }} {{ user.lastName }}
+            </td>
+            <td class="p-3 align-middle text-xs font-medium text-base-content/60 lowercase italic font-mono">
+              {{ user.email }}
+            </td>
+            <td class="p-3 align-middle text-xs font-bold opacity-60 tracking-widest">
+              {{ user.birthDate | date:'dd/MM/yyyy' }}
+            </td>
+            <td class="p-3 text-right align-middle pr-6">
+              <span class="badge badge-sm font-black text-[9px] uppercase tracking-tighter"
+                    [ngClass]="user.profile === 'ADMIN' ? 'badge-primary' : 'badge-ghost'">
+                {{ user.profile }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VISTA MÓVIL (TARJETAS) -->
+  <div class="block lg:hidden border-t border-base-300 dark:border-white/10">
+    <div class="flex flex-col">
+      @for (user of tableHandler.filteredData(); track user._id) {
+        <div (click)="goToDetail(user._id)" class="group flex gap-4 border-b border-base-300 bg-base-100 p-4 transition-colors hover:bg-base-200/50 dark:border-white/10 dark:bg-transparent cursor-pointer">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center bg-primary/10 rounded-xl border border-primary/20">
+             <i class="ri-user-fill text-primary"></i>
+          </div>
+
+          <div class="flex flex-1 flex-col gap-1">
+            <div class="flex items-baseline justify-between">
+              <h3 class="text-base font-black text-primary group-hover:underline underline-offset-2 tracking-tighter">
+                {{ user.username }}
+              </h3>
+              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full"
+                    [ngClass]="user.profile === 'ADMIN' ? 'bg-primary text-primary-content' : 'bg-base-200'">
+                {{ user.profile }}
+              </span>
+            </div>
+
+            <div class="flex flex-col text-[11px] font-medium text-base-content/70">
+              <span class="uppercase tracking-wide font-bold opacity-40">{{ user.firstName }} {{ user.lastName }}</span>
+              <span class="italic lowercase font-mono opacity-60">{{ user.email }}</span>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="py-12 text-center text-xs font-medium opacity-30 italic font-mono uppercase tracking-[0.2em]">
+          No hay usuarios que coincidan con "{{ tableHandler.searchTerm() }}"
+        </div>
+      }
+    </div>
+  </div>
+</div>
