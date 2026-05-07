@@ -2,14 +2,14 @@ import { Routes } from "@angular/router"
 
 export const routes: Routes = [
 	// Todas las psus -> /psus
-	{ path: '', loadComponent: () => import('./pages/psus/psus') },
-
-	// Detalles psu (ID) -> /psus/id-psu
-	{ path: '/:id', loadComponent: () => import('./pages/psu/psu') },
+	{ path: 'all', loadComponent: () => import('./pages/psus/psus') },
 
 	// Crear psu -> /psus
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar psu (ID) -> /psus/id-psu
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Actualizar psu (ID) -> /psus/idPsu/psuSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
+
+	// Detalles psu (ID) -> /psus/idPsu/psuSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/psu/psu') },
 ]

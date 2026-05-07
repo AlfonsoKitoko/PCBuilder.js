@@ -1,15 +1,15 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	// Todas las moboss -> /mobos
-	{ path: '', loadComponent: () => import('./pages/mobos/mobos') },
+	// Todas las moboss -> /mobo
+	{ path: 'all', loadComponent: () => import('./pages/mobos/mobos') },
 
-	// Detalles mobos (ID) -> /mobos/id-mobo
-	{ path: '/:id', loadComponent: () => import('./pages/mobo/mobo') },
+	// Crear mobos -> /mobo
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Crear mobos -> /mobos
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	// Actualizar mobos (ID) -> /mobo/idMobo/moboSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar mobos (ID) -> /mobos/id-mobo
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Detalles mobo (ID) -> /mobo/idMobo/moboSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/mobo/mobo') },
 ]

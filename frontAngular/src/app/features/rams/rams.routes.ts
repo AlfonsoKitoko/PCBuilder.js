@@ -1,15 +1,15 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	// Todas las rams -> /rams
-	{ path: '', loadComponent: () => import('./pages/rams/rams') },
+	// Todas las rams -> /ram
+	{ path: 'all', loadComponent: () => import('./pages/rams/rams') },
 
-	// Detalles ram (ID) -> /rams/id-ram
-	{ path: '/:id', loadComponent: () => import('./pages/ram/ram') },
+	// Crear ram -> /ram
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Crear ram -> /rams
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	// Actualizar ram (ID) -> /ram/idRam/ramSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar ram (ID) -> /rams/id-ram
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Detalles ram (ID) -> /ram/idRam/ramSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/ram/ram') },
 ]

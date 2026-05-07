@@ -1,15 +1,15 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	// Todas las storages -> /storages
-	{ path: '', loadComponent: () => import('./pages/storages/storages') },
+	// Todas las storages -> /storage
+	{ path: 'all', loadComponent: () => import('./pages/storages/storages') },
 
-	// Detalles storage (ID) -> /storages/id-storage
-	{ path: '/:id', loadComponent: () => import('./pages/storage/storage') },
+	// Crear storage -> /storage
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Crear storage -> /storages
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	// Actualizar storage (ID) -> /storage/idStorage/storageSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar storage (ID) -> /storages/id-storage
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Detalles storage (ID) -> /storage/idStorage/storageSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/storage/storage') },
 ]

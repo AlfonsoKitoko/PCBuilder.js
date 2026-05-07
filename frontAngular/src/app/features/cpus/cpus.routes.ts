@@ -1,15 +1,15 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	// Todas las cpus -> /cpus
-	{ path: '', loadComponent: () => import('./pages/cpus/cpus') },
+	// Todas las cpus -> /cpu
+	{ path: 'all', loadComponent: () => import('./pages/cpus/cpus') },
 
-	// Detalles cpu (ID) -> /cpus/id-cpu
-	{ path: '/:id', loadComponent: () => import('./pages/cpu/cpu') },
+	// Crear cpu -> /cpu
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Crear cpu -> /cpus
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	// Actualizar cpu (ID) -> /cpu/idCpu/cpuSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar cpu (ID) -> /cpus/id-cpu
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Detalles cpu (ID) -> /cpu/idCpu/cpuSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/cpu/cpu') },
 ]

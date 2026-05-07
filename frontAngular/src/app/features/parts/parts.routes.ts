@@ -1,15 +1,15 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	// Todas las partes -> /parts
+	// Todas las partes -> /categories
 	{ path: '', loadComponent: () => import('./pages/parts/parts') },
 
-	// Detalles parte (ID) -> /parts/id-part
-	{ path: '/:id', loadComponent: () => import('./pages/part/part') },
+	// Crear parte -> /categories
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Crear parte -> /parts
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	// Actualizar parte (ID) -> /categories/idPart/partSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar parte (ID) -> /parts/id-part
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Detalles parte (ID) -> /categories/idPart/partSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/part/part') },
 ]

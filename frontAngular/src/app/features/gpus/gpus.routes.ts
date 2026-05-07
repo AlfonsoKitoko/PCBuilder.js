@@ -1,15 +1,15 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	// Todas las gpus -> /gpus
-	{ path: '', loadComponent: () => import('./pages/gpus/gpus') },
+	// Todas las gpus -> /gpu
+	{ path: 'all', loadComponent: () => import('./pages/gpus/gpus') },
 
-	// Detalles gpu (ID) -> /gpus/id-gpu
-	{ path: '/:id', loadComponent: () => import('./pages/gpu/gpu') },
+	// Crear gpu -> /gpu
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Crear gpu -> /gpus
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	// Actualizar gpu (ID) -> /gpu/idGpu/gpuSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar gpu (ID) -> /gpus/id-gpu
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Detalles gpu (ID) -> /gpu/idGpu/gpuSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/gpu/gpu') },
 ]

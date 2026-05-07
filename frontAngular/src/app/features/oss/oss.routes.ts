@@ -1,15 +1,15 @@
 import { Routes } from "@angular/router"
 
 export const routes: Routes = [
-	// Todas las oss -> /oss
-	{ path: '', loadComponent: () => import('./pages/oss/oss') },
+	// Todas las oss -> /os
+	{ path: 'all', loadComponent: () => import('./pages/oss/oss') },
 
-	// Detalles os (ID) -> /oss/id-os
-	{ path: '/:id', loadComponent: () => import('./pages/os/os') },
+	// Crear os -> /os
+	{ path: 'new', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Crear os -> /oss
-	{ path: '/', loadComponent: () => import('./pages/new/new') },
+	// Actualizar os (ID) -> /os/idOs/osSlug
+	{ path: 'edit/:id/:slug', loadComponent: () => import('./pages/newedit/newedit') },
 
-	// Actualizar os (ID) -> /oss/id-os
-	{ path: '/edit/:id', loadComponent: () => import('./pages/edit/edit') },
+	// Detalles os (ID) -> /os/idOs/osSlug
+	{ path: ':id/:slug', loadComponent: () => import('./pages/os/os') },
 ]
