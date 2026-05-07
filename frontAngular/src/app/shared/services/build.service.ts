@@ -15,8 +15,10 @@ export class BuildService {
 	selectedBuild = signal<Build | null>(null);
 	isLoading = signal(false);
 
-	currentBuild = signal<BuildState>({
+	currentBuild = signal<BuildState & { name?: string; description?: string }>({
 		_id: undefined,
+		name: '',
+		description: '',
 		cpu: null,
 		mobo: null,
 		gpu: null,
@@ -26,6 +28,45 @@ export class BuildService {
 		case: null,
 		os: null,
 	});
+
+	analysis = signal<{ errors: string[]; totalWattage: number; isValid: boolean }>({
+		errors: [],
+		totalWattage: 0,
+		isValid: false,
+	});
+
+	updateMetadata(name: string, description: string) {
+		this.currentBuild.update((state) => ({ ...state, name, description }));
+	}
+
+	checkCompatibility() {
+		const b = this.currentBuild();
+		if (!b.cpu && !b.mobo && b.ram.length === 0) {
+			this.analysis.set({ errors: [], totalWattage: 0, isValid: false });
+			return;
+		}
+
+		const payload = {
+			cpu: b.cpu?._id,
+			mobo: b.mobo?._id,
+			ram: b.ram.map((r) => r._id),
+			storage: b.storage.map((s) => s._id),
+			gpu: b.gpu?._id,
+			case: b.case?._id,
+			psu: b.psu?._id,
+		};
+
+		this.http.post<ApiResponse<any>>(`${this.apiUrl}/validate`, payload, { withCredentials: true }).subscribe({
+			next: (res) => {
+				this.analysis.set({
+					errors: res.data.errors || [],
+					totalWattage: res.data.totalWattage || 0,
+					isValid: res.data.isValid ?? false,
+				});
+			},
+			error: (err) => console.error('Error en el Build Engine:', err),
+		});
+	}
 
 	addPart(type: keyof BuildState, part: any) {
 		this.currentBuild.update((state) => {
@@ -43,6 +84,7 @@ export class BuildService {
 				[type]: part,
 			};
 		});
+		this.checkCompatibility();
 	}
 
 	removePart(type: keyof BuildState, index?: number) {
@@ -54,6 +96,7 @@ export class BuildService {
 			}
 			return { ...state, [type]: Array.isArray(val) ? [] : null };
 		});
+		this.checkCompatibility();
 	}
 
 	resetBuild() {
@@ -68,6 +111,7 @@ export class BuildService {
 			psu: null,
 			os: null,
 		});
+		this.analysis.set({ errors: [], totalWattage: 0, isValid: false });
 	}
 
 	setEditBuild(build: Build) {
@@ -82,6 +126,7 @@ export class BuildService {
 			case: build.case,
 			os: build.os ?? null,
 		});
+		this.checkCompatibility();
 	}
 
 	getAll() {
@@ -95,7 +140,7 @@ export class BuildService {
 			},
 			error: (err) => {
 				this.isLoading.set(false);
-				console.error('Error al obtener CPUs:', err);
+				console.error('Error al obtener BUILDs:', err);
 			},
 		});
 	}

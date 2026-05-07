@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
 import { ModalService } from '../../../../shared/services/modal.service';
@@ -24,8 +25,12 @@ export default class Ram {
 	readonly getImageUrl = getImageUrl;
 
 	ram = this.ramService.selectedRam;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.ramService.isLoading;
+
+	managementRoles = [userProfile.ADMIN];
+
+	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -54,6 +59,28 @@ export default class Ram {
 			} else {
 				this.router.navigate(['/build/new']);
 			}
+		}
+	}
+
+	async deleteRam() {
+		const currentRam = this.ram();
+		if (!currentRam) return;
+
+		const confirmed = await this.modal.confirm({
+			title: '¿Eliminar Componente?',
+			message: `¿Quieres borrar permanentemente ${currentRam.manufacturer} ${currentRam.model}?`,
+			confirmLabel: 'Eliminar',
+			cancelLabel: 'Cancelar',
+		});
+
+		if (confirmed) {
+			this.ramService.delete(currentRam._id!).subscribe({
+				next: () => {
+					this.toast.show('RAM eliminada', 'success');
+					this.router.navigate(['/ram/all']);
+				},
+				error: () => this.toast.show('Error al elminiar', 'error'),
+			});
 		}
 	}
 }
