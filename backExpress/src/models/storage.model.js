@@ -7,11 +7,12 @@ const storageSchema = new mongoose.Schema(
 		// _id autogenerado
 		manufacturer: { type: String, uppercase: true, trim: true, required: true },
 		model: { type: String, uppercase: true, trim: true, required: true },
-		// GigaBytes
-		capacity: { type: String, uppercase: true, trim: true, required: true },
+		// GigaBytes (GB)
+		capacity: { type: Number, uppercase: true, trim: true, required: true },
 		type: { type: String, uppercase: true, trim: true, enum: STORAGE_TYPE, required: true },
 		form_factor: { type: String, uppercase: true, trim: true, enum: FORM_FACTOR, required: true },
 		interface: { type: String, uppercase: true, trim: true, enum: INTERFACE, required: true },
+		// MegaBytes (MB)
 		cache: { type: Number, required: true, validate: positiveIntegerValidator },
 		nvme: { type: Boolean, required: true, default: false },
 		// Céntimos
@@ -53,7 +54,7 @@ export default Storage
 	{
 		"manufacturer": " samsung ",
 		"model": "990 Pro",
-		"capacity": "2tb",
+		"capacity": "2000",
 		"type": "ssd",
 		"form_factor": "m.2",
 		"interface": "M.2 PCIE 4.0 X4",

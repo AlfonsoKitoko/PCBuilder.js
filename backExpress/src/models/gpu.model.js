@@ -13,7 +13,7 @@ const gpuSchema = new mongoose.Schema(
 	{
 		// _id autogenerado
 		manufacturer: { type: String, uppercase: true, trim: true, required: true },
-		series: { type: String, uppercase: true, trim: true, required: true },
+		model: { type: String, uppercase: true, trim: true, required: true },
 		gpu_type: { type: String, uppercase: true, trim: true, enum: GPU_TYPE, required: true },
 		// MegaHertz
 		base_freq: { type: Number, required: true, validate: positiveIntegerValidator },
@@ -38,9 +38,9 @@ const gpuSchema = new mongoose.Schema(
 
 // Middleware para generar el Slug (Ensamblador + Serie/Modelo)
 gpuSchema.pre('validate', function () {
-	if (!this.isModified('manufacturer') && !this.isModified('series')) return
+	if (!this.isModified('manufacturer') && !this.isModified('model')) return
 
-	const baseString = `${this.manufacturer} ${this.series}`
+	const baseString = `${this.manufacturer} ${this.model}`
 
 	this.slug = baseString
 		.toLowerCase()
@@ -63,7 +63,7 @@ export default Gpu
 /* Ejemplo json gpu:
 	{
 		"manufacturer": " msi ",
-		"series": "geforce rtx 4070 ti super ventus 3x",
+		"model": "geforce rtx 4070 ti super ventus 3x",
 		"gpu_type": "nvidia",
 		"base_freq": 2340,
 		"boost_freq": 2640,

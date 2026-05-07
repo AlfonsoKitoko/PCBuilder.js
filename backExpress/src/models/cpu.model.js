@@ -9,6 +9,7 @@ const cpuSchema = new mongoose.Schema(
 		model: { type: String, uppercase: true, trim: true, required: true },
 		series: { type: String, uppercase: true, trim: true, required: true },
 		microarchitecture: { type: String, uppercase: true, trim: true, required: true },
+		family: { type: String, uppercase: true, trim: true, required: true },
 		socket: { type: String, uppercase: true, trim: true, required: true },
 		// Int
 		core_count: { type: Number, min: 1, required: true },
@@ -17,6 +18,7 @@ const cpuSchema = new mongoose.Schema(
 		base_freq: { type: Number, required: true, validate: positiveIntegerValidator },
 		// MegaHertz
 		boost_freq: { type: Number, required: false, validate: positiveIntegerValidator },
+		l1_cache: { type: Number, required: false, default: 0, validate: positiveIntegerValidator },
 		// MegaBytes
 		l2_cache: { type: Number, required: true, validate: positiveIntegerValidator },
 		// MegaBytes

@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema(
 			default: 'USER',
 			required: true
 		},
+		slug: { type: String, unique: true, index: true },
 		// Campos para la recuperación de contraseña
 		resetPasswordToken: { type: String, select: false },
 		resetPasswordExpires: { type: Date, select: false },
@@ -42,6 +43,20 @@ const userSchema = new mongoose.Schema(
 		active: { type: Boolean, default: true, select: false }
 	}, { timestamps: true }
 )
+
+// Middleware para generar el slug antes de validar
+userSchema.pre('validate', function () {
+	if (!this.isModified('username')) return
+
+	// Generamos el slug del username (que ya viene en lowercase por el schema)
+	this.slug = this.username
+		.trim()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '') // Quita acentos
+		.replace(/[^a-z0-9\s-]/g, '')    // Quita caracteres raros
+		.replace(/[\s-]+/g, '-')         // Espacios a guiones
+		.replace(/^-+|-+$/g, '')         // Limpia extremos
+})
 
 userSchema.pre(/^find/, function () {
 	this.find({ active: { $ne: false } })

@@ -32,8 +32,7 @@ const usbHeaderesSchema = new mongoose.Schema({
 const storageConnectorsSchema = new mongoose.Schema({
 	sata_3gb: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
 	sata_6gb: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
-	m2_nvme: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
-	m2_sata: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
+	m2_slots: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
 	ide_pata: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
 	floppy: { type: Number, min: 0, required: true, validate: positiveIntegerValidator }
 }, { _id: false })

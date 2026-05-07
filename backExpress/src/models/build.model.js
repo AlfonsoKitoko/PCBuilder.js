@@ -23,6 +23,7 @@ const buildSchema = new mongoose.Schema({
 	psu: { type: mongoose.Schema.Types.ObjectId, ref: 'PSU', required: true, },
 	os: { type: mongoose.Schema.Types.ObjectId, ref: 'OS', required: false, },
 	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+	totalWattage: { type: Number, required: true, min: 0 },
 	// Céntimos
 	totalPrice: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
 	slug: { type: String, unique: true, index: true }

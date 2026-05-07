@@ -22,9 +22,7 @@ const ramSchema = new mongoose.Schema(
 		// Voltaje
 		voltage: { type: Number, required: true, validate: positiveIntegerValidator },
 		// Céntimos
-		price: {
-			type: Number, required: true, min: 0, validate: positiveIntegerValidator
-		},
+		price: { type: Number, required: true, min: 0, validate: positiveIntegerValidator },
 		partType: { type: mongoose.Schema.Types.ObjectId, ref: "Part", required: true },
 		slug: { type: String, unique: true, index: true },
 		// necesario para el soft delete

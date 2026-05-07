@@ -41,7 +41,7 @@ caseSchema.pre('validate', function () {
 	if (!this.isModified('manufacturer') && !this.isModified('model')) return
 
 	// Combinamos fabricante y modelo para un slug único y descriptivo
-	const baseString = `${this.manufacturer} ${this.model}`
+	const baseString = `${this.manufacturer} ${this.model} ${this.color}`
 
 	this.slug = baseString
 		.toLowerCase()
