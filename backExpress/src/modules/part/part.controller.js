@@ -19,6 +19,16 @@ export const findPartById = wrapAsync(async (req, res) => {
 	return apiResponse.success(res, 'Part details retrieved', foundPart)
 })
 
+// R - Buscar por Slug
+export const findPartBySlug = wrapAsync(async (req, res) => {
+	const { slug } = req.params
+	const foundPart = await partService.findPartBySlug(slug)
+
+	if (!foundPart) throw new AppError('Part not found', 404)
+
+	return apiResponse.success(res, 'Part details retrieved', foundPart)
+})
+
 // C - Crear Part
 export const createPart = wrapAsync(async (req, res) => {
 	const newPart = await partService.createPart(req.body)

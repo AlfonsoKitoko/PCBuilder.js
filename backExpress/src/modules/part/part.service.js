@@ -25,6 +25,11 @@ export const getPartById = async (id) => {
 	return await Part.findById(id).lean()
 }
 
+// R - Listar part por Slug
+export const getPartBySlug = async (slug) => {
+	return await Part.findOne({ slug }).lean()
+}
+
 // U - Actualizar part por id
 export const updatePart = async (id, partData) => {
 	return await Part.findByIdAndUpdate(id, partData, {
