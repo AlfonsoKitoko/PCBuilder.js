@@ -1,9 +1,10 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
 
+import * as PartService from '../../modules/part/part.service.js'
 import Part from '../../models/part.model.js'
 
-const seedParts = async () => {
+const seedCategories = async () => {
 	try {
 		const uri = process.env.MONGODB_ATLAS
 		if (!uri) throw new Error('MONGODB_ATLAS no definida en .env')
@@ -28,7 +29,7 @@ const seedParts = async () => {
 		]
 
 		await Promise.all(
-			categories.map((p) => Part.create(p))
+			categories.map((p) => PartService.createPart(p))
 		)
 
 		console.log(`++ (${categories.length}) Categorías (Parts) creadas con éxito ++`)
@@ -41,4 +42,4 @@ const seedParts = async () => {
 	}
 }
 
-seedParts()
+seedCategories()
