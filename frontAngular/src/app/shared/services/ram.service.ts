@@ -1,18 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { Ram } from '../models/ram.model';
+import { PartService } from './part.service';
 
 @Injectable({ providedIn: 'root' })
 export class RamService {
 	private http = inject(HttpClient);
 	private apiUrl = `${environment.apiUrl}/ram`;
+	private partService = inject(PartService);
 
 	rams = signal<Ram[]>([]);
 	selectedRam = signal<Ram | null>(null);
 	isLoading = signal(false);
+	partType = computed(() => this.partService.parts().find((p) => p.slug === 'ram'));
 
 	getAll() {
 		this.isLoading.set(true);
@@ -24,7 +27,7 @@ export class RamService {
 			},
 			error: (err) => {
 				this.isLoading.set(false);
-				console.error('Error al obtener CPUs:', err);
+				console.error('Error al obtener RAMs:', err);
 			},
 		});
 	}
@@ -51,7 +54,19 @@ export class RamService {
 	create(newRam: Ram): Observable<ApiResponse<Ram>> {
 		this.isLoading.set(true);
 
-		return this.http.post<ApiResponse<Ram>>(this.apiUrl, newRam, { withCredentials: true }).pipe(
+		const idPart = this.partType()?._id;
+
+		if (!idPart) {
+			console.error('Error: No se ha encontrado el ID de la categoria "ram"');
+			return throwError(() => new Error('Categoría no inicializada'));
+		}
+
+		const ramWithType = {
+			...newRam,
+			partType: idPart,
+		};
+
+		return this.http.post<ApiResponse<Ram>>(this.apiUrl, ramWithType, { withCredentials: true }).pipe(
 			tap((res) => {
 				this.rams.update((c) => [...c, res.data]);
 				this.isLoading.set(false);
