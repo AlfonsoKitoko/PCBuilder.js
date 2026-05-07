@@ -1,4 +1,5 @@
 import { MOBO_FORM_FACTOR } from "../constants/index.constant.js"
+import { calcTotalPowerConsum } from "./power.engine.js"
 
 export const checkCompatibility = (build) => {
 	const report = { errors: [], warnings: [] }
@@ -6,6 +7,24 @@ export const checkCompatibility = (build) => {
 	if (!build) return report
 
 	const { cpu, mobo, ram, gpu, storage, case: pcCase, psu } = build
+
+	// --- VALIDACIÓN DE COMPLETITUD ---
+	const missing = []
+	if (!cpu) missing.push("CPU")
+	if (!mobo) missing.push("Motherboard")
+	if (!psu) missing.push("Power Supply")
+	if (!pcCase) missing.push("Case")
+	if (!ram || ram.length === 0) missing.push("RAM")
+	if (!storage || storage.length === 0) missing.push("Storage")
+
+	if (missing.length > 0) {
+		// Si quieres que no se pueda guardar si falta algo:
+		report.errors.push(`Incomplete build. Missing: ${missing.join(', ')}`)
+
+		// Si solo quieres avisar pero dejar guardar, usa warnings:
+		// report.warnings.push(`Components missing: ${missing.join(', ')}`)
+	}
+	// ----------------------------------
 
 	// 1. Socket CPU vs Motherboard
 	if (cpu && mobo && cpu.socket !== mobo.socket) {
@@ -100,11 +119,11 @@ export const checkCompatibility = (build) => {
 	}
 
 	// 5. PSU Wattage (Cálculo básico para validación inmediata)
-	if (psu && cpu && (gpu || cpu.hasIntegrated)) {
-		const gpuConsumption = gpu ? (gpu.tdp || 0) : 0
-		const baseConsumption = (cpu.tdp || 0) + gpuConsumption + 50
-		if (psu.wattage < baseConsumption) {
-			report.errors.push(`PSU wattage too low: Recommended at least ${baseConsumption}W`)
+	if (psu && cpu) {
+		const totalConsumption = calcTotalPowerConsum(build)
+
+		if (psu.wattage < totalConsumption) {
+			report.errors.push(`PSU wattage too low: Total consumption is ${totalConsumption}W, but PSU only provides ${psu.wattage}W`)
 		}
 	}
 

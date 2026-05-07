@@ -17,9 +17,17 @@ export const validateFullBuild = (build) => {
 		}
 	}
 
+	// --- CHIVATO BACKEND ---
+	console.log('DEBUG BACKEND:', {
+		errorsCount: report.errors.length,
+		errors: report.errors,
+		psu: psuStatus
+	})
+
 	return {
 		isValid: report.errors.length === 0,
 		errors: report.errors,
-		warnings: report.warnings
+		warnings: report.warnings,
+		totalWattage: psuStatus?.totalWattage || 0
 	}
 }
