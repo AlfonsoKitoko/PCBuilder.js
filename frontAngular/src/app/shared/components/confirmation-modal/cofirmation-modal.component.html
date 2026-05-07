@@ -1,35 +1,37 @@
 <div
-	class="modal-backdrop bg-brand-primary/20 animate-in fade-in fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md duration-200"
+	class="modal-backdrop bg-neutral/40 animate-in fade-in fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md duration-200"
 	(click)="onBackdropClick($event)"
 >
 	<div
-		class="animate-in slide-in-from-bottom-4 w-full max-w-md transform overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl duration-300"
+		class="animate-in slide-in-from-bottom-4 bg-base-100 border-base-300 w-full max-w-md transform overflow-hidden rounded-2xl border shadow-2xl duration-300"
 	>
-		<div class="bg-brand-surface flex items-center justify-between border-b border-slate-100 px-6 py-5">
-			<h3 class="text-brand-primary text-xl font-extrabold">{{ data().title }}</h3>
+		<div class="bg-base-200/50 border-base-300 flex items-center justify-between border-b px-6 py-4">
+			<h3 class="text-primary text-lg font-bold tracking-tight uppercase">{{ data().title }}</h3>
 			<button
-				class="hover:text-brand-danger cursor-pointer p-1 text-slate-400 transition-colors"
+				class="hover:bg-base-300 rounded-lg p-1 opacity-50 transition-colors hover:opacity-100"
 				(click)="cancel.emit()"
 			>
-				<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 				</svg>
 			</button>
 		</div>
 
-		<div class="px-8 py-10">
-			<p class="leading-relaxed font-medium text-slate-600">{{ data().message }}</p>
+		<div class="px-8 py-8">
+			<p class="text-base-content/80 text-sm leading-relaxed font-medium">
+				{{ data().message }}
+			</p>
 		</div>
 
 		<div
-			class="bg-brand-surface flex flex-col-reverse gap-3 border-t border-slate-100 px-6 py-5 sm:flex-row sm:justify-end"
+			class="bg-base-200/30 border-base-300 flex flex-col-reverse gap-3 border-t px-6 py-4 sm:flex-row sm:justify-end"
 		>
-			<button class="btn-outline px-6 py-2" (click)="cancel.emit()">
+			<button class="btn btn-ghost btn-sm h-10 px-6 text-xs font-bold uppercase" (click)="cancel.emit()">
 				{{ data().cancelLabel || 'Cancelar' }}
 			</button>
 
 			<button
-				class="px-8 py-2"
+				class="btn-sm h-10 px-8 text-xs font-bold uppercase"
 				[ngClass]="{
 					'btn-danger': data().type === 'danger',
 					'btn-primary': data().type !== 'danger',
