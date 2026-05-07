@@ -7,25 +7,40 @@ import { hashPassword, comparePassword } from '../../utils/bcrypt.js'
 import { sendEmail } from '../../utils/mailer.js'
 import jwt from 'jsonwebtoken'
 
-const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const logoPath = path.join(__dirname, '../../../public/pcbuilder_logo.png')
+
+const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
 
 export const login = async (email, password) => {
-	const user = await User.findOne({ email }).select('+password')
-	if (!user) throw new AppError('Invalid credentials', 401)
+	const userFound = await User.findOne({ email }).select('+password')
+	if (!userFound) throw new AppError('User not found', 401)
 
-	const isMatch = await comparePassword(password, user.password)
-	if (!isMatch) throw new AppError('Invalid credentials', 401)
+	const validPassword = await comparePassword(password, userFound.password)
+	if (!validPassword) throw new AppError('Invalid credentials', 401)
 
 	// Expiración especial para admin
-	const expiresIn = (user.email === process.env.ADMIN_EMAIL) ? '3650d' : '1h'
+	const expiresIn = (userFound.email === process.env.ADMIN_EMAIL) ? '3650d' : '1h'
 
 	const token = jwt.sign(
-		{ id: user._id },
+		{
+			id: userFound._id,
+			email: userFound.email,
+			profile: userFound.profile
+		},
 		process.env.JWT_SECRET,
 		{ expiresIn }
 	)
 
-	user.password = undefined
+	const user = userFound.toObject()
+	delete user.password
+
 	return { user, token }
 }
 // SIEMPRE se crea 'USER'
@@ -47,9 +62,18 @@ export const register = async (userData) => {
 		password: hashedPassword
 	})
 
+	// Expiración especial para admin
+	const expiresIn = (user.email === process.env.ADMIN_EMAIL) ? '3650d' : '1h'
+
+	const token = jwt.sign(
+		{ id: user._id },
+		process.env.JWT_SECRET,
+		{ expiresIn }
+	)
+
 	user.password = undefined
 
-	return user
+	return { user, token }
 }
 
 // RECUPERAR CONTRASEÑA
@@ -71,17 +95,60 @@ export const requestPasswordReset = async (email) => {
 
 	await sendEmail(
 		user.email,
-		'Password Reset Request - PBUILDER',
+		'Restablecer Contraseña - PCBuilder',
 		`
-			<div style="font-family: sans-serif; max-width: 600px; margin: auto;">
-        <h2>Has solicitado restablecer tu contraseña</h2>
-        <p>Haz clic en el botón de abajo para elegir una nueva contraseña. Este enlace expira en 1 hora.</p>
-        <a href="${resetUrl}" style="background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700;900&display=swap');
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f9f9ff;">
+    <div style="font-family: 'Rubik', sans-serif; max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e8e4ff; border-radius: 16px; padding: 40px; color: #1e293b; box-shadow: 0 4px 12px rgba(79, 16, 242, 0.05);">
+      
+      <div style="text-align: start; margin-bottom: 30px;">
+        <img src="cid:logo_pcbuilder" alt="PCBuilder Logo" style="width: 220px; height: auto;">
+      </div>
+
+      <h2 style="color: #4f10f2; margin-top: 0; font-weight: 700; font-size: 24px;">Hola, ${user.firstName || 'usuario'}</h2>
+      
+      <p style="font-size: 16px; line-height: 1.6; color: #475569;">
+        Has solicitado restablecer tu contraseña. No te preocupes, nos pasa a los mejores. Haz clic en el botón de abajo para elegir una nueva:
+      </p>
+      
+      <div style="text-align: center; margin: 35px 0;">
+        <a href="${resetUrl}" style="background: #4f10f2; background: linear-gradient(to right, #4f10f2, #ec4899); color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 10px; font-weight: 700; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(79, 16, 242, 0.3);">
           Restablecer Contraseña
         </a>
-        <p>Si no solicitaste esto, ignora este correo.</p>
       </div>
-		`
+      
+      <div style="background-color: #f1f5f9; border-radius: 8px; padding: 15px; margin-bottom: 30px;">
+        <p style="font-size: 13px; color: #64748b; margin: 0; text-align: center;">
+          <strong>Nota:</strong> Por seguridad, este enlace expirará en <span style="color: #ec4899; font-weight: bold;">10 minutos</span>.
+        </p>
+      </div>
+      
+      <p style="font-size: 14px; color: #94a3b8; line-height: 1.5;">
+        Si no has solicitado este cambio, simplemente ignora este mensaje. Tu cuenta sigue estando segura y no se han realizado cambios.
+      </p>
+      
+      <hr style="border: none; border-top: 1px solid #e8e4ff; margin: 30px 0;">
+      
+      <p style="font-size: 12px; color: #b4befe; text-align: center; font-weight: 400;">
+        © 2026 PCBuilder - El hardware es nuestra pasión.
+      </p>
+    </div>
+  </body>
+  </html>
+  `,
+		[
+			{
+				filename: 'pcbuilder_logo.png',
+				path: logoPath,
+				cid: 'logo_pcbuilder'
+			}
+		]
 	)
 
 	return { message: 'Reset email sent' }
@@ -105,4 +172,11 @@ export const resetUserPassword = async (token, newPassword) => {
 	await user.save()
 
 	return { message: 'Password updated successfully' }
+}
+
+export const getUserById = async (id) => {
+	const user = await User.findById(id).select('-password')
+	if (!user) throw new AppError('User no longer exists', 404)
+
+	return user
 }
