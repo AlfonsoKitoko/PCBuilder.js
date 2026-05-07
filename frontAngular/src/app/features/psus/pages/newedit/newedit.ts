@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { connectors, effRating, modular, psuType } from '../../../../shared/constants/index.constant';
 import { userProfile } from '../../../../shared/models/user.model'; //
 import { AuthService } from '../../../../shared/services/auth.service';
+import { ModalService } from '../../../../shared/services/modal.service';
 import { PsuService } from '../../../../shared/services/psu.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { getImageUrl } from '../../../../shared/utils/image-mapper';
@@ -22,6 +23,7 @@ export default class NewEdit implements OnInit {
 	private readonly psuService = inject(PsuService);
 	private readonly authService = inject(AuthService);
 	private readonly router = inject(Router);
+	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
 
 	readonly getImageUrl = getImageUrl;
@@ -92,35 +94,46 @@ export default class NewEdit implements OnInit {
 		}
 	}
 
-	onSubmit() {
+	async onSubmit() {
 		if (this.form.invalid || !this.canManage()) {
 			this.form.markAllAsTouched();
 			return;
 		}
 
-		this.isLoading.set(true);
+		const action = this.isEditMode() ? 'actualizar' : 'crear';
 
-		// Transformamos de vuelta para MongoDB (Euros -> Céntimos, L -> cL)
-		const rawValue = this.form.getRawValue();
-		const data = {
-			...rawValue,
-			price: Math.round(rawValue.price * 100),
-			base_freq: Math.round(rawValue.base_freq * 1000),
-			boost_freq: Math.round(rawValue.boost_freq * 1000),
-		};
-
-		const request = this.isEditMode() ? this.psuService.update(this.id()!, data) : this.psuService.create(data);
-
-		request.subscribe({
-			next: () => {
-				const msg = this.isEditMode() ? 'Cambios guardados' : 'Fuente de Alimentación (PSU) creada correctamente';
-				this.toast.show(msg, 'success');
-				this.router.navigate(['/psu/all']);
-			},
-			error: (err) => {
-				this.isLoading.set(false);
-				this.toast.show(err.error?.message || 'Error en la operación', 'error');
-			},
+		const confirmed = await this.modal.confirm({
+			title: `¿Confirmar ${action}?`,
+			message: `¿Estás seguro de que deseas ${action} esta caja?`,
+			confirmLabel: 'Aceptar',
+			cancelLabel: 'Cancelat',
 		});
+
+		if (confirmed) {
+			this.isLoading.set(true);
+
+			// Transformamos de vuelta para MongoDB (Euros -> Céntimos, L -> cL)
+			const rawValue = this.form.getRawValue();
+			const data = {
+				...rawValue,
+				price: Math.round(rawValue.price * 100),
+				base_freq: Math.round(rawValue.base_freq * 1000),
+				boost_freq: Math.round(rawValue.boost_freq * 1000),
+			};
+
+			const request = this.isEditMode() ? this.psuService.update(this.id()!, data) : this.psuService.create(data);
+
+			request.subscribe({
+				next: () => {
+					const msg = this.isEditMode() ? 'Cambios guardados' : 'Fuente de Alimentación (PSU) creada correctamente';
+					this.toast.show(msg, 'success');
+					this.router.navigate(['/psu/all']);
+				},
+				error: (err) => {
+					this.isLoading.set(false);
+					this.toast.show(err.error?.message || 'Error en la operación', 'error');
+				},
+			});
+		}
 	}
 }

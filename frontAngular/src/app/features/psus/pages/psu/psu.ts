@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
 import { ModalService } from '../../../../shared/services/modal.service';
@@ -21,11 +22,15 @@ export default class Psu {
 	private readonly buildService = inject(BuildService);
 	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
+	readonly getImageUrl = getImageUrl;
 
 	psu = this.psuService.selectedPsu;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.psuService.isLoading;
-	readonly getImageUrl = getImageUrl;
+
+	managementRoles = [userProfile.ADMIN];
+
+	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -54,6 +59,28 @@ export default class Psu {
 			} else {
 				this.router.navigate(['/build/new']);
 			}
+		}
+	}
+
+	async deletePsu() {
+		const currentPsu = this.psu();
+		if (!currentPsu) return;
+
+		const confirmed = await this.modal.confirm({
+			title: '¿Eliminar Componente?',
+			message: `¿Quieres borrar permanentemente ${currentPsu.manufacturer} ${currentPsu.model}?`,
+			confirmLabel: 'Eliminar',
+			cancelLabel: 'Cancelar',
+		});
+
+		if (confirmed) {
+			this.psuService.delete(currentPsu._id!).subscribe({
+				next: () => {
+					this.toast.show('Fuente de alimentación eliminada', 'success');
+					this.router.navigate(['/psu/all']);
+				},
+				error: () => this.toast.show('Error al elminiar', 'error'),
+			});
 		}
 	}
 }

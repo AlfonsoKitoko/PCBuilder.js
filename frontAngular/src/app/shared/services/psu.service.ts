@@ -1,18 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { Psu } from '../models/psu.model';
+import { PartService } from './part.service';
 
 @Injectable({ providedIn: 'root' })
 export class PsuService {
 	private http = inject(HttpClient);
 	private apiUrl = `${environment.apiUrl}/psu`;
+	private partService = inject(PartService);
 
 	psus = signal<Psu[]>([]);
 	selectedPsu = signal<Psu | null>(null);
 	isLoading = signal(false);
+	partType = computed(() => this.partService.parts().find((p) => p.slug === 'psu'));
 
 	getAll() {
 		this.isLoading.set(true);
@@ -24,7 +27,7 @@ export class PsuService {
 			},
 			error: (err) => {
 				this.isLoading.set(false);
-				console.error('Error al obtener CPUs:', err);
+				console.error('Error al obtener PSUs:', err);
 			},
 		});
 	}
@@ -51,7 +54,19 @@ export class PsuService {
 	create(newPsu: Psu): Observable<ApiResponse<Psu>> {
 		this.isLoading.set(true);
 
-		return this.http.post<ApiResponse<Psu>>(this.apiUrl, newPsu, { withCredentials: true }).pipe(
+		const idPart = this.partType()?._id;
+
+		if (!idPart) {
+			console.error('Error: No se ha encontrado el ID de la categoria "psu"');
+			return throwError(() => new Error('Categoría no inicializada'));
+		}
+
+		const psuWithType = {
+			...newPsu,
+			partType: idPart,
+		};
+
+		return this.http.post<ApiResponse<Psu>>(this.apiUrl, psuWithType, { withCredentials: true }).pipe(
 			tap((res) => {
 				this.psus.update((c) => [...c, res.data]);
 				this.isLoading.set(false);
