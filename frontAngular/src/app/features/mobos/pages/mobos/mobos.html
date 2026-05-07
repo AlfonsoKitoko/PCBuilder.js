@@ -1,1 +1,147 @@
-<p>mobos works!</p>
+<div class="container mx-auto p-4 max-w-7xl">
+  <header class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-xl font-bold tracking-tight text-base-content uppercase">Archivo de Placas Base</h1>
+      <p class="text-[10px] text-base-content/50 font-bold uppercase tracking-widest mt-1">
+        {{ tableHandler.filteredData().length }} resultados encontrados
+      </p>
+    </div>
+
+    <div class="relative w-full md:w-64">
+      <input
+        type="text"
+        [value]="tableHandler.searchTerm()"
+        (input)="tableHandler.searchTerm.set($any($event.target).value)"
+        placeholder="Filtrar placas..."
+        class="input input-bordered input-sm w-full rounded-lg bg-base-100 h-9 text-xs focus:border-primary"
+      />
+    </div>
+  </header>
+
+  <!-- VISTA DESKTOP -->
+  <div class="hidden lg:block border-t border-base-300 dark:border-white/10">
+    <table class="w-full border-collapse">
+      <thead class="bg-base-200/30">
+        <tr class="text-[9px] font-bold uppercase tracking-widest text-base-content/50 border-b border-base-300 dark:border-white/10">
+          <th class="p-3 w-20"></th>
+          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('model')">
+            Modelo @if(tableHandler.sortCol() === 'model'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('socket')">
+            Socket @if(tableHandler.sortCol() === 'socket'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+          <th class="p-3 text-left cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('form_factor')">
+            Formato @if(tableHandler.sortCol() === 'form_factor'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+          <th class="p-3 text-left">Slots RAM</th>
+          <th class="p-3 text-center">Wi-Fi</th>
+          <th class="p-3 text-center">Bluetooth</th>
+          <th class="p-3 text-right pr-6 cursor-pointer hover:text-primary transition-colors" (click)="tableHandler.toggleSort('price')">
+            Precio @if(tableHandler.sortCol() === 'price'){ {{ tableHandler.isAsc() ? ' ↑' : ' ↓' }} }
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-base-300 dark:divide-white/5">
+        @for (mobo of tableHandler.filteredData(); track mobo._id) {
+          <tr (click)="goToDetail(mobo._id, mobo.slug)" class="group hover:bg-base-200/50 transition-colors cursor-pointer">
+            <td class="p-3 align-middle">
+              <div class="h-14 w-14 bg-white p-1 ring-1 ring-base-300 rounded dark:ring-white/10">
+                <img
+                [src]="getImageUrl('mobo', mobo.slug)"
+                class="h-full w-full object-contain"
+                (error)="$any($event.target).src=getImageUrl('mobo')" />
+              </div>
+            </td>
+            <td class="p-3 align-middle text-sm font-bold text-primary group-hover:underline">
+              {{ mobo.manufacturer }} {{ mobo.model }}
+            </td>
+            <td class="p-3 align-middle text-xs font-bold uppercase text-primary/80">{{ mobo.socket }}</td>
+            <td class="p-3 align-middle text-xs font-medium">{{ mobo.form_factor }}</td>
+            <td class="p-3 align-middle text-xs font-medium">
+              <span class="font-bold text-base-content">{{ mobo.ram_slots }}x</span> {{ mobo.ram_type }}
+            </td>
+
+            <!-- WiFi Desktop (Enum String) -->
+            <td class="p-3 align-middle text-center text-[10px] font-black uppercase">
+              @if (mobo.wireless?.wifi && mobo.wireless.wifi !== 'NONE') {
+                <span class="text-success leading-none">{{ mobo.wireless.wifi }}</span>
+              } @else {
+                <span class="opacity-20">-</span>
+              }
+            </td>
+
+            <!-- Bluetooth Desktop (Boolean) -->
+            <td class="p-3 align-middle text-center text-[10px] font-black uppercase">
+              @if (mobo.wireless?.bluetooth) {
+                <span class="text-info leading-none">SÍ</span>
+              } @else {
+                <span class="opacity-20">-</span>
+              }
+            </td>
+
+            <td class="p-3 text-right align-middle pr-6 font-black tracking-tighter">
+              {{ mobo.price / 100 | currency: 'EUR' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VISTA MÓVIL -->
+  <div class="block lg:hidden border-t border-base-300 dark:border-white/10">
+    <div class="flex flex-col">
+      @for (mobo of tableHandler.filteredData(); track mobo._id) {
+        <div (click)="goToDetail(mobo._id, mobo.slug)" class="group flex gap-4 border-b border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200/50 dark:border-white/10 dark:bg-transparent cursor-pointer">
+          <div class="flex h-16 w-16 shrink-0 items-center justify-center bg-white p-1.5 ring-1 ring-base-300 rounded dark:ring-white/10">
+            <img
+            [src]="getImageUrl('mobo', mobo.slug)"
+            [alt]="mobo.model"
+            class="h-full w-full object-contain"
+            (error)="$any($event.target).src=getImageUrl(undefined)" />
+          </div>
+
+          <div class="flex flex-1 flex-col gap-1">
+            <div class="flex items-baseline justify-between">
+              <h3 class="text-base font-bold text-primary group-hover:underline decoration-1 underline-offset-2 leading-tight">
+                {{ mobo.manufacturer }} {{ mobo.model }}
+              </h3>
+              <span class="text-base font-black text-base-content tracking-tighter">
+                {{ mobo.price / 100 | currency: 'EUR' }}
+              </span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-x-4 text-[11px] font-medium text-base-content/70">
+              <span class="flex gap-1"><span class="text-base-content/40 font-bold uppercase">Socket:</span> {{ mobo.socket }}</span>
+              <span class="flex gap-1"><span class="text-base-content/40 font-bold uppercase">RAM:</span> {{ mobo.ram_slots }} slots</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-x-3 text-[10px] font-bold uppercase">
+              <span class="text-base-content/50">{{ mobo.form_factor }}</span>
+
+              <!-- WiFi Mobile -->
+              <span class="flex gap-1">
+                <span class="text-base-content/30 italic">WIFI:</span>
+                <span [class]="(mobo.wireless?.wifi && mobo.wireless.wifi !== 'NONE') ? 'text-success' : 'opacity-20'">
+                  {{ (mobo.wireless?.wifi && mobo.wireless.wifi !== 'NONE') ? 'SÍ' : 'NO' }}
+                </span>
+              </span>
+
+              <!-- Bluetooth Mobile -->
+              <span class="flex gap-1">
+                <span class="text-base-content/30 italic">BT:</span>
+                <span [class]="mobo.wireless?.bluetooth ? 'text-info' : 'opacity-20'">
+                  {{ mobo.wireless?.bluetooth ? 'SÍ' : 'NO' }}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="py-12 text-center text-xs font-medium opacity-30 italic">
+          No hay coincidencias para "{{ tableHandler.searchTerm() }}"
+        </div>
+      }
+    </div>
+  </div>
+</div>

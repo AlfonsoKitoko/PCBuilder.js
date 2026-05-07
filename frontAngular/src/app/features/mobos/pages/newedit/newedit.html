@@ -1,0 +1,213 @@
+<div class="container mx-auto p-4 max-w-5xl">
+  <header class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 text-center md:text-left">
+    <div class="flex flex-col">
+      <nav class="text-[10px] uppercase tracking-widest text-base-content/40 mb-2 font-bold">
+        Gestión de Componentes / Mobo / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
+      </nav>
+      <h1 class="text-3xl md:text-5xl font-black tracking-tighter uppercase text-base-content leading-none">
+        {{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Placa Base</span>
+      </h1>
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+
+    <!-- COLUMNA IZQUIERDA: Imagen y Acciones -->
+    <div class="lg:col-span-4 flex flex-col gap-4">
+      <div class="mx-auto w-full max-w-70 lg:max-w-none aspect-square bg-white rounded-2xl ring-1 ring-base-300 dark:ring-white/10 p-6 flex items-center justify-center shadow-sm">
+        @if (form.get('model')?.value) {
+          <img [src]="getImageUrl('mobo', slug())"
+               [alt]="form.get('model')?.value"
+               class="max-h-50 lg:max-h-full w-full object-contain"
+               (error)="$any($event.target).src=getImageUrl(undefined)" />
+        } @else {
+          <div class="text-center opacity-20">
+            <i class="ri-hard-drive-2-line text-6xl"></i>
+            <p class="text-[10px] uppercase font-bold tracking-widest mt-2">Vista Previa Mobo</p>
+          </div>
+        }
+      </div>
+
+      <div class="bg-base-200/50 rounded-xl p-5 border border-base-300 dark:border-white/5">
+        <button type="submit"
+                [disabled]="form.invalid || isLoading()"
+                class="btn btn-primary btn-block rounded-lg uppercase font-bold tracking-wider shadow-lg shadow-primary/20">
+          @if (isLoading()) {
+            <span class="loading loading-spinner loading-xs"></span>
+          }
+          {{ isEditMode() ? 'Guardar Cambios' : 'Crear Placa' }}
+        </button>
+        <a routerLink="/motherboard/all" class="btn btn-ghost btn-block btn-sm mt-2 uppercase text-[10px] tracking-widest opacity-50">
+          Cancelar
+        </a>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: Formulario -->
+    <div class="lg:col-span-8 flex flex-col gap-4">
+
+      <!-- IDENTIFICACIÓN BÁSICA -->
+<section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
+  <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
+    <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Especificaciones Core</h2>
+  </div>
+  <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="form-control">
+      <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Fabricante</span></label>
+      <input type="text" formControlName="manufacturer" class="input input-bordered w-full bg-base-200/30 font-bold" placeholder="Ej: Gigabyte" />
+    </div>
+    <div class="form-control">
+      <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Modelo</span></label>
+      <input type="text" formControlName="model" class="input input-bordered w-full bg-base-200/30" placeholder="Ej: Z790 AORUS ELITE" />
+    </div>
+    <div class="form-control">
+      <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Socket</span></label>
+      <input type="text" formControlName="socket" class="input input-bordered w-full bg-base-200/30 font-bold" placeholder="Ej: LGA1700" />
+    </div>
+    <div class="form-control">
+      <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Chipset</span></label>
+      <input type="text" formControlName="chipset" class="input input-bordered w-full bg-base-200/30" placeholder="Ej: Z790" />
+    </div>
+    <div class="form-control md:col-span-2">
+      <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Factor de Forma</span></label>
+      <select formControlName="form_factor" class="select select-bordered w-full bg-base-200/30 font-bold">
+        @for (f of moboFormFactors; track f) { <option [value]="f">{{ f }}</option> }
+      </select>
+    </div>
+  </div>
+</section>
+
+      <!-- MEMORIA RAM -->
+      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
+        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
+          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Memoria RAM</h2>
+        </div>
+        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Tecnología RAM</span></label>
+            <select formControlName="ram_type" class="select select-bordered w-full bg-base-200/30 font-bold">
+              @for (r of ramTypes; track r) { <option [value]="r">{{ r }}</option> }
+            </select>
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Slots DIMM</span></label>
+            <input type="number" formControlName="ram_slots" class="input input-bordered w-full bg-base-200/30 text-center font-bold" />
+          </div>
+        </div>
+      </section>
+
+      <!-- CONECTORES INTERNOS (STORAGE & SLOTS) -->
+      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden" formGroupName="internal_connectors">
+        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
+          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Expansión y Almacenamiento</h2>
+        </div>
+        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Almacenamiento -->
+          <div formGroupName="storage">
+            <p class="text-[9px] font-black uppercase opacity-30 mb-3 tracking-widest">Almacenamiento</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">M.2 Slots</span></label>
+                <input type="number" formControlName="m2_slots" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">SATA 6Gb/s</span></label>
+                <input type="number" formControlName="sata_6gb" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+            </div>
+          </div>
+          <!-- Slots PCIe -->
+          <div formGroupName="expansion_slots">
+            <p class="text-[9px] font-black uppercase opacity-30 mb-3 tracking-widest">Slots PCIe</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">x16 Slots</span></label>
+                <input type="number" formControlName="x16" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">x1 Slots</span></label>
+                <input type="number" formControlName="x1" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REAR I/O (PUERTOS TRASEROS) -->
+      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden" formGroupName="rear_io">
+        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
+          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Panel Trasero (I/O)</h2>
+        </div>
+        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div formGroupName="usb_ports">
+            <p class="text-[9px] font-black uppercase opacity-30 mb-3 tracking-widest">USB Traseros</p>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">2.0</span></label>
+                <input type="number" formControlName="usb2" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">3.2 G1</span></label>
+                <input type="number" formControlName="usb3_gen1" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">3.2 G2</span></label>
+                <input type="number" formControlName="usb3_gen2" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+            </div>
+          </div>
+          <div formGroupName="video">
+            <p class="text-[9px] font-black uppercase opacity-30 mb-3 tracking-widest">Salidas Video</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">HDMI</span></label>
+                <input type="number" formControlName="hdmi" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+              <div class="form-control">
+                <label class="label py-1"><span class="label-text text-[9px] uppercase font-bold">DP</span></label>
+                <input type="number" formControlName="displayport" class="input input-bordered input-sm bg-base-200/30 text-center" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WIRELESS Y PRECIO -->
+      <section class="bg-base-100 rounded-xl border border-base-300 dark:border-white/10 overflow-hidden">
+        <div class="bg-base-200/50 px-4 py-2 border-b border-base-300 dark:border-white/10">
+          <h2 class="text-[10px] font-black uppercase tracking-widest text-base-content/60">Conectividad y Comercial</h2>
+        </div>
+        <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div formGroupName="wireless" class="md:col-span-2 grid grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">WiFi Standard</span></label>
+              <select formControlName="wifi" class="select select-bordered w-full bg-base-200/30 font-bold text-sm">
+                @for (w of wifiStandards; track w) { <option [value]="w">{{ w }}</option> }
+              </select>
+            </div>
+            <div class="form-control justify-center">
+              <label class="label cursor-pointer justify-start gap-4">
+                <input type="checkbox" formControlName="bluetooth" class="checkbox checkbox-primary checkbox-sm" />
+                <span class="label-text text-[10px] uppercase font-bold opacity-50">Bluetooth</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text text-[10px] uppercase font-bold opacity-50">Precio</span></label>
+            <div class="relative">
+              <input type="number" formControlName="price" step="0.01" class="input input-bordered w-full bg-base-200/30 font-bold text-primary text-xl h-14" />
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold opacity-30 text-primary">EUR</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      @if (isEditMode()) {
+        <div class="mt-4 p-4 opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] flex flex-wrap gap-x-6 gap-y-2 border-t border-base-300 dark:border-white/5">
+          <span>UUID: {{ id() }}</span>
+          <span>Status: Modo Edición</span>
+        </div>
+      }
+    </div>
+  </form>
+</div>
