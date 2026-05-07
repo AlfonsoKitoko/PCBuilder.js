@@ -87,10 +87,28 @@ export const updateBuild = async (id, userId, userProfile, updateData) => {
 	}
 
 	build.totalPrice = calcTotalPrice(build)	// El precio se recalcula siempre
-	newBuild.totalWattage = calcTotalPowerConsum(newBuild)
+	build.totalWattage = calcTotalPowerConsum(build)
 	const updatedBuild = await build.save()
 
 	return { build: updatedBuild, warnings: validation.warnings }
+}
+
+export const validateBuild = async (buildData) => {
+	const tempBuild = new Build(buildData)
+
+	await tempBuild.populate(['cpu', 'mobo', 'ram', 'storage', 'gpu', 'case', 'psu', 'os'])
+
+	const validation = validateFullBuild(tempBuild)
+	const totalWattage = calcTotalPowerConsum(tempBuild)
+	const totalPrice = calcTotalPrice(tempBuild)
+
+	return {
+		isvalid: validation.isValid,
+		errors: validation.errors,
+		warnings: validation.warnings,
+		totalWattage,
+		totalPrice
+	}
 }
 
 // D - Eliminar build por id (sólo dueño o admin)

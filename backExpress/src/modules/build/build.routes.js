@@ -10,6 +10,8 @@ router.get('/', buildController.getAllBuilds)
 // R - Listar propias usuario (requiere login)
 router.get('/mine', protect, buildController.getMyBuilds)
 
+router.post('/validate', protect, buildController.validateBuild)
+
 // R - Detalle build por id
 router.get('/:id', buildController.getBuildById)
 

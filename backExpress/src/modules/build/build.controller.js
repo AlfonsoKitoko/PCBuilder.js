@@ -50,6 +50,15 @@ export const updateBuild = wrapAsync(async (req, res) => {
 	return apiResponse.success(res, message, { build, warnings })
 })
 
+export const validateBuild = wrapAsync(async (req, res) => {
+	const analysis = await buildService.validateBuild(req.body)
+
+	return apiResponse.success(
+		res, analysis.isValid ? 'Build is compatible' : 'Incompatibilities detected',
+		analysis
+	)
+})
+
 // D - Eliminar Build
 export const deleteBuild = wrapAsync(async (req, res) => {
 	await buildService.deleteBuild(
