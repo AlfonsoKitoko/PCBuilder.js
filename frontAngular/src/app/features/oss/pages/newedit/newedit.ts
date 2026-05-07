@@ -1,0 +1,110 @@
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common'
+import { Component, computed, inject, input, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
+import { Router, RouterModule } from '@angular/router'
+import { OsService } from '../../../../shared/services/os.service'
+import { AuthService } from '../../../../shared/services/auth.service'
+import { ToastService } from '../../../../shared/services/toast.service'
+import { osMode } from '../../../../shared/constants/index.constant'
+import { userProfile } from '../../../../shared/models/user.model' //
+import { getImageUrl } from '../../../../shared/utils/image-mapper'
+
+@Component({
+	selector: 'app-newedit',
+	imports: [CommonModule, ReactiveFormsModule, RouterModule, CurrencyPipe, DecimalPipe],
+	templateUrl: './newedit.html',
+})
+export default class NewEdit implements OnInit {
+	id = input<string>()
+	slug = input<string>()
+
+	private readonly fb = inject(FormBuilder)
+	private readonly osService = inject(OsService)
+	private readonly authService = inject(AuthService)
+	private readonly router = inject(Router)
+	private readonly toast = inject(ToastService)
+
+	readonly getImageUrl = getImageUrl
+
+	isLoading = this.osService.isLoading
+	isEditMode = computed(() => !!this.id())
+	selectedOs = this.osService.selectedOs
+
+	// Configuración de roles permitidos (igual que en tu archivo de Builds)
+	managementRoles = [userProfile.ADMIN] //
+
+	osModes = Object.values(osMode)
+
+	form: FormGroup = this.fb.group({
+		manufacturer: ['', [Validators.required]],
+		version: ['', [Validators.required]],
+		edition: ['',[Validators.required]],
+		mode: [0,[Validators.required]],
+		price: [0, [Validators.required, Validators.min(0)]],
+	})
+
+	// Propiedad computada para verificar el permiso de forma reactiva
+	canManage = computed(() => {
+		const user = this.authService.user();
+		return user && this.managementRoles.includes(user.profile as userProfile);
+	})
+
+	ngOnInit() {
+		if (!this.canManage()) {
+			this.toast.show('No tienes permisos para gestionar tarjeta gráfica', 'error');
+			this.router.navigate(['/os/all']);
+			return;
+		}
+
+		if (this.isEditMode()) {
+			this.osService.selectedOs.set(null);
+			this.osService.getById(this.id()!).subscribe({
+				next: (res) => {
+					// Transformamos para que el usuario vea GHz y Euros
+					console.log(this.selectedOs());
+					const data = {
+						...res.data,
+						price: res.data.price / 100, // Céntimos -> Euros
+					};
+					this.form.patchValue(data);
+				},
+				error: () => {
+					this.toast.show('Error al buscar el Sistema Operativo (OS)', 'error');
+					this.router.navigate(['/os/all']);
+				}
+			});
+		}
+	}
+
+	onSubmit() {
+		if (this.form.invalid || !this.canManage()) {
+			this.form.markAllAsTouched();
+			return;
+		}
+
+		this.isLoading.set(true);
+
+		// Transformamos de vuelta para MongoDB (Euros -> Céntimos, L -> cL)
+		const rawValue = this.form.getRawValue();
+		const data = {
+			...rawValue,
+			price: Math.round(rawValue.price * 100),
+		};
+
+		const request = this.isEditMode()
+			? this.osService.update(this.id()!, data)
+			: this.osService.create(data);
+
+		request.subscribe({
+			next: () => {
+				const msg = this.isEditMode() ? 'Cambios guardados' : 'Sistema Operativo (OS) creada correctamente';
+				this.toast.show(msg, 'success');
+				this.router.navigate(['/os/all']);
+			},
+			error: (err) => {
+				this.isLoading.set(false);
+				this.toast.show(err.error?.message || 'Error en la operación', 'error');
+			}
+		});
+	}
+}
