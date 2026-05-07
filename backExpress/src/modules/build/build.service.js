@@ -2,6 +2,7 @@ import Build from '../../models/build.model.js'
 import { validateFullBuild } from '../../build-engine/validation.engine.js'
 import { calcTotalPrice } from '../../build-engine/price.engine.js'
 import AppError from '../../utils/AppError.js'
+import { calcTotalPowerConsum } from '../../build-engine/power.engine.js'
 
 // C - Crear build
 export const createBuild = async (buildData, userId) => {
@@ -15,6 +16,7 @@ export const createBuild = async (buildData, userId) => {
 
 	// Calculamos el precio usando el Engine de precios
 	newBuild.totalPrice = calcTotalPrice(newBuild)
+	newBuild.totalWattage = calcTotalPowerConsum(newBuild)
 	const savedBuild = await newBuild.save()
 	return { build: savedBuild, warnings: validation.warnings }
 }
@@ -22,11 +24,11 @@ export const createBuild = async (buildData, userId) => {
 // R - Listar todas las builds
 export const getAllBuilds = async () => {
 	return await Build.find()
-		.select('-__v -createdAt -updatedAt -mobo -storage -case -description')
+		.select('-__v -createdAt -updatedAt -description')
 		.populate('owner', 'username')
-		.populate('cpu gpu os', 'manufacturer model')
-		.populate('ram', 'manufacturer model capacity speed')
-		.populate('psu', 'manufacturer model wattage')
+		.populate('cpu gpu os case mobo storage', 'manufacturer model slug gpu_type')
+		.populate('ram', 'manufacturer model capacity speed slug')
+		.populate('psu', 'manufacturer model wattage slug')
 		.sort({ updatedAt: -1, createdAt: -1 })
 		.lean()
 }
@@ -47,7 +49,13 @@ export const getBuildById = async (id) => {
 	const build = await Build.findById(id)
 		.select('-__v')
 		.populate('owner', 'username')
-		.populate('cpu mobo ram storage gpu psu case os')
+		.populate({
+			path: 'cpu mobo ram storage gpu psu case os',
+			populate: {
+				path: 'partType',
+				select: 'name slug'
+			}
+		})
 		.lean()
 
 	if (!build) throw new AppError('Build not found', 404)
@@ -79,6 +87,7 @@ export const updateBuild = async (id, userId, userProfile, updateData) => {
 	}
 
 	build.totalPrice = calcTotalPrice(build)	// El precio se recalcula siempre
+	newBuild.totalWattage = calcTotalPowerConsum(newBuild)
 	const updatedBuild = await build.save()
 
 	return { build: updatedBuild, warnings: validation.warnings }
