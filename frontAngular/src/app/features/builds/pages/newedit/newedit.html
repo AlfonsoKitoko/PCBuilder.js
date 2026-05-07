@@ -20,16 +20,27 @@
 			<div class="flex items-end gap-8 text-right">
 				<div>
 					<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Consumo Estimado</p>
-					<p class="text-info text-right text-2xl font-black tracking-tighter">{{ stats().totalWattage }}W</p>
+					<p class="text-info text-right text-2xl font-black tracking-tighter">{{ analysis().totalWattage }}W</p>
 				</div>
 				<div>
 					<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Coste Total Estimado</p>
 					<p class="text-success text-4xl font-black tracking-tighter">
-						{{ stats().totalPrice / 100 | currency: 'EUR' }}
+						{{ totalPrice() / 100 | currency: 'EUR' }}
 					</p>
 				</div>
 			</div>
 		</div>
+
+		@if (analysis().errors.length > 0) {
+			<div class="alert alert-error mb-6 rounded-xl shadow-sm">
+				<div class="flex flex-col items-start gap-1">
+					<span class="text-xs font-bold tracking-wider uppercase">Incompatibilidades detectadas:</span>
+					@for (error of analysis().errors; track error) {
+						<p class="text-sm">• {{ error }}</p>
+					}
+				</div>
+			</div>
+		}
 
 		<div class="mt-6">
 			<textarea
@@ -52,7 +63,6 @@
 				</tr>
 			</thead>
 			<tbody class="divide-base-300 divide-y">
-				<!-- CPU -->
 				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 					<td class="p-4 align-middle">
 						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">CPU</span>
@@ -89,7 +99,6 @@
 					</td>
 				</tr>
 
-				<!-- PLACA BASE -->
 				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 					<td class="p-4 align-middle">
 						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Placa Base</span>
@@ -126,7 +135,6 @@
 					</td>
 				</tr>
 
-				<!-- RAM (BUCLE) -->
 				@for (item of slots().ram; track $index) {
 					<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 						<td class="p-4 align-middle">
@@ -160,7 +168,6 @@
 						</td>
 					</tr>
 				} @empty {
-					<!-- Fila que se muestra cuando no hay RAM seleccionada -->
 					<tr class="border-base-300 border-b">
 						<td class="p-4 align-middle">
 							<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Memoria Ram</span>
@@ -186,7 +193,6 @@
 					</td>
 				</tr>
 
-				<!-- STORAGE (BUCLE) -->
 				@for (item of slots().storage; track $index) {
 					<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 						<td class="p-4 align-middle">
@@ -221,7 +227,6 @@
 						</td>
 					</tr>
 				} @empty {
-					<!-- Fila que se muestra cuando no hay discos seleccionados -->
 					<tr class="border-base-300 border-b">
 						<td class="p-4 align-middle">
 							<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Almacenamiento</span>
@@ -247,7 +252,6 @@
 					</td>
 				</tr>
 
-				<!-- GPU -->
 				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 					<td class="p-4 align-middle">
 						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Gráfica</span>
@@ -284,7 +288,6 @@
 					</td>
 				</tr>
 
-				<!-- CASE -->
 				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 					<td class="p-4 align-middle">
 						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Chasis</span>
@@ -321,7 +324,6 @@
 					</td>
 				</tr>
 
-				<!-- PSU -->
 				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 					<td class="p-4 align-middle">
 						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Fuente</span>
@@ -332,9 +334,9 @@
 								<img class="h-full w-full object-contain" [src]="getImageUrl('psu', slots().psu?.slug)" />
 							</div>
 							@if (slots().psu; as part) {
-								<span class="text-primary text-sm font-bold"
-									>{{ part.manufacturer }} {{ part.model }} {{ part.wattage }}W ({{ part.eff_rating }})</span
-								>
+								<span class="text-primary text-sm font-bold">
+									{{ part.manufacturer }} {{ part.model }} {{ part.wattage }}W ({{ part.eff_rating }})
+								</span>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -360,7 +362,6 @@
 					</td>
 				</tr>
 
-				<!-- SO -->
 				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 					<td class="p-4 align-middle">
 						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">SO</span>
@@ -371,9 +372,9 @@
 								<img class="h-full w-full object-contain" [src]="getImageUrl('os', slots().os?.slug)" />
 							</div>
 							@if (slots().os; as part) {
-								<span class="text-primary text-sm font-bold"
-									>{{ part.manufacturer }} {{ part.version }} ({{ part.mode }})</span
-								>
+								<span class="text-primary text-sm font-bold">
+									{{ part.manufacturer }} {{ part.version }} ({{ part.mode }})
+								</span>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -402,7 +403,9 @@
 			<tfoot>
 				<tr class="bg-base-200/30 font-black">
 					<td class="p-4 text-right text-xs tracking-widest uppercase" colspan="2">Total configuración</td>
-					<td class="text-primary p-4 text-right text-lg">{{ stats().totalPrice / 100 | currency: 'EUR' }}</td>
+					<td class="text-primary p-4 text-right text-lg">
+						{{ totalPrice() / 100 | currency: 'EUR' }}
+					</td>
 					<td></td>
 				</tr>
 			</tfoot>
@@ -413,7 +416,7 @@
 		<button class="btn btn-ghost btn-sm text-error font-bold tracking-widest uppercase">Descartar</button>
 		<button
 			class="btn btn-primary px-10 font-black tracking-widest uppercase shadow-lg"
-			[disabled]="form.invalid"
+			[disabled]="form.invalid || analysis().errors.length > 0"
 			(click)="save()"
 		>
 			Guardar Cambios

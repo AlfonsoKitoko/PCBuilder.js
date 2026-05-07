@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
@@ -22,7 +22,7 @@ export default class Build {
 	readonly getImageUrl = getImageUrl;
 
 	build = this.buildService.selectedBuild;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.buildService.isLoading;
 
 	ngOnInit() {
