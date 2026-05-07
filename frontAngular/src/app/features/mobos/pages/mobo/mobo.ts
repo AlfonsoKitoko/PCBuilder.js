@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
 import { MoboService } from '../../../../shared/services/mobo.service';
@@ -24,8 +25,12 @@ export default class Mobo {
 	readonly getImageUrl = getImageUrl;
 
 	mobo = this.moboService.selectedMobo;
-	currentUser = this.authService.user;
+	currentUser = computed(() => this.authService.user());
 	isLoading = this.moboService.isLoading;
+
+	managementRoles = [userProfile.ADMIN];
+
+	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -54,6 +59,28 @@ export default class Mobo {
 			} else {
 				this.router.navigate(['/build/new']);
 			}
+		}
+	}
+
+	async deleteMobo() {
+		const currentMobo = this.mobo();
+		if (!currentMobo) return;
+
+		const confirmed = await this.modal.confirm({
+			title: '¿Eliminar Componente?',
+			message: `¿Quieres borrar permanentemente ${currentMobo.manufacturer} ${currentMobo.model}?`,
+			confirmLabel: 'Eliminar',
+			cancelLabel: 'Cancelar',
+		});
+
+		if (confirmed) {
+			this.moboService.delete(currentMobo._id!).subscribe({
+				next: () => {
+					this.toast.show('Placa Base eliminada', 'success');
+					this.router.navigate(['/mobo/all']);
+				},
+				error: () => this.toast.show('Error al elminiar', 'error'),
+			});
 		}
 	}
 }
