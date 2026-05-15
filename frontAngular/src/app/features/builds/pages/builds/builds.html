@@ -1,19 +1,21 @@
 <div class="container mx-auto p-6">
-	<!-- Cabecera estilo Categorías -->
 	<header class="mb-12 text-center">
-		<h1 class="text-base-content text-4xl font-black tracking-tight lg:text-5xl">
-			Configuraciones de <span class="from-primary to-secondary bg-linear-to-r bg-clip-text text-transparent">PC</span>
+		<h1 class="text-base-content text-4xl font-black tracking-tight uppercase italic lg:text-5xl">
+			{{ pageTexts().title }}
+			<span class="from-primary to-secondary bg-linear-to-r bg-clip-text text-transparent">{{
+				pageTexts().titleHighlight
+			}}</span>
 		</h1>
-		<p class="text-base-content/60 mt-4 text-lg font-medium">Explora y gestiona las builds de la comunidad</p>
+		<p class="text-base-content/60 mt-4 text-lg font-medium">{{ pageTexts().description }}</p>
 
-		<div class="mt-8 flex justify-center">
+		<div class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
 			<div class="relative w-full max-w-md">
 				<input
-					class="input input-bordered focus:border-primary bg-base-100 w-full rounded-2xl pl-12 shadow-sm transition-all focus:shadow-md"
+					class="input input-bordered focus:border-primary bg-base-100 h-12 w-full rounded-2xl pl-12 shadow-sm transition-all focus:shadow-md"
 					[value]="searchTerm()"
 					(input)="searchTerm.set($any($event.target).value)"
 					type="text"
-					placeholder="Buscar por nombre, usuario o piezas..."
+					placeholder="Buscar por nombre, piezas..."
 				/>
 				<svg
 					class="text-base-content/30 absolute top-3.5 left-4"
@@ -31,11 +33,80 @@
 					<path d="m21 21-4.3-4.3" />
 				</svg>
 			</div>
+
+			<div class="flex w-full flex-row gap-3 sm:w-auto">
+				<a
+					class="btn btn-primary h-12 min-h-12 flex-1 rounded-2xl px-4 font-bold uppercase shadow-lg transition-all hover:scale-105 active:scale-95 sm:flex-none sm:px-6"
+					[routerLink]="['/build/new']"
+				>
+					<svg
+						class="h-5 w-5"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<line x1="12" y1="5" x2="12" y2="19"></line>
+						<line x1="5" y1="12" x2="19" y2="12"></line>
+					</svg>
+					<span class="ml-2 text-xs sm:text-sm">Nueva build</span>
+				</a>
+
+				@if (user()) {
+					@if (isMinePage()) {
+						<a
+							class="btn btn-outline btn-secondary h-12 min-h-12 flex-1 rounded-2xl px-4 font-bold uppercase transition-all hover:scale-105 active:scale-95 sm:flex-none sm:px-6"
+							routerLink="/build/all"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<rect width="7" height="7" x="3" y="3" rx="1" />
+								<rect width="7" height="7" x="14" y="3" rx="1" />
+								<rect width="7" height="7" x="14" y="14" rx="1" />
+								<rect width="7" height="7" x="3" y="14" rx="1" />
+							</svg>
+							<span class="ml-2 text-xs sm:text-sm">Explorar Comunidad</span>
+						</a>
+					} @else {
+						<a
+							class="btn btn-outline btn-secondary h-12 min-h-12 flex-1 rounded-2xl px-4 font-bold uppercase transition-all hover:scale-105 active:scale-95 sm:flex-none sm:px-6"
+							routerLink="/build/mine"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+								<circle cx="12" cy="7" r="4" />
+							</svg>
+							<span class="ml-2 text-xs sm:text-sm">Mis Builds</span>
+						</a>
+					}
+				}
+			</div>
 		</div>
 	</header>
 
 	<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-		<!-- Estado de Carga (Skeleton) -->
 		@if (isLoading() && builds().length === 0) {
 			@for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
 				<div
@@ -56,13 +127,11 @@
 				</div>
 			}
 		} @else {
-			<!-- Listado de Builds -->
 			@for (build of builds(); track build._id) {
-				<div
-					class="group bg-base-100 border-base-300 relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-white/10"
-					(click)="goToDetail(build._id, build.slug)"
+				<a
+					class="group bg-base-100 border-base-300 relative flex flex-col overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-white/10"
+					[routerLink]="['/build', build._id, build.slug]"
 				>
-					<!-- Barra Superior Gradiente -->
 					<div
 						class="h-1.5 w-full"
 						[style.background]="
@@ -74,7 +143,6 @@
 						"
 					></div>
 
-					<!-- Sección Superior: Imágenes -->
 					<div class="border-base-300 relative flex h-48 border-b dark:border-white/5">
 						<div
 							class="pointer-events-none absolute inset-0 opacity-[0.03]"
@@ -89,10 +157,12 @@
 
 						<div
 							class="border-base-300 relative z-10 flex w-1/2 items-center justify-center border-r bg-white p-4 dark:border-white/5"
+							[class.grayscale]="build.case?.active === false"
+							[class.opacity-50]="build.case?.active === false"
 						>
 							<img
 								class="h-full object-contain transition-transform duration-500 group-hover:scale-110"
-								[src]="getImageUrl('case', build.case?.slug)"
+								[src]="getImageUrl('case', build.case?.slug, false)"
 								[alt]="build.case?.model"
 								(error)="$any($event.target).src = getImageUrl('no-image')"
 							/>
@@ -101,24 +171,29 @@
 						<div class="relative z-10 flex w-1/2 flex-col">
 							<div
 								class="bg-base-200/50 border-base-300 flex h-1/2 items-center justify-center border-b p-3 dark:border-white/5"
+								[class.grayscale]="build.cpu?.active === false"
+								[class.opacity-50]="build.cpu?.active === false"
 							>
 								<img
 									class="h-full object-contain"
-									[src]="getImageUrl('cpu', build.cpu?.slug)"
+									[src]="getImageUrl('cpu', build.cpu?.slug, false)"
 									(error)="$any($event.target).src = getImageUrl('no-image')"
 								/>
 							</div>
-							<div class="bg-base-300/30 flex h-1/2 items-center justify-center p-3">
+							<div
+								class="bg-base-300/30 flex h-1/2 items-center justify-center p-3"
+								[class.grayscale]="build.gpu?.active === false"
+								[class.opacity-50]="build.gpu?.active === false"
+							>
 								<img
 									class="h-full object-contain"
-									[src]="getImageUrl('gpu', build.gpu?.slug)"
+									[src]="getImageUrl('gpu', build.gpu?.slug, false)"
 									(error)="$any($event.target).src = getImageUrl('no-image')"
 								/>
 							</div>
 						</div>
 					</div>
 
-					<!-- Sección Central: Info -->
 					<div class="flex flex-1 flex-col gap-3 p-5">
 						<div class="flex items-start justify-between">
 							<div class="mr-2 flex-1 truncate">
@@ -131,7 +206,6 @@
 									Ref: {{ build._id }}
 								</div>
 							</div>
-							<!-- Badge de Wattage -->
 							<div
 								class="badge badge-outline border-base-300 group-hover:border-primary/30 text-[10px] font-bold opacity-70 transition-colors"
 							>
@@ -141,7 +215,7 @@
 
 						<div class="relative flex flex-col gap-1.5 pl-3">
 							<div
-								class="w-.75 absolute top-0 bottom-0 left-0 rounded-full"
+								class="absolute top-0 bottom-0 left-0 w-1 rounded-full"
 								[style.background]="
 									'linear-gradient(to bottom, ' +
 									getBuildIdentity(build).cpuColor +
@@ -153,21 +227,20 @@
 
 							<div class="text-xs">
 								<span class="text-base-content/40 block text-[9px] font-bold uppercase">Procesador</span>
-								<span class="text-base-content/80 font-bold"
-									>{{ build.cpu?.manufacturer }} {{ build.cpu?.model || '---' }}</span
-								>
+								<span class="text-base-content/80 font-bold">
+									{{ build.cpu?.manufacturer }} {{ build.cpu?.model || '---' }}
+								</span>
 							</div>
 
 							<div class="text-xs">
 								<span class="text-base-content/40 block text-[9px] font-bold uppercase">Gráfica</span>
-								<span class="text-base-content/80 font-bold"
-									>{{ build.gpu?.manufacturer }} {{ build.gpu?.model || '---' }}</span
-								>
+								<span class="text-base-content/80 font-bold">
+									{{ build.gpu?.manufacturer }} {{ build.gpu?.model || '---' }}
+								</span>
 							</div>
 						</div>
 					</div>
 
-					<!-- Sección Inferior -->
 					<div
 						class="bg-base-200/50 border-base-300 flex items-center justify-between border-t px-5 py-4 dark:border-white/5"
 					>
@@ -179,11 +252,11 @@
 						<div class="flex flex-col text-right">
 							<span class="text-base-content/30 text-[8px] font-black tracking-tighter uppercase">Creado por</span>
 							<span class="text-base-content/70 text-xs font-bold italic">
-								@{{ build.owner?.username || 'user' }}
+								@{{ build.ownerName || build.owner?.username || 'user' }}
 							</span>
 						</div>
 					</div>
-				</div>
+				</a>
 			} @empty {
 				<div class="col-span-full flex flex-col items-center py-20 opacity-40">
 					<svg
