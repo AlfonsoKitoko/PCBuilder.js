@@ -1,149 +1,156 @@
 <div class="container mx-auto max-w-5xl p-4">
 	@if (case(); as case) {
-		<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
-			<div class="flex flex-col">
-				<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
-					Archivo de Chasis / {{ case.manufacturer }}
-				</nav>
-				<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
-					{{ case.manufacturer }} <span class="text-primary">{{ case.model }}</span>
-				</h1>
-			</div>
-			<div class="md:text-right">
-				<span class="text-primary md:text-base-content text-3xl font-black tracking-tighter">
-					{{ case.price / 100 | currency: 'EUR' }}
-				</span>
-			</div>
-		</header>
-
-		<div class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12">
-			<div class="flex flex-col gap-4 lg:col-span-4">
-				<div
-					class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
-				>
-					<img
-						class="max-h-50 w-full object-contain lg:max-h-full"
-						[src]="getImageUrl('case', case.slug)"
-						[alt]="case.model"
-						(error)="$any($event.target).src = getImageUrl(undefined)"
-					/>
+		<div
+			class="transition-all duration-500"
+			[style.filter]="case.active === false ? 'grayscale(100%)' : 'none'"
+			[style.opacity]="case.active === false ? '0.6' : '1'"
+			[class.pointer-events-none]="case.active === false && !canManage()"
+		>
+			<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
+				<div class="flex flex-col">
+					<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
+						Archivo de Chasis / {{ case.manufacturer }}
+					</nav>
+					<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
+						{{ case.manufacturer }} <span class="text-primary">{{ case.model }}</span>
+					</h1>
 				</div>
+				<div class="md:text-right">
+					<span class="text-primary md:text-base-content text-3xl font-black tracking-tighter">
+						{{ case.price / 100 | currency: 'EUR' }}
+					</span>
+				</div>
+			</header>
 
-				<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
-					<button
-						class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
-						(click)="addToBuild()"
+			<div class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12">
+				<div class="flex flex-col gap-4 lg:col-span-4">
+					<div
+						class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
 					>
-						Añadir a la Build
-					</button>
+						<img
+							class="max-h-50 w-full object-contain lg:max-h-full"
+							[src]="getImageUrl('case', case.slug)"
+							[alt]="case.model"
+							(error)="$any($event.target).src = getImageUrl(undefined)"
+						/>
+					</div>
 
-					@if (canManage()) {
-						<div class="divider my-2 opacity-50"></div>
-
-						<a
-							class="btn btn-warning btn-outline btn-block btn-sm rounded-lg font-bold tracking-wider uppercase"
-							[routerLink]="['/case/edit', case._id, case.slug]"
-						>
-							<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-								/>
-							</svg>
-							Editar Caja
-						</a>
-
+					<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
 						<button
-							class="btn btn-error btn-outline btn-block btn-sm mt-2 rounded-lg font-bold tracking-wider uppercase"
-							(click)="deleteCase()"
+							class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
+							(click)="addToBuild()"
 						>
-							<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-								/>
-							</svg>
-							Eliminar Caja
+							Añadir a la Build
 						</button>
-					}
+
+						@if (canManage()) {
+							<div class="divider my-2 opacity-50"></div>
+
+							<a
+								class="btn btn-warning btn-outline btn-block btn-sm rounded-lg font-bold tracking-wider uppercase"
+								[routerLink]="['/case/edit', case._id, case.slug]"
+							>
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+									/>
+								</svg>
+								Editar Caja
+							</a>
+
+							<button
+								class="btn btn-error btn-outline btn-block btn-sm mt-2 rounded-lg font-bold tracking-wider uppercase"
+								(click)="deleteCase()"
+							>
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+									/>
+								</svg>
+								Eliminar Caja
+							</button>
+						}
+					</div>
 				</div>
-			</div>
 
-			<div class="flex flex-col gap-4 lg:col-span-8">
-				<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
-					<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
-						<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
-							Especificaciones Técnicas
-						</h2>
-					</div>
-					<div class="divide-base-300 divide-y dark:divide-white/5">
-						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/50 font-medium">Fabricante</span>
-							<span class="font-bold">{{ case.manufacturer }}</span>
+				<div class="flex flex-col gap-4 lg:col-span-8">
+					<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
+						<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+							<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
+								Especificaciones Técnicas
+							</h2>
 						</div>
-						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/50 font-medium">Modelo</span>
-							<span class="font-bold">{{ case.model }}</span>
-						</div>
-						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/50 font-medium">Tipo de Caja</span>
-							<span class="font-bold">{{ case.case_type }}</span>
-						</div>
-						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/50 font-medium">Factor de Forma</span>
-							<span class="text-primary font-bold uppercase">{{ case.form_factor }}</span>
-						</div>
-						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/50 font-medium">Volumen</span>
-							<span class="font-bold">{{ case.volume / 100 | number: '1.1-2' }} L</span>
-						</div>
-						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/50 font-medium">Color Principal</span>
-							<span class="font-bold">{{ case.color }}</span>
-						</div>
-						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/50 font-medium">Fuente de Alimentación</span>
-							<span class="font-bold">{{ case.power_supply || 'No incluida' }}</span>
-						</div>
+						<div class="divide-base-300 divide-y dark:divide-white/5">
+							<div class="flex justify-between p-4 text-sm">
+								<span class="text-base-content/50 font-medium">Fabricante</span>
+								<span class="font-bold">{{ case.manufacturer }}</span>
+							</div>
+							<div class="flex justify-between p-4 text-sm">
+								<span class="text-base-content/50 font-medium">Modelo</span>
+								<span class="font-bold">{{ case.model }}</span>
+							</div>
+							<div class="flex justify-between p-4 text-sm">
+								<span class="text-base-content/50 font-medium">Tipo de Caja</span>
+								<span class="font-bold">{{ case.case_type }}</span>
+							</div>
+							<div class="flex justify-between p-4 text-sm">
+								<span class="text-base-content/50 font-medium">Factor de Forma</span>
+								<span class="text-primary font-bold uppercase">{{ case.form_factor }}</span>
+							</div>
+							<div class="flex justify-between p-4 text-sm">
+								<span class="text-base-content/50 font-medium">Volumen</span>
+								<span class="font-bold">{{ case.volume / 100 | number: '1.1-2' }} L</span>
+							</div>
+							<div class="flex justify-between p-4 text-sm">
+								<span class="text-base-content/50 font-medium">Color Principal</span>
+								<span class="font-bold">{{ case.color }}</span>
+							</div>
+							<div class="flex justify-between p-4 text-sm">
+								<span class="text-base-content/50 font-medium">Fuente de Alimentación</span>
+								<span class="font-bold">{{ case.power_supply || 'No incluida' }}</span>
+							</div>
 
-						<div class="p-4 text-sm">
-							<span class="text-base-content/50 mb-2 block font-medium">Conectividad Frontal</span>
-							<div class="grid grid-cols-2 gap-2">
-								@for (entry of case.front_panel | keyvalue; track entry.key) {
-									@if (entry.value) {
-										<div
-											class="bg-base-200/30 border-base-300 flex justify-between rounded border p-2 dark:border-white/5"
-										>
-											<span class="text-[10px] font-bold uppercase opacity-60">{{ entry.key }}</span>
-											<span class="text-xs font-bold">{{ entry.value }}</span>
-										</div>
+							<div class="p-4 text-sm">
+								<span class="text-base-content/50 mb-2 block font-medium">Conectividad Frontal</span>
+								<div class="grid grid-cols-2 gap-2">
+									@for (entry of case.front_panel | keyvalue; track entry.key) {
+										@if (entry.value) {
+											<div
+												class="bg-base-200/30 border-base-300 flex justify-between rounded border p-2 dark:border-white/5"
+											>
+												<span class="text-[10px] font-bold uppercase opacity-60">{{ entry.key }}</span>
+												<span class="text-xs font-bold">{{ entry.value }}</span>
+											</div>
+										}
 									}
-								}
+								</div>
+							</div>
+
+							<div class="p-4 text-sm">
+								<span class="text-base-content/50 mb-2 block font-medium">Almacenamiento (Bahías)</span>
+								<div class="flex flex-wrap gap-2">
+									@for (entry of case.internal_bays | keyvalue; track entry.key) {
+										@if (entry.value) {
+											<div class="badge badge-outline gap-2 px-4 py-3 text-xs font-bold">
+												<span class="italic opacity-50">{{ entry.key }}:</span> {{ entry.value }}
+											</div>
+										}
+									}
+								</div>
 							</div>
 						</div>
+					</section>
 
-						<div class="p-4 text-sm">
-							<span class="text-base-content/50 mb-2 block font-medium">Almacenamiento (Bahías)</span>
-							<div class="flex flex-wrap gap-2">
-								@for (entry of case.internal_bays | keyvalue; track entry.key) {
-									@if (entry.value) {
-										<div class="badge badge-outline gap-2 px-4 py-3 text-xs font-bold">
-											<span class="italic opacity-50">{{ entry.key }}:</span> {{ entry.value }}
-										</div>
-									}
-								}
-							</div>
-						</div>
+					<div
+						class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
+					>
+						<span>ID: {{ case._id }}</span>
+						<span>Tipo: {{ case.partType.name }}</span>
 					</div>
-				</section>
-
-				<div
-					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
-				>
-					<span>ID: {{ case._id }}</span>
-					<span>Tipo: {{ case.partType.name }}</span>
 				</div>
 			</div>
 		</div>

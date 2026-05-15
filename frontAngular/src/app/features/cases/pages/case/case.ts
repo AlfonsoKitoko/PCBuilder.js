@@ -7,6 +7,7 @@ import { BuildService } from '../../../../shared/services/build.service';
 import { CaseService } from '../../../../shared/services/case.service';
 import { ModalService } from '../../../../shared/services/modal.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { generateSlug } from '../../../../shared/utils/generate-slug';
 import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
@@ -22,15 +23,20 @@ export default class Case {
 	private readonly buildService = inject(BuildService);
 	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
+
 	readonly getImageUrl = getImageUrl;
+	private generateSlug = generateSlug;
 
 	case = this.caseService.selectedCase;
-	currentUser = computed(() => this.authService.user());
 	isLoading = this.caseService.isLoading;
+	currentUser = computed(() => this.authService.user());
 
 	managementRoles = [userProfile.ADMIN];
 
-	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
+	canManage = computed(() => {
+		const user = this.currentUser();
+		return user ? this.managementRoles.includes(user.profile as userProfile) : false;
+	});
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -80,7 +86,7 @@ export default class Case {
 					this.toast.show('Caja eliminada', 'success');
 					this.router.navigate(['/case/all']);
 				},
-				error: () => this.toast.show('Error al elminiar', 'error'),
+				error: () => this.toast.show('Error al eliminar', 'error'),
 			});
 		}
 	}
