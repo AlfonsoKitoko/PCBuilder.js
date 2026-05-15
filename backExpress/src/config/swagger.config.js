@@ -43,7 +43,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: `http://localhost:${backPort}${baseUrl}`,
+				url: `https://localhost:${backPort}${baseUrl}`,
 				description: 'Local Servitor'
 			}
 		],
