@@ -12,22 +12,15 @@ export const validateFullBuild = (build) => {
 	if (psuStatus) {
 		if (psuStatus.isCritical) {
 			report.errors.push(psuStatus.message)
-		} else {
+		} else if (psuStatus.message !== 'PSU OK') {
 			report.warnings.push(psuStatus.message)
 		}
 	}
-
-	// --- CHIVATO BACKEND ---
-	console.log('DEBUG BACKEND:', {
-		errorsCount: report.errors.length,
-		errors: report.errors,
-		psu: psuStatus
-	})
 
 	return {
 		isValid: report.errors.length === 0,
 		errors: report.errors,
 		warnings: report.warnings,
-		totalWattage: psuStatus?.totalWattage || 0
+		wattageDetails: psuStatus?.wattageDetails || null
 	}
 }

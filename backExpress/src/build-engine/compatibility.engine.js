@@ -8,24 +8,6 @@ export const checkCompatibility = (build) => {
 
 	const { cpu, mobo, ram, gpu, storage, case: pcCase, psu } = build
 
-	// --- VALIDACIÓN DE COMPLETITUD ---
-	const missing = []
-	if (!cpu) missing.push("CPU")
-	if (!mobo) missing.push("Motherboard")
-	if (!psu) missing.push("Power Supply")
-	if (!pcCase) missing.push("Case")
-	if (!ram || ram.length === 0) missing.push("RAM")
-	if (!storage || storage.length === 0) missing.push("Storage")
-
-	if (missing.length > 0) {
-		// Si quieres que no se pueda guardar si falta algo:
-		report.errors.push(`Incomplete build. Missing: ${missing.join(', ')}`)
-
-		// Si solo quieres avisar pero dejar guardar, usa warnings:
-		// report.warnings.push(`Components missing: ${missing.join(', ')}`)
-	}
-	// ----------------------------------
-
 	// 1. Socket CPU vs Motherboard
 	if (cpu && mobo && cpu.socket !== mobo.socket) {
 		report.errors.push(`Incompatible Socket: CPU is ${cpu.socket} but Motherboard is ${mobo.socket}`)
@@ -38,7 +20,11 @@ export const checkCompatibility = (build) => {
 			report.errors.push(`RAM type mismatch: Motherboard requires ${mobo.ram_type}`)
 		}
 
-		const totalModules = ram.reduce((acc, r) => acc + (r.modules?.quantity || 1), 0)
+		const totalModules = ram.reduce((acc, kit) => {
+			const sticksPerKit = kit.modules?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
+			return acc + sticksPerKit
+		}, 0)
+
 		if (totalModules > mobo.ram_slots) {
 			report.errors.push(`Too many RAM modules: ${totalModules} installed, but Mobo only has ${mobo.ram_slots} slots`)
 		}
@@ -120,14 +106,15 @@ export const checkCompatibility = (build) => {
 
 	// 5. PSU Wattage (Cálculo básico para validación inmediata)
 	if (psu && cpu) {
-		const totalConsumption = calcTotalPowerConsum(build)
+		const powerAnalysis = calcTotalPowerConsum(build)
+		const totalConsumption = powerAnalysis.total
 
 		if (psu.wattage < totalConsumption) {
-			report.errors.push(`PSU wattage too low: Total consumption is ${totalConsumption}W, but PSU only provides ${psu.wattage}W`)
+			report.errors.push(`PSU wattage too low: Total consumption is ${totalConsumption} W, but PSU only provides ${psu.wattage} W`)
 		}
 	}
 
-	// 6. Gráficos (CORREGIDO: Usamos la propiedad booleana correcta del modelo)
+	// 6. Gráficos
 	const hasIGP = cpu?.hasIntegrated === true
 
 	if (cpu && !hasIGP && !gpu) {
