@@ -2,11 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { PASSWORD_PATTERN } from '../../../../shared/constants/patterns';
 import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { ModalService } from '../../../../shared/services/modal.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { UserService } from '../../../../shared/services/user.service';
+import { Validator } from '../../../../shared/services/validator.service';
 import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
@@ -22,6 +24,7 @@ export default class NewEdit implements OnInit {
 	private readonly fb = inject(FormBuilder);
 	private readonly userService = inject(UserService);
 	private readonly authService = inject(AuthService);
+	private readonly validator = inject(Validator);
 	private readonly router = inject(Router);
 	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
@@ -34,24 +37,47 @@ export default class NewEdit implements OnInit {
 
 	managementRoles = [userProfile.ADMIN];
 
-	form: FormGroup = this.fb.group({
-		username: ['', [Validators.required, Validators.minLength(3)]],
-		password: ['', [this.isEditMode() ? Validators.nullValidator : Validators.required]],
-		firstName: [''],
-		lastName: [''],
-		email: ['', [Validators.required, Validators.email]],
-		birthDate: ['', [Validators.required]],
-		profile: [userProfile.USER, [Validators.required]],
+	canManage = computed(() => {
+		const currentUser = this.authService.user();
+		if (!currentUser) return false;
+
+		const isAdmin = this.managementRoles.includes(currentUser.profile as userProfile);
+		const isSelfEdit = this.isEditMode() && currentUser._id === this.id();
+
+		return isAdmin || isSelfEdit;
 	});
 
-	canManage = computed(() => {
-		const user = this.authService.user();
-		return user && this.managementRoles.includes(user.profile as userProfile);
-	});
+	// En newedit.ts
+	form: FormGroup = this.fb.group(
+		{
+			username: [, [Validators.required, Validators.minLength(3)]],
+			// Usamos una función para determinar los validadores
+			password: [
+				'',
+				this.isEditMode()
+					? [Validators.pattern(PASSWORD_PATTERN)] // Solo validará SI hay algo escrito
+					: [Validators.required, Validators.pattern(PASSWORD_PATTERN)],
+			],
+			repeatPassword: [
+				'',
+				this.isEditMode()
+					? [Validators.pattern(PASSWORD_PATTERN)]
+					: [Validators.required, Validators.pattern(PASSWORD_PATTERN)],
+			],
+			firstName: [],
+			lastName: [],
+			email: [, [Validators.required, Validators.email]],
+			birthDate: [, [Validators.required, this.validator.nofutureDateValidator]],
+			profile: [userProfile.USER, [Validators.required]],
+		},
+		{
+			validators: [this.validator.passwordMatchValidator('password', 'repeatPassword')],
+		},
+	);
 
 	ngOnInit() {
 		if (!this.canManage()) {
-			this.toast.show('No tienes permisos para gestionar usuarios', 'error');
+			this.toast.show('No tienes permisos para realizar esta acción', 'error');
 			this.router.navigate(['/user/all']);
 			return;
 		}
@@ -65,6 +91,10 @@ export default class NewEdit implements OnInit {
 						birthDate: res.data.birthDate ? res.data.birthDate.split('T')[0] : '',
 					};
 					this.form.patchValue(data);
+					const currentUser = this.authService.user();
+					if (currentUser && currentUser.profile !== userProfile.ADMIN) {
+						this.form.get('profile')?.disable();
+					}
 				},
 				error: () => {
 					this.toast.show('Error al buscar el usuario', 'error');
@@ -75,7 +105,33 @@ export default class NewEdit implements OnInit {
 	}
 
 	async onSubmit() {
+		// 1. Si estamos editando y no se ha escrito NADA en los campos de pass
+		if (this.isEditMode()) {
+			const p = this.form.get('password');
+			const r = this.form.get('repeatPassword');
+
+			if (!p?.value && !r?.value) {
+				// Quitamos temporalmente los validadores para que el formulario sea válido
+				p?.clearValidators();
+				r?.clearValidators();
+			} else {
+				// Si hay algo, nos aseguramos de que tengan el patrón (por si lo borramos antes)
+				p?.setValidators([Validators.pattern(PASSWORD_PATTERN)]);
+				r?.setValidators([Validators.pattern(PASSWORD_PATTERN)]);
+			}
+			// Actualizamos el estado de salud de los inputs
+			p?.updateValueAndValidity();
+			r?.updateValueAndValidity();
+		}
+
+		// 2. Ahora comprobamos la validez
 		if (this.form.invalid || !this.canManage()) {
+			// Debug para ver qué campo está fallando exactamente
+			Object.keys(this.form.controls).forEach((key) => {
+				const controlErrors = this.form.get(key)?.errors;
+				if (controlErrors) console.log('Campo con error:', key, controlErrors);
+			});
+
 			this.form.markAllAsTouched();
 			return;
 		}
@@ -84,14 +140,16 @@ export default class NewEdit implements OnInit {
 
 		const confirmed = await this.modal.confirm({
 			title: `¿Confirmar ${action}?`,
-			message: `¿Estás seguro de que deseas ${action} esta caja?`,
+			message: `¿Estás seguro de que deseas ${action} los datos?`,
 			confirmLabel: 'Aceptar',
-			cancelLabel: 'Cancelat',
+			cancelLabel: 'cancelar',
 		});
 
 		if (confirmed) {
 			this.isLoading.set(true);
 			const data = this.form.getRawValue();
+
+			delete data.repeatPassword;
 
 			// Si estamos editando y el password está vacío, lo eliminamos para no sobreescribirlo
 			if (this.isEditMode() && !data.password) {

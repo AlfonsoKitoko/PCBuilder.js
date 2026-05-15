@@ -41,14 +41,7 @@
 					</select>
 				</div>
 
-				<button
-					class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
-					[disabled]="form.invalid || isLoading()"
-					type="submit"
-				>
-					@if (isLoading()) {
-						<span class="loading loading-spinner loading-xs"></span>
-					}
+				<button class="btn btn-primary btn-block" [disabled]="isLoading()" type="submit">
 					{{ isEditMode() ? 'Actualizar Datos' : 'Crear Usuario' }}
 				</button>
 				<a
@@ -90,6 +83,20 @@
 							class="input input-bordered bg-base-200/30 w-full"
 							type="password"
 							formControlName="password"
+							placeholder="••••••••"
+						/>
+					</div>
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Repetir Contraseña</span>
+							@if (isEditMode()) {
+								<span class="label-text-alt text-warning text-[9px] uppercase">Opcional al editar</span>
+							}
+						</label>
+						<input
+							class="input input-bordered bg-base-200/30 w-full"
+							type="password"
+							formControlName="repeatPassword"
 							placeholder="••••••••"
 						/>
 					</div>

@@ -11,7 +11,6 @@
 	</header>
 
 	<form class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12" [formGroup]="form" (ngSubmit)="onSubmit()">
-		<!-- COLUMNA IZQUIERDA: Imagen y Acciones -->
 		<div class="flex flex-col gap-4 lg:col-span-4">
 			<div
 				class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
@@ -51,9 +50,7 @@
 			</div>
 		</div>
 
-		<!-- COLUMNA DERECHA: Formulario -->
 		<div class="flex flex-col gap-4 lg:col-span-8">
-			<!-- IDENTIFICACIÓN BÁSICA -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Especificaciones Core</h2>
@@ -105,7 +102,7 @@
 					</div>
 					<div class="form-control md:col-span-2">
 						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Factor de Forma</span></label
+							><span class="label-text text-[10px] font-bold uppercase opacity-50">Factor Forma</span></label
 						>
 						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="form_factor">
 							@for (f of moboFormFactors; track f) {
@@ -116,7 +113,6 @@
 				</div>
 			</section>
 
-			<!-- MEMORIA RAM -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Memoria RAM</h2>
@@ -145,25 +141,24 @@
 				</div>
 			</section>
 
-			<!-- CONECTORES INTERNOS (STORAGE & SLOTS) -->
 			<section
 				class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10"
 				formGroupName="internal_connectors"
 			>
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
-						Expansión y Almacenamiento
+						Expansión y Conectores Internos
 					</h2>
 				</div>
-				<div class="grid grid-cols-1 gap-6 p-4 md:grid-cols-2">
-					<!-- Almacenamiento -->
+
+				<div class="grid grid-cols-1 gap-6 p-4">
 					<div formGroupName="storage">
-						<p class="mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">Almacenamiento</p>
-						<div class="grid grid-cols-2 gap-2">
+						<p class="text-primary mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">
+							Almacenamiento (SATA/M.2)
+						</p>
+						<div class="grid grid-cols-2 gap-2 md:grid-cols-5">
 							<div class="form-control">
-								<label class="label py-1"
-									><span class="label-text text-[9px] font-bold uppercase">M.2 Slots</span></label
-								>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">M.2</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
@@ -171,24 +166,48 @@
 								/>
 							</div>
 							<div class="form-control">
-								<label class="label py-1"
-									><span class="label-text text-[9px] font-bold uppercase">SATA 6Gb/s</span></label
-								>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">SATA 6 Gb/s</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
 									formControlName="sata_6gb"
 								/>
 							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">SATA 3 Gb/s</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="sata_3gb"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">IDE</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="ide_pata"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">Floppy</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="floppy"
+								/>
+							</div>
 						</div>
 					</div>
-					<!-- Slots PCIe -->
-					<div formGroupName="expansion_slots">
-						<p class="mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">Slots PCIe</p>
-						<div class="grid grid-cols-2 gap-2">
+
+					<div class="border-base-200 border-t pt-4 dark:border-white/5" formGroupName="expansion_slots">
+						<p class="text-primary mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">
+							Slots PCIe / Expansión
+						</p>
+						<div class="grid grid-cols-3 gap-2 md:grid-cols-6">
 							<div class="form-control">
 								<label class="label py-1"
-									><span class="label-text text-[9px] font-bold uppercase">x16 Slots</span></label
+									><span class="label-text text-[9px] font-bold uppercase">PCIe x16</span></label
 								>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
@@ -197,34 +216,55 @@
 								/>
 							</div>
 							<div class="form-control">
-								<label class="label py-1"
-									><span class="label-text text-[9px] font-bold uppercase">x1 Slots</span></label
-								>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCIe x8</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="x8"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCIe x4</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="x4"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCIe x1</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
 									formControlName="x1"
 								/>
 							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCI</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="pci_legacy"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">AGP</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="agp_slot"
+								/>
+							</div>
 						</div>
 					</div>
-				</div>
-			</section>
 
-			<!-- REAR I/O (PUERTOS TRASEROS) -->
-			<section
-				class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10"
-				formGroupName="rear_io"
-			>
-				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
-					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Panel Trasero (I/O)</h2>
-				</div>
-				<div class="grid grid-cols-1 gap-6 p-4 md:grid-cols-2">
-					<div formGroupName="usb_ports">
-						<p class="mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">USB Traseros</p>
-						<div class="grid grid-cols-3 gap-2">
+					<div class="border-base-200 border-t pt-4 dark:border-white/5" formGroupName="usb_headers">
+						<p class="text-primary mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">
+							Cabezales USB Internos
+						</p>
+						<div class="grid grid-cols-2 gap-2 md:grid-cols-5">
 							<div class="form-control">
-								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">2.0</span></label>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 2.0</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
@@ -232,7 +272,7 @@
 								/>
 							</div>
 							<div class="form-control">
-								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">3.2 G1</span></label>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 1</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
@@ -240,32 +280,27 @@
 								/>
 							</div>
 							<div class="form-control">
-								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">3.2 G2</span></label>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 2</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
 									formControlName="usb3_gen2"
 								/>
 							</div>
-						</div>
-					</div>
-					<div formGroupName="video">
-						<p class="mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">Salidas Video</p>
-						<div class="grid grid-cols-2 gap-2">
 							<div class="form-control">
-								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">HDMI</span></label>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB Gen 2x2</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
-									formControlName="hdmi"
+									formControlName="usb3_gen2x2"
 								/>
 							</div>
 							<div class="form-control">
-								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">DP</span></label>
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">Serial</span></label>
 								<input
 									class="input input-bordered input-sm bg-base-200/30 text-center"
 									type="number"
-									formControlName="displayport"
+									formControlName="serial_header"
 								/>
 							</div>
 						</div>
@@ -273,36 +308,206 @@
 				</div>
 			</section>
 
-			<!-- WIRELESS Y PRECIO -->
+			<section
+				class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10"
+				formGroupName="rear_io"
+			>
+				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Panel Trasero (I/O)</h2>
+				</div>
+				<div class="grid grid-cols-1 gap-6 p-4">
+					<div formGroupName="usb_ports">
+						<p class="text-primary mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">
+							Puertos USB y Legacy
+						</p>
+						<div class="grid grid-cols-3 gap-2 md:grid-cols-6">
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 2.0</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="usb2"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 1</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="usb3_gen1"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 2</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="usb3_gen2"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB Gen 2x2</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="usb3_gen2x2"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PS/2</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="ps2"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">COM</span></label>
+								<input
+									class="input input-bordered input-sm bg-base-200/30 text-center"
+									type="number"
+									formControlName="serial_com"
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div class="border-base-200 grid grid-cols-1 gap-4 border-t pt-4 md:grid-cols-2 dark:border-white/5">
+						<div formGroupName="video">
+							<p class="text-primary mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">
+								Salidas de Vídeo
+							</p>
+							<div class="grid grid-cols-2 gap-2">
+								<div class="form-control">
+									<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">HDMI</span></label>
+									<input
+										class="input input-bordered input-sm bg-base-200/30 text-center"
+										type="number"
+										formControlName="hdmi"
+									/>
+								</div>
+								<div class="form-control">
+									<label class="label py-1"
+										><span class="label-text text-[9px] font-bold uppercase">DisplayPort</span></label
+									>
+									<input
+										class="input input-bordered input-sm bg-base-200/30 text-center"
+										type="number"
+										formControlName="displayport"
+									/>
+								</div>
+								<div class="form-control">
+									<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">VGA</span></label>
+									<input
+										class="input input-bordered input-sm bg-base-200/30 text-center"
+										type="number"
+										formControlName="vga"
+									/>
+								</div>
+								<div class="form-control">
+									<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">DVI</span></label>
+									<input
+										class="input input-bordered input-sm bg-base-200/30 text-center"
+										type="number"
+										formControlName="dvi"
+									/>
+								</div>
+							</div>
+						</div>
+
+						<div class="flex flex-col gap-4">
+							<div class="grid grid-cols-2 gap-4">
+								<div class="flex flex-col" formGroupName="ethernet">
+									<p class="text-primary mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">Ethernet</p>
+
+									<div class="form-control">
+										<label class="label py-1">
+											<span class="label-text text-[9px] font-bold uppercase">Puertos</span>
+										</label>
+										<input
+											class="input input-bordered input-sm bg-base-200/30 text-center"
+											type="number"
+											formControlName="quantity"
+										/>
+									</div>
+
+									<div class="form-control mt-2">
+										<label class="label py-1">
+											<span class="label-text text-[9px] font-bold uppercase">Mbps</span>
+										</label>
+										<input
+											class="input input-bordered input-sm bg-base-200/30 text-center"
+											type="number"
+											step="0.1"
+											formControlName="speed"
+										/>
+									</div>
+								</div>
+
+								<div class="flex flex-col">
+									<p class="text-primary mb-3 text-[9px] font-black tracking-widest uppercase opacity-30">Audio</p>
+
+									<div class="form-control">
+										<label class="label py-1">
+											<span class="label-text text-[9px] font-bold uppercase">Jacks 3.5mm</span>
+										</label>
+										<input
+											class="input input-bordered input-sm bg-base-200/30 text-center"
+											type="number"
+											formControlName="audio_jacks"
+										/>
+									</div>
+
+									<div class="form-control invisible mt-2">
+										<label class="label py-1"><span class="label-text text-[9px]">-</span></label>
+										<div class="h-8"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
-						Conectividad y Comercial
+						Conectividad inalámbrica y precio
 					</h2>
 				</div>
 				<div class="grid grid-cols-1 gap-6 p-4 md:grid-cols-3">
 					<div class="grid grid-cols-2 gap-4 md:col-span-2" formGroupName="wireless">
 						<div class="form-control">
-							<label class="label"
-								><span class="label-text text-[10px] font-bold uppercase opacity-50">WiFi Standard</span></label
+							<label class="label">
+								<span class="label-text text-[10px] font-bold uppercase opacity-50">WiFi Standard</span>
+							</label>
+							<select
+								class="select select-bordered bg-base-200/30 h-14 w-full text-lg font-bold"
+								formControlName="wifi"
 							>
-							<select class="select select-bordered bg-base-200/30 w-full text-sm font-bold" formControlName="wifi">
 								@for (w of wifiStandards; track w) {
 									<option [value]="w">{{ w }}</option>
 								}
 							</select>
 						</div>
-						<div class="form-control justify-center">
-							<label class="label cursor-pointer justify-start gap-4">
-								<input class="checkbox checkbox-primary checkbox-sm" type="checkbox" formControlName="bluetooth" />
+
+						<div class="form-control">
+							<label class="label">
 								<span class="label-text text-[10px] font-bold uppercase opacity-50">Bluetooth</span>
 							</label>
+							<div class="input input-bordered bg-base-200/30 flex h-14 w-full items-center">
+								<label class="label w-full cursor-pointer justify-start gap-4 py-0">
+									<input class="checkbox checkbox-primary checkbox-sm" type="checkbox" formControlName="bluetooth" />
+									<span class="label-text text-[10px] font-bold uppercase opacity-50">Tiene Bluetooth</span>
+								</label>
+							</div>
 						</div>
 					</div>
+
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Precio</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Precio</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 text-primary h-14 w-full text-xl font-bold"
