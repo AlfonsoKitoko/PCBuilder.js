@@ -1,29 +1,70 @@
 @if (build(); as build) {
-	<div class="container mx-auto max-w-6xl p-4">
-		<header class="border-base-300 mb-8 border-b pb-6">
+	<div class="container mx-auto max-w-6xl p-4 pb-24 md:pb-4">
+		<header class="border-base-300 relative mb-8 border-b pb-6">
 			<div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-				<div>
-					<h1 class="text-primary text-3xl font-black tracking-tighter uppercase">{{ build.name }}</h1>
-					<div class="mt-2 flex items-center gap-3">
-						<span class="bg-base-200 text-base-content/60 rounded px-2 py-1 text-xs font-bold tracking-widest uppercase"
-							>Build ID: {{ build._id }}</span
-						>
-						<span class="text-base-content/50 text-sm font-medium italic"
-							>Publicada por @{{ build.owner.username }}</span
-						>
-					</div>
-				</div>
-				<div class="flex items-end gap-8 text-right">
-					<!-- Wattage Estimado -->
-					<div>
-						<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Consumo Estimado</p>
-						<p class="text-info text-right text-2xl font-black tracking-tighter">{{ build.totalWattage }}W</p>
+				<div class="w-full">
+					<div class="flex items-center gap-4">
+						<h1 class="text-primary text-2xl font-black tracking-tighter uppercase md:text-3xl">
+							{{ build.name }}
+						</h1>
+
+						@if (canManage() || (currentUser() && build.owner?._id === currentUser()?._id)) {
+							<div class="flex gap-2">
+								<a
+									class="btn btn-secondary btn-sm rounded-lg font-bold tracking-tight uppercase"
+									[routerLink]="['/build/edit', build._id, build.slug]"
+								>
+									<svg class="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+										<path
+											d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712Zm-2.218 5.93-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.199Z"
+										/>
+									</svg>
+									Editar
+								</a>
+
+								<button
+									class="btn btn-ghost btn-sm hover:bg-error/10 text-error rounded-lg font-bold tracking-tight uppercase"
+									(click)="deleteBuild()"
+								>
+									<svg
+										class="h-4 w-4"
+										viewBox="0 0 24 24"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+										<line x1="10" y1="11" x2="10" y2="17" />
+										<line x1="14" y1="11" x2="14" y2="17" />
+									</svg>
+									Eliminar
+								</button>
+							</div>
+						}
 					</div>
 
-					<!-- Coste Total -->
-					<div>
-						<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Coste Total Estimado</p>
-						<p class="text-success text-4xl font-black tracking-tighter">
+					<div class="mt-2 flex flex-wrap items-center gap-3">
+						<span
+							class="bg-base-200 text-base-content/60 rounded px-2 py-1 text-[10px] font-bold tracking-widest uppercase"
+							>ID: {{ build._id }}</span
+						>
+						<span class="text-base-content/50 text-xs font-medium italic">@{{ build.owner.username }}</span>
+					</div>
+				</div>
+
+				<div
+					class="border-base-300 flex w-full items-end justify-between gap-4 border-t pt-4 md:w-auto md:justify-end md:border-none md:pt-0"
+				>
+					<div class="text-left md:text-right">
+						<p class="text-base-content/40 text-[9px] font-bold tracking-[0.2em] uppercase">Consumo</p>
+						<p class="text-info text-xl font-black tracking-tighter md:text-2xl">{{ build.totalWattage }}W</p>
+					</div>
+					<div class="text-right">
+						<p class="text-base-content/40 text-[9px] font-bold tracking-[0.2em] uppercase">Total</p>
+						<p class="text-success text-3xl font-black tracking-tighter md:text-4xl">
 							{{ build.totalPrice / 100 | currency: 'EUR' }}
 						</p>
 					</div>
@@ -37,177 +78,183 @@
 			}
 		</header>
 
-		<div class="overflow-x-auto">
-			<table class="w-full border-collapse">
+		<div class="border-base-300 overflow-hidden rounded-2xl border shadow-sm">
+			<table class="bg-base-100 w-full border-collapse">
 				<thead>
 					<tr
-						class="text-base-content/40 border-base-300 border-b-2 text-[10px] font-black tracking-[0.15em] uppercase"
+						class="text-base-content/40 border-base-300 bg-base-200/50 border-b-2 text-[10px] font-black tracking-[0.15em] uppercase"
 					>
-						<th class="w-32 p-4 text-left">Componente</th>
-						<th class="p-4 text-left">Selección</th>
-						<th class="w-32 p-4 text-right">Precio</th>
+						<th class="w-16 p-4 text-left md:w-32">Tipo</th>
+						<th class="p-4 text-left">Componente</th>
+						<th class="w-24 p-4 text-right md:w-32">Precio</th>
 					</tr>
 				</thead>
 				<tbody class="divide-base-300 divide-y">
-					<!-- OBLIGATORIOS -->
 					<ng-container
 						*ngTemplateOutlet="
 							rowTemplate;
 							context: {
 								label: 'CPU',
+								type: 'cpu',
 								part: build.cpu,
 								name: build.cpu.manufacturer + ' ' + build.cpu.model,
-								type: 'cpu',
+								icon: 'cpu',
 							}
 						"
 					></ng-container>
-
 					<ng-container
 						*ngTemplateOutlet="
 							rowTemplate;
 							context: {
 								label: 'Placa Base',
+								type: 'mobo',
 								part: build.mobo,
 								name: build.mobo.manufacturer + ' ' + build.mobo.model,
-								type: 'mobo',
+								icon: 'mobo',
 							}
 						"
 					></ng-container>
-
 					@for (ramPart of build.ram; track $index) {
 						<ng-container
 							*ngTemplateOutlet="
 								rowTemplate;
 								context: {
-									label: $first ? 'Memoria Ram' : '',
-									part: ramPart,
-									name:
-										ramPart.manufacturer +
-										' ' +
-										ramPart.model +
-										' ' +
-										(ramPart.modules?.[0]?.quantity + ' x ' + ramPart.modules?.[0]?.size) +
-										' (' +
-										ramPart.speed +
-										' MHz) ' +
-										ramPart.ram_type,
+									label: $first ? 'RAM' : '',
 									type: 'ram',
+									part: ramPart,
+									name: ramPart.manufacturer + ' ' + ramPart.model,
+									icon: 'ram',
 								}
 							"
 						></ng-container>
 					}
-
 					@for (disk of build.storage; track $index) {
 						<ng-container
 							*ngTemplateOutlet="
 								rowTemplate;
 								context: {
-									label: $first ? 'Almacenamiento' : '',
-									part: disk,
-									name:
-										disk.manufacturer +
-										' ' +
-										disk.model +
-										' (' +
-										(disk.capacity >= 1024 ? disk.capacity / 1024 + ' TB' : disk.capacity + ' GB') +
-										')',
+									label: $first ? 'Disco' : '',
 									type: 'storage',
+									part: disk,
+									name: disk.model,
+									icon: 'storage',
 								}
 							"
 						></ng-container>
 					}
-
-					<!-- OPCIONAL: GPU -->
 					<ng-container
 						*ngTemplateOutlet="
 							rowTemplate;
 							context: {
-								label: 'Gráfica',
-								part: build.gpu,
-								name: build.gpu ? build.gpu.manufacturer + ' ' + build.gpu.model : '---',
+								label: 'GPU',
 								type: 'gpu',
+								part: build.gpu,
+								name: build.gpu ? build.gpu.model : '---',
+								icon: 'gpu',
 							}
 						"
 					></ng-container>
-
-					<!-- OBLIGATORIOS -->
 					<ng-container
 						*ngTemplateOutlet="
 							rowTemplate;
-							context: {
-								label: 'Chasis',
-								part: build.case,
-								name: build.case.manufacturer + ' ' + build.case.model,
-								type: 'case',
-							}
+							context: { label: 'Caja', type: 'case', part: build.case, name: build.case.model, icon: 'case' }
 						"
 					></ng-container>
-
 					<ng-container
 						*ngTemplateOutlet="
 							rowTemplate;
-							context: {
-								label: 'Fuente',
-								part: build.psu,
-								name:
-									build.psu.manufacturer +
-									' ' +
-									build.psu.model +
-									' ' +
-									build.psu.wattage +
-									'W (' +
-									build.psu.eff_rating +
-									')',
-								type: 'psu',
-							}
-						"
-					></ng-container>
-
-					<!-- OPCIONAL: SO -->
-					<ng-container
-						*ngTemplateOutlet="
-							rowTemplate;
-							context: {
-								label: 'SO',
-								part: build.os,
-								name: build.os ? build.os.manufacturer + ' ' + build.os.version + ' (' + build.os.mode + ')' : '---',
-								type: 'os',
-							}
+							context: { label: 'PSU', type: 'psu', part: build.psu, name: build.psu.model, icon: 'psu' }
 						"
 					></ng-container>
 				</tbody>
-				<tfoot>
-					<tr class="bg-base-200/30 font-black">
-						<td class="p-4 text-right text-xs tracking-widest uppercase" colspan="2">Total</td>
-						<td class="text-primary p-4 text-right text-lg">{{ build.totalPrice / 100 | currency: 'EUR' }}</td>
-					</tr>
-				</tfoot>
 			</table>
 		</div>
 	</div>
 
-	<ng-template #rowTemplate let-label="label" let-part="part" let-name="name" let-type="type">
+	<ng-template #rowTemplate let-label="label" let-part="part" let-name="name" let-type="type" let-icon="icon">
 		<tr
-			class="group hover:bg-base-200/50 border-base-300 border-b transition-colors"
-			[class.cursor-pointer]="part"
+			class="group hover:bg-base-200/50 cursor-pointer transition-colors"
 			(click)="part && goToDetail(part.partType?.slug, part._id, part.slug)"
 		>
-			<td class="p-4 align-middle">
-				<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">{{ label }}</span>
+			<td class="p-3 align-middle md:p-4">
+				<span class="text-base-content/40 hidden text-[10px] font-black tracking-widest uppercase md:block">{{
+					label
+				}}</span>
+				<div class="text-primary/60 flex justify-center md:hidden">
+					@switch (icon) {
+						@case ('cpu') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="4" y="4" width="16" height="16" rx="2" />
+								<rect x="9" y="9" width="6" height="6" />
+								<path d="M15 2v2m0 16v2M2 15h2m16 0h2M2 9h2m16 0h2M9 2v2m0 16v2" />
+							</svg>
+						}
+						@case ('mobo') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="3" y="3" width="18" height="18" rx="2" />
+								<path d="M7 7h10v10H7z" />
+								<path d="M12 7v10M7 12h10" />
+							</svg>
+						}
+						@case ('gpu') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="2" y="5" width="20" height="14" rx="2" />
+								<path d="M16 5V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v1" />
+								<circle cx="8" cy="12" r="2" />
+								<circle cx="16" cy="12" r="2" />
+							</svg>
+						}
+						@case ('ram') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M6 19V5h12v14M6 7h12M6 11h12M6 15h12" />
+							</svg>
+						}
+						@case ('storage') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path
+									d="M22 12H2M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+								/>
+								<path d="M6 16h.01M10 16h.01" />
+							</svg>
+						}
+						@case ('psu') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+							</svg>
+						}
+						@case ('case') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="4" y="3" width="16" height="18" rx="2" />
+								<path d="M8 7h8M8 11h8M8 15h4" />
+							</svg>
+						}
+					}
+				</div>
 			</td>
-			<td class="p-4 align-middle">
-				<div class="flex items-center gap-4">
-					<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+			<td class="p-3 align-middle md:p-4">
+				<div class="flex items-center gap-3">
+					<div class="border-base-300 h-10 w-10 shrink-0 rounded border bg-white p-1 md:h-12 md:w-12">
 						<img
 							class="h-full w-full object-contain"
 							[src]="getImageUrl(type, part?.slug)"
 							(error)="$any($event.target).src = getImageUrl(undefined)"
 						/>
 					</div>
-					<span class="text-primary text-sm font-bold" [class.group-hover:underline]="part">{{ name }}</span>
+					<div class="flex min-w-0 flex-col">
+						<span
+							class="truncate text-xs font-bold transition-colors md:text-sm"
+							[class.text-primary]="part?.active !== false"
+							[class.text-base-content/50]="part?.active === false"
+						>
+							{{ name }}
+						</span>
+						@if (part?.active === false) {
+							<span class="text-error text-[8px] font-bold uppercase">No disponible</span>
+						}
+					</div>
 				</div>
 			</td>
-			<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
+			<td class="p-3 text-right align-middle text-xs font-bold tracking-tighter md:p-4 md:text-sm">
 				{{ part ? (part.price / 100 | currency: 'EUR') : '---' }}
 			</td>
 		</tr>
@@ -215,6 +262,6 @@
 } @else {
 	<div class="flex flex-col items-center justify-center py-20">
 		<span class="loading loading-ring loading-lg text-primary"></span>
-		<p class="mt-4 text-xs font-bold tracking-widest uppercase opacity-30">Cargando Build...</p>
+		<p class="mt-4 text-[10px] font-bold tracking-widest uppercase opacity-30">Cargando Build...</p>
 	</div>
 }
