@@ -48,13 +48,13 @@
 	--color-base-200: #191e24;
 	--color-base-300: #15191e;
 	--color-base-content: #ecf9ff;
-	--color-primary: #605dff;
-	--color-primary-content: #edf1fe;
-	--color-secondary: #f43098;
-	--color-secondary-content: #f9e4f0;
+	--color-primary: #f43098;
+	--color-primary-content: #f9e4f0;
+	--color-secondary: #605dff;
+	--color-secondary-content: #edf1fe;
 	--color-accent: #00d3bb;
 	--color-accent-content: #084d49;
-	--color-neutral: #09090b;
+	--color-neutral: #1e1b4b;
 	--color-neutral-content: #e4e4e7;
 	--color-info: #00bafe;
 	--color-info-content: #042e49;
@@ -120,29 +120,47 @@
 }
 
 @layer components {
-	/* BOTÓN PRINCIPAL: Usamos la base de daisyUI y añadimos tus efectos */
+	/* BOTÓN PRINCIPAL (Usa Primary) */
 	.btn-primary {
-		@apply btn btn-primary border-none text-white transition-all active:scale-95;
+		@apply btn border-none transition-all active:scale-95;
+		background-color: var(--color-primary);
+		color: var(--color-primary-content);
+	}
+	.btn-primary:hover {
+		background-color: var(--color-primary);
+		filter: brightness(0.9);
 	}
 
-	/* BOTÓN DE ÉXITO: Secondary en tu paleta de Daisy */
+	/* BOTÓN DE ÉXITO (Usa tu Secondary como pediste) */
 	.btn-success {
-		@apply btn btn-secondary border-none font-bold active:scale-95;
+		@apply btn border-none font-bold transition-all active:scale-95;
+		background-color: var(--color-secondary);
+		color: var(--color-secondary-content);
+	}
+	.btn-success:hover {
+		background-color: var(--color-secondary);
+		filter: brightness(0.9);
 	}
 
-	/* BOTÓN DANGER: Error en tu paleta de Daisy */
+	/* BOTÓN DANGER (Usa Error) */
 	.btn-danger {
-		@apply btn btn-error border-none text-white active:scale-95;
+		@apply btn border-none transition-all active:scale-95;
+		background-color: var(--color-error);
+		color: var(--color-error-content);
+	}
+	.btn-danger:hover {
+		background-color: var(--color-error);
+		filter: brightness(0.9);
 	}
 
-	/* INPUT: Estilo DaisyUI optimizado */
+	/* INPUT: Forzamos que use el color de texto del contenido del tema */
 	.input-field {
-		@apply input input-md focus:outline-primary w-full transition-all;
-		border-width: 1px;
+		@apply input input-md w-full transition-all;
+		border: 1px solid var(--color-base-300);
+		background-color: var(--color-base-100);
+		color: var(--color-base-content);
 	}
-
-	/* TABLA: Optimizada para el modo oscuro automático */
-	.main-table th {
-		@apply bg-base-200 text-primary border-base-300 border-b px-4 py-3 text-xs font-bold tracking-wider uppercase;
+	.input-field:focus {
+		outline: 2px solid var(--color-primary);
 	}
 }
