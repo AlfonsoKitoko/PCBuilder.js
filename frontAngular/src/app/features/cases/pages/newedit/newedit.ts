@@ -105,7 +105,7 @@ export default class NewEdit implements OnInit {
 			title: `¿Confirmar ${action}?`,
 			message: `¿Estás seguro de que deseas ${action} esta caja?`,
 			confirmLabel: 'Aceptar',
-			cancelLabel: 'Cancelat',
+			cancelLabel: 'cancelar',
 		});
 
 		if (confirmed) {
