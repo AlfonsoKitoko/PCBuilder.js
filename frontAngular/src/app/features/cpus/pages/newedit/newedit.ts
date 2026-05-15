@@ -52,7 +52,7 @@ export default class NewEdit implements OnInit {
 		l2_cache: [0, [Validators.required]],
 		l3_cache: [0, [Validators.required]],
 		tdp: [0, [Validators.required]],
-		hasIntegrated: ['', [Validators.required]],
+		hasIntegrated: [false],
 		integrated_graphics: ['', []],
 		price: [0, [Validators.required, Validators.min(0)]],
 	});
@@ -79,7 +79,7 @@ export default class NewEdit implements OnInit {
 						...res.data,
 						price: res.data.price / 100, // Céntimos -> Euros
 						base_freq: res.data.base_freq / 1000, // MHz -> GHz
-						boost_freq: res.data.base_freq / 1000, // MHz -> GHz
+						boost_freq: res.data.boost_freq / 1000, // MHz -> GHz
 					};
 					this.form.patchValue(data);
 				},
@@ -101,9 +101,9 @@ export default class NewEdit implements OnInit {
 
 		const confirmed = await this.modal.confirm({
 			title: `¿Confirmar ${action}?`,
-			message: `¿Estás seguro de que deseas ${action} esta caja?`,
+			message: `¿Estás seguro de que deseas ${action} este procesador?`,
 			confirmLabel: 'Aceptar',
-			cancelLabel: 'Cancelat',
+			cancelLabel: 'cancelar',
 		});
 
 		if (confirmed) {
