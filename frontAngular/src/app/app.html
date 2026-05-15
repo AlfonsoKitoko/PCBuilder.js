@@ -6,11 +6,18 @@
 	<app-footer />
 
 	@if (modalService.activeModal(); as modalData) {
-		<app-confirmation-modal
-			[data]="modalData"
-			(confirm)="modalService.confirmAction()"
-			(cancel)="modalService.cancelAction()"
-		/>
+		@switch (modalData.type) {
+			@case ('build') {
+				<app-build-modal [data]="modalData" />
+			}
+			@default {
+				<app-confirmation-modal
+					[data]="modalData"
+					(confirm)="modalService.confirmAction()"
+					(cancel)="modalService.cancelAction()"
+				/>
+			}
+		}
 	}
 </div>
 <app-toast />
