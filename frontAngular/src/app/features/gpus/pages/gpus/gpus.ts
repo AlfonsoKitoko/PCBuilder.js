@@ -7,6 +7,7 @@ import { BuildService } from '../../../../shared/services/build.service';
 import { GpuService } from '../../../../shared/services/gpu.service';
 import { ModalService } from '../../../../shared/services/modal.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { generateSlug } from '../../../../shared/utils/generate-slug';
 import { getImageUrl } from '../../../../shared/utils/image-mapper';
 import { useTableHandler } from '../../../../shared/utils/table-handler.util';
 
@@ -22,7 +23,9 @@ export default class Gpus {
 	private readonly buildService = inject(BuildService);
 	private readonly modal = inject(ModalService);
 	private readonly toast = inject(ToastService);
+
 	readonly getImageUrl = getImageUrl;
+	private generateSlug = generateSlug;
 
 	tableHandler = useTableHandler(this.gpuService.gpus, [
 		'manufacturer',
@@ -47,7 +50,10 @@ export default class Gpus {
 	user = computed(() => this.authService.user());
 	managementRoles = [userProfile.ADMIN];
 
-	canManage = computed(() => this.managementRoles.includes(this.user()!.profile as userProfile));
+	canManage = computed(() => {
+		const user = this.user();
+		return user ? this.managementRoles.includes(user.profile as userProfile) : false;
+	});
 
 	ngOnInit() {
 		this.gpuService.getAll();
@@ -61,10 +67,12 @@ export default class Gpus {
 
 			this.toast.show(`${item.manufacturer} ${item.model} añadido a la build`, 'success');
 
-			const buildId = this.buildService.currentBuild()._id;
+			const currentBuild = this.buildService.currentBuild();
 
-			if (buildId) this.router.navigate(['/build/edit', buildId]);
-			else this.router.navigate(['/build/new']);
+			if (currentBuild._id) {
+				const slug = currentBuild.name ? this.generateSlug(currentBuild.name) : '';
+				this.router.navigate(['/build/edit', currentBuild._id, slug]);
+			} else this.router.navigate(['/build/new']);
 		}
 	}
 	goToDetail(id: string | undefined, slug: string | undefined) {
