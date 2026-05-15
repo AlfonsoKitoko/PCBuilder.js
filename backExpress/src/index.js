@@ -1,4 +1,6 @@
 import 'dotenv/config'
+import fs from 'fs'
+import https from 'https'
 import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -31,10 +33,14 @@ const swaggerPath = process.env.SWAGGER_DOCS || '/api-docs'
 //////////////////////////////////////////////////////
 
 const allowedOrigins = [
-	`http://localhost:${frontPort}`,			// Angular development server
+	// `http://localhost:${frontPort}`,			// Angular development server
 	`https://localhost:${frontPort}`,
-	`http://localhost:${backPort}`,		// Express development server
+	// `http://127.0.0.1:${frontPort}`,			// Alt Angular development server
+	`https://127.0.0.1:${frontPort}`,
+	// `http://localhost:${backPort}`,		// Express development server
 	`https://localhost:${backPort}`,
+	// `http://127.0.0.1:${backPort}`,		// Alt Express development server
+	`https://127.0.0.1:${backPort}`,
 ]
 
 app.use(
@@ -70,18 +76,29 @@ app.use(
 	swaggerUI.setup(swaggerSpecs)
 )
 
+const keyPath = path.join(__dirname, '../certs/pcbuilder.key')
+const certPath = path.join(__dirname, '../certs/pcbuilder.crt')
+
+let httpsOptions = null
+
+if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+	httpsOptions = {
+		key: fs.readFileSync(keyPath),
+		cert: fs.readFileSync(certPath)
+	}
+}
+
 //////////////////////////////////////////////////////
 // ++ ROUTES ++
 //////////////////////////////////////////////////////
+app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, '../public/favicon.ico')))
 
 app.get('/', (req, res) => res.redirect(baseUrl))
 
 app.use(baseUrl, builderRoutes)
 
 // Captura de rutas inexistentes
-app.use((req, res, next) => {
-	next(new AppError(`Non-existent route: ${req.originalUrl}`, 404))
-})
+app.use((req, res, next) => next(new AppError(`Non-existent route: ${req.originalUrl}`, 404)))
 
 app.use(errorHandler)
 
@@ -93,11 +110,14 @@ const startServer = async () => {
 	try {
 		await conexMongoDB()
 
-		app.listen(backPort, () => {
+		const server = httpsOptions ? https.createServer(httpsOptions, app) : app
+		const protocol = httpsOptions ? 'https' : 'http'
+
+		server.listen(backPort, () => {
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-			console.log(`++ Servitor running at http://localhost:${backPort}${baseUrl} ++`)
+			console.log(`++ Servitor running at ${protocol}://localhost:${backPort}${baseUrl} ++`)
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-			console.log(`++ Swagger running @ http://localhost:${backPort}${swaggerPath} ++`)
+			console.log(`++ Swagger running @ ${protocol}://localhost:${backPort}${swaggerPath} ++`)
 			console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 		})
 	} catch (err) {

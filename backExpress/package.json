@@ -21,6 +21,8 @@
 		"dotenv": "^17.2.3",
 		"ejs": "^3.1.10",
 		"express": "^5.2.1",
+		"fs": "^0.0.1-security",
+		"https": "^1.0.0",
 		"jsonwebtoken": "^9.0.3",
 		"log4js": "^6.9.1",
 		"method-override": "^3.0.0",
