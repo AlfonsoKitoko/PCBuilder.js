@@ -1,54 +1,101 @@
 <div class="container mx-auto max-w-6xl p-4" [formGroup]="form">
 	<header class="border-base-300 mb-8 border-b pb-6">
-		<div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-			<div class="w-full flex-1">
-				<input
-					class="input input-ghost text-primary w-full p-0 text-3xl font-black tracking-tighter uppercase focus:bg-transparent focus:outline-none"
-					type="text"
-					formControlName="name"
-					placeholder="NOMBRE DE LA BUILD"
-				/>
-
-				<div class="mt-2 flex items-center gap-3">
-					<span class="bg-base-200 text-base-content/60 rounded px-2 py-1 text-xs font-bold tracking-widest uppercase">
-						Build ID: {{ id() || 'BORRADOR' }}
+		<div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+			<div class="flex-1">
+				<h1 class="text-primary text-2xl font-semibold tracking-tight uppercase">
+					{{ id() ? 'Editando Build' : 'Nueva Build' }}
+				</h1>
+				<div class="mt-1 flex items-center gap-2">
+					<span class="text-base-content/40 text-[10px] font-bold tracking-[0.15em] uppercase italic">
+						{{ id() ? 'ID: ' + id() : 'Modo Creación' }}
 					</span>
-					<span class="text-base-content/50 text-sm font-medium uppercase italic">Modo Edición</span>
 				</div>
 			</div>
 
-			<div class="flex items-end gap-8 text-right">
-				<div>
-					<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Consumo Estimado</p>
-					<p class="text-info text-right text-2xl font-black tracking-tighter">{{ analysis().totalWattage }}W</p>
+			<div class="flex items-center gap-6">
+				<div class="dropdown dropdown-end">
+					<label class="btn btn-ghost btn-sm hover:bg-base-200 gap-2 px-3 font-bold normal-case" tabindex="0">
+						<div class="indicator">
+							@if (analysis().errors.length + analysis().warnings.length > 0) {
+								<span
+									class="indicator-item badge badge-xs font-bold"
+									[class.badge-error]="analysis().errors.length > 0"
+									[class.badge-warning]="analysis().errors.length === 0"
+								>
+									{{ analysis().errors.length + analysis().warnings.length }}
+								</span>
+							}
+							<svg
+								class="h-4 w-4 opacity-70"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+								/>
+							</svg>
+						</div>
+						<span class="text-[11px] tracking-widest uppercase opacity-70">Análisis</span>
+					</label>
+
+					<div
+						class="dropdown-content border-base-300 card card-compact bg-base-100 z-1 mt-3 w-80 overflow-hidden border shadow-2xl backdrop-blur-md"
+						tabindex="0"
+					>
+						<div class="bg-primary/10 absolute -top-12 -left-12 h-32 w-32 rounded-full blur-2xl"></div>
+						<div class="bg-secondary/10 absolute -right-12 -bottom-12 h-32 w-32 rounded-full blur-2xl"></div>
+
+						<div class="card-body relative z-10">
+							<h3 class="border-base-200 border-b pb-2 text-[11px] font-bold tracking-widest uppercase opacity-90">
+								detalles del análisis
+							</h3>
+							<div class="mt-2">
+								@if (analysis().errors.length === 0 && analysis().warnings.length === 0) {
+									<p class="text-success py-2 text-center text-xs font-bold italic">✓ Ningún error detectado</p>
+								}
+								<app-build-reporter [analysis]="analysis()" />
+							</div>
+						</div>
+					</div>
 				</div>
-				<div>
-					<p class="text-base-content/40 text-[10px] font-bold tracking-[0.2em] uppercase">Coste Total Estimado</p>
-					<p class="text-success text-4xl font-black tracking-tighter">
-						{{ totalPrice() / 100 | currency: 'EUR' }}
+
+				<div class="dropdown dropdown-end">
+					<label
+						class="btn btn-ghost group hover:bg-base-200 flex h-auto flex-col items-end gap-0 px-2 py-1"
+						tabindex="0"
+					>
+						<p class="text-base-content/40 mb-1 text-[9px] leading-none font-bold tracking-[0.2em] uppercase">
+							Consumo Estimado
+						</p>
+						<div class="flex items-center gap-1">
+							<span class="text-info text-2xl leading-none font-semibold tracking-tight">
+								~ {{ analysis().wattage?.total || 0 }} W
+							</span>
+						</div>
+					</label>
+
+					<div
+						class="dropdown-content border-base-300 card card-compact bg-base-100 z-1 mt-3 w-64 overflow-hidden border shadow-2xl"
+						tabindex="0"
+					>
+						<app-build-wattage-details [slots]="slots()" [wattage]="analysis().wattage" />
+					</div>
+				</div>
+
+				<div class="border-base-300/50 flex flex-col items-end border-l pl-6">
+					<p class="text-base-content/40 mb-1 text-[9px] leading-none font-bold tracking-[0.2em] uppercase">
+						Precio total
+					</p>
+					<p class="text-success text-3xl leading-none font-semibold tracking-tighter">
+						{{ analysis().totalPrice / 100 | currency: 'EUR' }}
 					</p>
 				</div>
 			</div>
-		</div>
-
-		@if (analysis().errors.length > 0) {
-			<div class="alert alert-error mb-6 rounded-xl shadow-sm">
-				<div class="flex flex-col items-start gap-1">
-					<span class="text-xs font-bold tracking-wider uppercase">Incompatibilidades detectadas:</span>
-					@for (error of analysis().errors; track error) {
-						<p class="text-sm">• {{ error }}</p>
-					}
-				</div>
-			</div>
-		}
-
-		<div class="mt-6">
-			<textarea
-				class="textarea textarea-bordered bg-base-200/50 border-base-300/50 focus:outline-primary/30 w-full rounded-xl text-sm leading-relaxed italic"
-				formControlName="description"
-				placeholder="Añade una descripción..."
-				rows="2"
-			></textarea>
 		</div>
 	</header>
 
@@ -59,7 +106,7 @@
 					<th class="w-32 p-4 text-left">Componente</th>
 					<th class="p-4 text-left">Selección</th>
 					<th class="w-32 p-4 text-right">Precio</th>
-					<th class="w-16 p-4 text-center">Acción</th>
+					<th class="w-24 p-4 text-center">Acción</th>
 				</tr>
 			</thead>
 			<tbody class="divide-base-300 divide-y">
@@ -69,11 +116,22 @@
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
-							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+							<div
+								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+								[class.grayscale]="slots().cpu?.active === false"
+								[class.border-error]="slots().cpu?.active === false"
+								[routerLink]="slots().cpu ? ['/cpu', slots().cpu?._id, slots().cpu?.slug] : null"
+								(click)="!slots().cpu ? goToSelect('cpu') : null"
+							>
 								<img class="h-full w-full object-contain" [src]="getImageUrl('cpu', slots().cpu?.slug)" />
 							</div>
 							@if (slots().cpu; as part) {
-								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/cpu', part._id, part.slug]"
+								>
+									{{ part.manufacturer }} {{ part.model }}
+								</span>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -88,14 +146,36 @@
 						{{ slots().cpu ? (slots().cpu!.price / 100 | currency: 'EUR') : '---' }}
 					</td>
 					<td class="p-4 text-center align-middle">
-						@if (slots().cpu) {
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('cpu')"
-							>
-								✕
-							</button>
-						}
+						<div class="flex justify-center gap-2">
+							@if (slots().cpu) {
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('cpu')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('cpu')"
+								>
+									✕
+								</button>
+							}
+						</div>
 					</td>
 				</tr>
 
@@ -105,11 +185,22 @@
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
-							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+							<div
+								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+								[class.grayscale]="slots().mobo?.active === false"
+								[class.border-error]="slots().mobo?.active === false"
+								[routerLink]="slots().mobo ? ['/motherboard', slots().mobo?._id, slots().mobo?.slug] : null"
+								(click)="!slots().mobo ? goToSelect('motherboard') : null"
+							>
 								<img class="h-full w-full object-contain" [src]="getImageUrl('mobo', slots().mobo?.slug)" />
 							</div>
 							@if (slots().mobo; as part) {
-								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/motherboard', part._id, part.slug]"
+								>
+									{{ part.manufacturer }} {{ part.model }}
+								</span>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -124,14 +215,36 @@
 						{{ slots().mobo ? (slots().mobo!.price / 100 | currency: 'EUR') : '---' }}
 					</td>
 					<td class="p-4 text-center align-middle">
-						@if (slots().mobo) {
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('mobo')"
-							>
-								✕
-							</button>
-						}
+						<div class="flex justify-center gap-2">
+							@if (slots().mobo) {
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('motherboard')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('mobo')"
+								>
+									✕
+								</button>
+							}
+						</div>
 					</td>
 				</tr>
 
@@ -144,10 +257,18 @@
 						</td>
 						<td class="p-4 align-middle">
 							<div class="flex items-center gap-4">
-								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<div
+									class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+									[class.grayscale]="item.active === false"
+									[class.border-error]="item.active === false"
+									[routerLink]="['/ram', item._id, item.slug]"
+								>
 									<img class="h-full w-full object-contain" [src]="getImageUrl('ram', item.slug)" />
 								</div>
-								<span class="text-primary text-sm font-bold">
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/ram', item._id, item.slug]"
+								>
 									{{ item.manufacturer }} {{ item.model }} {{ item.modules?.[0]?.quantity }}x{{
 										item.modules?.[0]?.size
 									}}
@@ -159,12 +280,34 @@
 							{{ item.price / 100 | currency: 'EUR' }}
 						</td>
 						<td class="p-4 text-center align-middle">
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('ram', $index)"
-							>
-								✕
-							</button>
+							<div class="flex justify-center gap-2">
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('ram')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('ram', $index)"
+								>
+									✕
+								</button>
+							</div>
 						</td>
 					</tr>
 				} @empty {
@@ -204,10 +347,18 @@
 						</td>
 						<td class="p-4 align-middle">
 							<div class="flex items-center gap-4">
-								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<div
+									class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+									[class.grayscale]="item.active === false"
+									[class.border-error]="item.active === false"
+									[routerLink]="['/storage', item._id, item.slug]"
+								>
 									<img class="h-full w-full object-contain" [src]="getImageUrl('storage', item.slug)" />
 								</div>
-								<span class="text-primary text-sm font-bold">
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/storage', item._id, item.slug]"
+								>
 									{{ item.manufacturer }} {{ item.model }} ({{
 										item.capacity >= 1024 ? item.capacity / 1024 + 'TB' : item.capacity + 'GB'
 									}})
@@ -218,12 +369,34 @@
 							{{ item.price / 100 | currency: 'EUR' }}
 						</td>
 						<td class="p-4 text-center align-middle">
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('storage', $index)"
-							>
-								✕
-							</button>
+							<div class="flex justify-center gap-2">
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('storage')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('storage', $index)"
+								>
+									✕
+								</button>
+							</div>
 						</td>
 					</tr>
 				} @empty {
@@ -258,11 +431,21 @@
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
-							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+							<div
+								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+								[class.grayscale]="slots().gpu?.active === false"
+								[class.border-error]="slots().gpu?.active === false"
+								[routerLink]="slots().gpu ? ['/gpu', slots().gpu?._id, slots().gpu?.slug] : null"
+								(click)="!slots().gpu ? goToSelect('gpu') : null"
+							>
 								<img class="h-full w-full object-contain" [src]="getImageUrl('gpu', slots().gpu?.slug)" />
 							</div>
 							@if (slots().gpu; as part) {
-								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/gpu', part._id, part.slug]"
+									>{{ part.manufacturer }} {{ part.model }}</span
+								>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -277,14 +460,36 @@
 						{{ slots().gpu ? (slots().gpu!.price / 100 | currency: 'EUR') : '---' }}
 					</td>
 					<td class="p-4 text-center align-middle">
-						@if (slots().gpu) {
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('gpu')"
-							>
-								✕
-							</button>
-						}
+						<div class="flex justify-center gap-2">
+							@if (slots().gpu) {
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('gpu')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('gpu')"
+								>
+									✕
+								</button>
+							}
+						</div>
 					</td>
 				</tr>
 
@@ -294,11 +499,21 @@
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
-							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+							<div
+								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+								[class.grayscale]="slots().case?.active === false"
+								[class.border-error]="slots().case?.active === false"
+								[routerLink]="slots().case ? ['/case', slots().case?._id, slots().case?.slug] : null"
+								(click)="!slots().case ? goToSelect('case') : null"
+							>
 								<img class="h-full w-full object-contain" [src]="getImageUrl('case', slots().case?.slug)" />
 							</div>
 							@if (slots().case; as part) {
-								<span class="text-primary text-sm font-bold">{{ part.manufacturer }} {{ part.model }}</span>
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/case', part._id, part.slug]"
+									>{{ part.manufacturer }} {{ part.model }}</span
+								>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -313,14 +528,36 @@
 						{{ slots().case ? (slots().case!.price / 100 | currency: 'EUR') : '---' }}
 					</td>
 					<td class="p-4 text-center align-middle">
-						@if (slots().case) {
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('case')"
-							>
-								✕
-							</button>
-						}
+						<div class="flex justify-center gap-2">
+							@if (slots().case) {
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('case')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('case')"
+								>
+									✕
+								</button>
+							}
+						</div>
 					</td>
 				</tr>
 
@@ -330,13 +567,21 @@
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
-							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+							<div
+								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+								[class.grayscale]="slots().psu?.active === false"
+								[class.border-error]="slots().psu?.active === false"
+								[routerLink]="slots().psu ? ['/psu', slots().psu?._id, slots().psu?.slug] : null"
+								(click)="!slots().psu ? goToSelect('psu') : null"
+							>
 								<img class="h-full w-full object-contain" [src]="getImageUrl('psu', slots().psu?.slug)" />
 							</div>
 							@if (slots().psu; as part) {
-								<span class="text-primary text-sm font-bold">
-									{{ part.manufacturer }} {{ part.model }} {{ part.wattage }}W ({{ part.eff_rating }})
-								</span>
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/psu', part._id, part.slug]"
+									>{{ part.manufacturer }} {{ part.model }}</span
+								>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -351,14 +596,36 @@
 						{{ slots().psu ? (slots().psu!.price / 100 | currency: 'EUR') : '---' }}
 					</td>
 					<td class="p-4 text-center align-middle">
-						@if (slots().psu) {
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('psu')"
-							>
-								✕
-							</button>
-						}
+						<div class="flex justify-center gap-2">
+							@if (slots().psu) {
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('psu')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('psu')"
+								>
+									✕
+								</button>
+							}
+						</div>
 					</td>
 				</tr>
 
@@ -368,13 +635,21 @@
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
-							<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+							<div
+								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
+								[class.grayscale]="slots().os?.active === false"
+								[class.border-error]="slots().os?.active === false"
+								[routerLink]="slots().os ? ['/os', slots().os?._id, slots().os?.slug] : null"
+								(click)="!slots().os ? goToSelect('os') : null"
+							>
 								<img class="h-full w-full object-contain" [src]="getImageUrl('os', slots().os?.slug)" />
 							</div>
 							@if (slots().os; as part) {
-								<span class="text-primary text-sm font-bold">
-									{{ part.manufacturer }} {{ part.version }} ({{ part.mode }})
-								</span>
+								<span
+									class="text-primary cursor-pointer text-sm font-bold hover:underline"
+									[routerLink]="['/os', part._id, part.slug]"
+									>{{ part.manufacturer }} {{ part.version }}</span
+								>
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
@@ -389,20 +664,42 @@
 						{{ slots().os ? (slots().os!.price / 100 | currency: 'EUR') : '---' }}
 					</td>
 					<td class="p-4 text-center align-middle">
-						@if (slots().os) {
-							<button
-								class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
-								(click)="onRemove('os')"
-							>
-								✕
-							</button>
-						}
+						<div class="flex justify-center gap-2">
+							@if (slots().os) {
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
+									(click)="goToSelect('os')"
+									title="Sustituir"
+								>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+										/>
+									</svg>
+								</button>
+								<button
+									class="btn btn-ghost btn-circle btn-xs text-error/40 hover:text-error text-lg font-black"
+									(click)="onRemove('os')"
+								>
+									✕
+								</button>
+							}
+						</div>
 					</td>
 				</tr>
 			</tbody>
 			<tfoot>
 				<tr class="bg-base-200/30 font-black">
-					<td class="p-4 text-right text-xs tracking-widest uppercase" colspan="2">Total configuración</td>
+					<td class="p-4 text-right text-xs tracking-widest uppercase" colspan="2">Precio Total</td>
 					<td class="text-primary p-4 text-right text-lg">
 						{{ totalPrice() / 100 | currency: 'EUR' }}
 					</td>
@@ -413,13 +710,15 @@
 	</div>
 
 	<div class="border-base-300 mt-12 flex justify-end gap-4 border-t pt-8">
-		<button class="btn btn-ghost btn-sm text-error font-bold tracking-widest uppercase">Descartar</button>
+		<button class="btn btn-ghost btn-sm text-error font-bold tracking-widest uppercase" (click)="discardBuild()">
+			Descartar
+		</button>
 		<button
 			class="btn btn-primary px-10 font-black tracking-widest uppercase shadow-lg"
-			[disabled]="form.invalid || analysis().errors.length > 0"
+			[disabled]="analysis().errors.length > 0"
 			(click)="save()"
 		>
-			Guardar Cambios
+			{{ id() ? 'Actualizar Build' : 'Guardar Cambios' }}
 		</button>
 	</div>
 </div>
