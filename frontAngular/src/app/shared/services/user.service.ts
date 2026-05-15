@@ -4,15 +4,31 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { User } from '../models/user.model';
+import { BuildService } from './build.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 	private http = inject(HttpClient);
 	private apiUrl = `${environment.apiUrl}/user`;
+	private readonly buildService = inject(BuildService);
 
 	users = signal<User[]>([]);
 	selectedUser = signal<User | null>(null);
 	isLoading = signal(false);
+
+	getUserBuildCount(userId: string | undefined): number {
+		if (!userId) return 0;
+
+		const builds = this.buildService.builds();
+		if (!builds) return 0;
+
+		return builds.filter((b) => {
+			// Si owner es un objeto (populate), usamos b.owner._id
+			// Si owner es un string, lo usamos directamente
+			const ownerId = typeof b.owner === 'object' ? b.owner?._id : b.owner;
+			return ownerId === userId;
+		}).length;
+	}
 
 	getAll() {
 		this.isLoading.set(true);
