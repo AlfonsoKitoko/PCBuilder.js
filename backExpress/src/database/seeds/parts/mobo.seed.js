@@ -2,7 +2,7 @@ export const mobos = [
 	{	// MSI PRO Z790-A WIFI II
 		manufacturer: 'MSI',
 		model: 'PRO Z790-A WIFI II',
-		socket: 'LGA 1700',
+		socket: 'LGA1700',
 		form_factor: 'ATX',
 		chipset: 'INTEL Z790',
 		ram_type: 'DDR5',

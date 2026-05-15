@@ -168,7 +168,7 @@ export const cpus = [
 		tdp: 170,
 		hasIntegrated: true,
 		integrated_graphics: 'RADEON',
-		price: 629
+		price: 63900
 	},
 	{	// AMD Ryzen 5 7600X
 		manufacturer: 'AMD',
