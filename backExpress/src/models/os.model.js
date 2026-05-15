@@ -36,7 +36,10 @@ osSchema.pre('validate', function () {
 })
 
 osSchema.pre(/^find/, function () {
-	this.find({ active: { $ne: false } })
+	const query = this.getQuery()
+	if (!query._id) {
+		this.where({ active: { $ne: false } })
+	}
 })
 
 const Os = mongoose.model('OS', osSchema)

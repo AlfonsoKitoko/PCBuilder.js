@@ -53,7 +53,10 @@ ramSchema.pre('validate', function () {
 })
 
 ramSchema.pre(/^find/, function () {
-	this.find({ active: { $ne: false } })
+	const query = this.getQuery()
+	if (!query._id) {
+		this.where({ active: { $ne: false } })
+	}
 })
 
 const Ram = mongoose.model("RAM", ramSchema)
