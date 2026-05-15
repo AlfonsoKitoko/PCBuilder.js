@@ -91,22 +91,22 @@
 			</div>
 
 			<div>
-				<label class="label-form text-base-content" for="passwordRepeat"
+				<label class="label-form text-base-content" for="repeatPassword"
 					>Repetir contraseña <span class="text-error">*</span></label
 				>
 				<input
 					class="input-field"
-					id="passwordRepeat"
+					id="repeatPassword"
 					[class.input-error]="
-						(registerForm.get('passwordRepeat')?.invalid || registerForm.hasError('noMatch')) &&
-						registerForm.get('passwordRepeat')?.touched
+						(registerForm.get('repeatPassword')?.invalid || registerForm.hasError('noMatch')) &&
+						registerForm.get('repeatPassword')?.touched
 					"
 					type="password"
-					formControlName="passwordRepeat"
+					formControlName="repeatPassword"
 					autocomplete="new-password"
 					placeholder="••••••••"
 				/>
-				@if (registerForm.hasError('noMatch') && registerForm.get('passwordRepeat')?.touched) {
+				@if (registerForm.hasError('noMatch') && registerForm.get('repeatPassword')?.touched) {
 					<p class="text-error mt-1 text-xs">Las contraseñas no coinciden</p>
 				}
 			</div>

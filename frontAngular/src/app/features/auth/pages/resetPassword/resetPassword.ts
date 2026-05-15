@@ -28,7 +28,7 @@ export default class ResetPassword {
 			password: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
 			repeatPassword: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
 		},
-		{ validators: [this.validator.passwordMatchValidator()] },
+		{ validators: [this.validator.passwordMatchValidator('password', 'repeatPassword')] },
 	);
 	ngOnInit(): void {
 		this.token = this.route.snapshot.params['token'];
