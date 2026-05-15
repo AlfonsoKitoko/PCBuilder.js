@@ -60,11 +60,11 @@ export class NavbarComponent {
 	logout() {
 		this.authService.logout().subscribe({
 			next: () => {
-				this.router.navigate(['/auth/login']);
+				this.router.navigate(['/landing']);
 			},
 			error: (err) => {
 				console.error('Error durante el logout:', err);
-				this.router.navigate(['/auth/login']);
+				this.router.navigate(['/landing']);
 			},
 		});
 	}
