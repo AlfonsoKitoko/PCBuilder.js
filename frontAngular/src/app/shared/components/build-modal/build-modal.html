@@ -1,0 +1,119 @@
+<div
+	class="modal-backdrop bg-neutral/60 animate-in fade-in fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm duration-200"
+	(click)="onBackdropClick($event)"
+>
+	<div
+		class="bg-base-100 border-base-300 animate-in slide-in-from-bottom-8 w-full max-w-md transform overflow-hidden rounded-3xl border shadow-2xl duration-300"
+	>
+		<div class="bg-base-200 border-base-300 flex items-center justify-between border-b px-6 py-5">
+			<div class="flex items-center gap-3">
+				<div class="bg-primary text-primary-content flex h-10 w-10 items-center justify-center rounded-xl shadow-lg">
+					<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+						/>
+					</svg>
+				</div>
+				<div>
+					<h3 class="text-base-content text-lg leading-none font-black tracking-tight uppercase">{{ data().title }}</h3>
+					<p class="text-base-content mt-1 text-[10px] font-bold tracking-widest uppercase opacity-60">
+						Detalles de la configuración
+					</p>
+				</div>
+			</div>
+			<button class="btn btn-ghost btn-circle btn-sm text-base-content" (click)="cancel()">
+				<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</div>
+
+		<div class="space-y-6 px-8 py-8">
+			@if (data().message) {
+				<div class="bg-info/10 border-info/20 text-info flex items-center gap-3 rounded-2xl border p-4">
+					<svg
+						class="h-5 w-5 shrink-0"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
+					</svg>
+					<p class="text-xs leading-tight font-bold">{{ data().message }}</p>
+				</div>
+			}
+
+			<div class="form-control w-full">
+				<label class="label mb-1">
+					<span class="label-text text-base-content text-[11px] font-black tracking-wider uppercase opacity-70"
+						>nombre</span
+					>
+					<span class="label-text-alt text-primary text-[10px] font-bold italic">Obligatorio</span>
+				</label>
+				<div class="relative">
+					<input
+						class="input input-bordered focus:input-primary text-base-content w-full pl-10 font-bold transition-all"
+						[value]="name()"
+						(input)="name.set($any($event.target).value)"
+						type="text"
+						placeholder="Ej: Master Race 3000"
+					/>
+					<svg
+						class="text-base-content absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 opacity-50"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+						/>
+					</svg>
+				</div>
+			</div>
+
+			<div class="form-control w-full">
+				<label class="label mb-1">
+					<span class="label-text text-base-content text-[11px] font-black tracking-wider uppercase opacity-70"
+						>Descripción</span
+					>
+				</label>
+				<textarea
+					class="textarea textarea-bordered focus:textarea-primary text-base-content min-h-[120px] w-full pt-3 leading-relaxed transition-all"
+					[value]="description()"
+					(input)="description.set($any($event.target).value)"
+					placeholder="Escribe aquí para qué sirve esta build..."
+				></textarea>
+			</div>
+		</div>
+
+		<div class="bg-base-200 border-base-300 flex flex-col-reverse gap-3 border-t px-8 py-6 sm:flex-row sm:justify-end">
+			<button
+				class="btn btn-ghost text-base-content btn-sm h-12 px-6 text-[11px] font-black tracking-widest uppercase"
+				(click)="cancel()"
+			>
+				{{ data().cancelLabel || 'Cancelar' }}
+			</button>
+
+			<button
+				class="btn btn-primary btn-sm h-12 px-10 text-[11px] font-black tracking-widest uppercase shadow-lg"
+				[disabled]="!name().trim()"
+				(click)="confirmSave()"
+			>
+				{{ data().confirmLabel || 'Confirmar' }}
+			</button>
+		</div>
+	</div>
+</div>

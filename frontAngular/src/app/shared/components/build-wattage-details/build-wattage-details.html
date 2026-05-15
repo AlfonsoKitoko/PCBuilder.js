@@ -1,0 +1,69 @@
+<div class="card-body relative overflow-hidden">
+	<div class="bg-primary/10 absolute -top-12 -left-12 h-32 w-32 rounded-full blur-2xl"></div>
+	<div class="bg-secondary/10 absolute -right-12 -bottom-12 h-32 w-32 rounded-full blur-2xl"></div>
+
+	<div class="relative z-10">
+		<h3 class="border-base-200 mb-3 border-b pb-2 text-[10px] font-bold tracking-widest uppercase opacity-90">
+			Detalle del consumo estimado
+		</h3>
+
+		<ul class="flex flex-col gap-2.5">
+			@if (slots().cpu) {
+				<li class="flex justify-between text-xs">
+					<span class="tracking-wider uppercase opacity-50">CPU</span>
+					<span class="font-mono font-bold">{{ wattage()?.cpu || 0 }} W</span>
+				</li>
+			}
+			@if (slots().mobo) {
+				<li class="flex justify-between text-xs">
+					<span class="tracking-wider uppercase opacity-50">Placa base</span>
+					<span class="font-mono font-bold">{{ wattage()?.mobo || 50 }} W</span>
+				</li>
+			}
+
+			@for (kit of slots().ram; track $index) {
+				<li class="flex justify-between text-xs">
+					<span class="tracking-wider uppercase opacity-50">kit RAM #{{ $index + 1 }}</span>
+					<div class="border-base-300 flex flex-col gap-1 border-l pl-2">
+						@for (stick of [].constructor(kit.modules?.[0]?.quantity || 1); track i; let i = $index) {
+							<div class="flex justify-between gap-4 text-[11px]">
+								<span class="whitespace-nowrap italic opacity-50">Stick {{ i + 1 }}</span>
+								<span class="font-mono font-bold">
+									{{ ((+kit.voltage || 0) / 100) * 3 || 4 | number: '1.0-0' }} W
+								</span>
+							</div>
+						}
+					</div>
+				</li>
+			}
+
+			@for (drive of slots().storage; track $index) {
+				<li class="flex justify-between text-xs">
+					<span class="tracking-wider uppercase opacity-50">Disco {{ $index + 1 }}</span>
+					<span class="font-mono font-bold"> {{ drive.type === 'SSD' ? (drive.nvme ? 5 : 3) : 7 }} W </span>
+				</li>
+			}
+
+			@if (slots().gpu) {
+				<li class="flex justify-between text-xs">
+					<span class="tracking-wider uppercase opacity-50">GPU</span>
+					<span class="font-mono font-bold">{{ wattage()?.gpu || 0 }} W</span>
+				</li>
+			}
+
+			<li class="border-base-content/10 mt-1 border-t pt-2">
+				<div class="flex justify-between text-sm font-bold">
+					<span class="tracking-widest uppercase opacity-70">Total Build</span>
+					<span class="text-info font-mono">{{ wattage()?.total || 0 }} W</span>
+				</div>
+
+				@if (slots().psu) {
+					<div class="mt-1 flex justify-between text-[11px] font-bold italic">
+						<span class="text-warning font-normal tracking-widest uppercase opacity-80">Capacidad PSU</span>
+						<span class="text-warning font-mono">{{ slots().psu?.wattage }} W</span>
+					</div>
+				}
+			</li>
+		</ul>
+	</div>
+</div>

@@ -1,0 +1,45 @@
+<div class="mb-8 flex flex-col gap-4">
+	@if (analysis().errors.length > 0) {
+		<div class="alert alert-error bg-error/20 border-error/20 text-error rounded-xl border shadow-sm backdrop-blur-sm">
+			<div class="flex flex-col items-start gap-1">
+				<div class="flex items-center gap-2">
+					<svg class="h-4 w-4 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2.5"
+							d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
+					</svg>
+					<span class="text-xs font-black tracking-widest uppercase">Errores Críticos</span>
+				</div>
+				@for (error of analysis().errors; track error) {
+					<p class="text-sm font-bold italic opacity-100">• {{ error }}</p>
+				}
+			</div>
+		</div>
+	}
+
+	@if (analysis().warnings && analysis().warnings.length > 0) {
+		<div
+			class="alert alert-warning bg-warning/20 border-warning/20 text-warning rounded-xl border shadow-sm backdrop-blur-sm"
+		>
+			<div class="flex flex-col items-start gap-1">
+				<div class="flex items-center gap-2">
+					<svg class="h-4 w-4 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2.5"
+							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+						/>
+					</svg>
+					<span class="text-xs font-black tracking-widest uppercase">Advertencias</span>
+				</div>
+				@for (warning of analysis().warnings; track warning) {
+					<p class="text-sm font-bold italic opacity-100">• {{ warning }}</p>
+				}
+			</div>
+		</div>
+	}
+</div>
