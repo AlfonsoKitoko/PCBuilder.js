@@ -2,112 +2,115 @@
 	@if (user(); as user) {
 		<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
 			<div class="flex flex-col">
-				<nav class="text-base-content/40 mb-2 font-mono text-[10px] font-bold tracking-widest uppercase">
-					Sistema / Control de Acceso / {{ user.profile }}
+				<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
+					Comunidad / Usuarios / {{ user.username }}
 				</nav>
-				<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
-					Perfil de <span class="text-primary italic">{{ user.username }}</span>
+				<h1 class="text-base-content text-3xl leading-none font-black uppercase md:text-5xl">
+					Datos de
+					<span class="from-primary to-secondary bg-linear-to-r bg-clip-text text-transparent">{{
+						user.username
+					}}</span>
 				</h1>
-			</div>
-			<div class="md:text-right">
-				<span
-					class="badge badge-lg badge-primary h-auto rounded-md py-2 text-[10px] font-black tracking-widest uppercase"
-				>
-					Status: Activo
-				</span>
 			</div>
 		</header>
 
 		<div class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12">
-			<!-- Columna Avatar/Acciones -->
 			<div class="flex flex-col gap-4 lg:col-span-4">
 				<div
-					class="bg-base-200 ring-base-300 group relative mx-auto flex aspect-square w-full max-w-70 items-center justify-center overflow-hidden rounded-2xl p-10 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
+					class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
 				>
-					<!-- Icono de usuario estilizado -->
-					<i
-						class="ri-user-3-line text-primary/10 text-[120px] transition-transform duration-500 group-hover:scale-110"
-					></i>
-					<div class="absolute right-6 bottom-6 left-6 text-center">
-						<span class="text-[10px] font-black tracking-[0.3em] uppercase opacity-40">Identidad Digital</span>
+					<div
+						class="from-primary/20 to-secondary/20 flex h-full w-full items-center justify-center rounded-xl bg-linear-to-br"
+					>
+						<span class="text-primary text-6xl font-black md:text-8xl">
+							{{ user.username.substring(0, 2).toUpperCase() }}
+						</span>
 					</div>
 				</div>
 
-				<div class="bg-base-200/50 border-base-300 flex flex-col gap-2 rounded-xl border p-5 dark:border-white/5">
-					<button
+				<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
+					<a
 						class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
+						[routerLink]="['/build/user', user._id]"
 					>
-						<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-							/>
-						</svg>
-						Editar Perfil
-					</button>
-					<button
-						class="btn btn-ghost btn-block btn-sm text-[9px] font-black tracking-widest uppercase opacity-50 hover:opacity-100"
-					>
-						Resetear Contraseña
-					</button>
+						Ver Builds ({{ userService.getUserBuildCount(user._id) }})
+					</a>
+
+					@if (user._id === currentUser()?._id || canManage()) {
+						<div class="divider my-2 opacity-50"></div>
+
+						<a
+							class="btn btn-warning btn-outline btn-block btn-sm rounded-lg font-bold tracking-wider uppercase"
+							[routerLink]="['/user/edit', user._id]"
+						>
+							<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+								/>
+							</svg>
+							Editar Perfil
+						</a>
+
+						<button
+							class="btn btn-error btn-outline btn-block btn-sm mt-2 rounded-lg font-bold tracking-wider uppercase"
+							(click)="onDeleteAccount(user._id!)"
+						>
+							<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+								/>
+							</svg>
+							Desactivar Cuenta
+						</button>
+					}
 				</div>
 			</div>
 
-			<!-- Columna Información -->
 			<div class="flex flex-col gap-4 lg:col-span-8">
 				<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 					<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
-						<h2 class="text-base-content/60 font-mono text-[10px] font-black tracking-widest uppercase">
-							Dossier de Identificación
+						<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
+							Información de Usuario
 						</h2>
 					</div>
-					<div class="divide-base-300 divide-y font-mono dark:divide-white/5">
-						<div class="group flex justify-between p-4 text-sm">
-							<span class="text-base-content/40 text-[10px] font-bold uppercase">Username</span>
-							<span class="text-primary font-black italic">{{ user.username }}</span>
-						</div>
-
+					<div class="divide-base-300 divide-y dark:divide-white/5">
 						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/40 text-[10px] font-bold uppercase">Nombre Completo</span>
-							<span class="font-bold tracking-tight uppercase">{{ user.firstName }} {{ user.lastName }}</span>
+							<span class="text-base-content/50 font-medium">Username</span>
+							<span class="text-primary font-bold">@{{ user.username }}</span>
 						</div>
-
 						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/40 text-[10px] font-bold uppercase">Dirección Email</span>
-							<span class="text-primary decoration-primary/30 font-bold lowercase underline">{{ user.email }}</span>
+							<span class="text-base-content/50 font-medium">Nombre completo</span>
+							<span class="font-bold uppercase">{{ user.firstName }} {{ user.lastName }}</span>
 						</div>
-
 						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/40 text-[10px] font-bold uppercase">F. Nacimiento</span>
-							<span class="font-bold tracking-widest">{{ user.birthDate | date: 'fullDate' | uppercase }}</span>
+							<span class="text-base-content/50 font-medium">Email</span>
+							<span class="font-bold">{{ user.email }}</span>
 						</div>
-
 						<div class="flex justify-between p-4 text-sm">
-							<span class="text-base-content/40 text-[10px] font-bold uppercase">Privilegios</span>
-							<span class="badge badge-outline border-primary/30 text-primary text-[10px] font-black">{{
-								user.profile
-							}}</span>
+							<span class="text-base-content/50 font-medium">Fecha de nacimiento</span>
+							<span class="font-bold">{{ user.birthDate | date: 'dd / MM / yyyy' }}</span>
+						</div>
+						<div class="flex justify-between p-4 text-sm">
+							<span class="text-base-content/50 font-medium">Nivel de privilegios</span>
+							<span class="badge badge-primary badge-sm font-black italic">{{ user.profile }}</span>
 						</div>
 					</div>
 				</section>
 
-				<!-- Metadata de Auditoría -->
 				<div
-					class="border-base-300 mt-4 flex flex-wrap gap-x-8 gap-y-2 border-t p-4 font-mono text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
+					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
 				>
-					<span class="flex items-center gap-1"><i class="ri-fingerprint-line"></i> UID: {{ user._id }}</span>
-					<span class="flex items-center gap-1"><i class="ri-shield-check-line"></i> SECURITY: LEVEL_01</span>
-					<span class="flex items-center gap-1"><i class="ri-calendar-line"></i> REGISTRO: SYS_2026</span>
+					<span>UID: {{ user._id }}</span>
 				</div>
 			</div>
 		</div>
 	} @else {
-		<div class="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-			<span class="loading loading-ring loading-lg text-primary"></span>
-			<span class="animate-pulse text-[10px] font-black tracking-[0.4em] uppercase opacity-30"
-				>Sincronizando base de datos...</span
-			>
+		<div class="flex min-h-[60vh] items-center justify-center">
+			<span class="loading loading-ring loading-lg text-primary/50"></span>
 		</div>
 	}
 </div>
