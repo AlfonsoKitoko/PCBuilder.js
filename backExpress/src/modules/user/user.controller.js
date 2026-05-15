@@ -51,6 +51,16 @@ export const updateUserById = wrapAsync(async (req, res) => {
 // D - Eliminar User
 export const deleteUserById = wrapAsync(async (req, res) => {
 	const { id } = req.params
+	const userId = req.user.id
+	const userProfile = req.user.profile
+
+	const isSelf = id.toString() === userId.toString()
+	const isAdmin = userProfile === 'ADMIN'
+
+	if (!isSelf && !isAdmin) {
+		throw new AppError('Insufficient permissions', 403)
+	}
+
 	const deletedUser = await userService.deleteUser(id)
 
 	if (!deletedUser) throw new AppError('User not found', 404)
