@@ -1,10 +1,19 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { BuildState } from '../models/build-state.model';
 import { Build } from '../models/build.model';
+
+interface WattageDetails {
+	cpu: number;
+	gpu: number;
+	ram: number;
+	storage: number;
+	mobo: number;
+	total: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class BuildService {
@@ -29,9 +38,17 @@ export class BuildService {
 		os: null,
 	});
 
-	analysis = signal<{ errors: string[]; totalWattage: number; isValid: boolean }>({
+	analysis = signal<{
+		errors: string[];
+		warnings: string[];
+		wattage: WattageDetails | null;
+		totalPrice: number;
+		isValid: boolean;
+	}>({
 		errors: [],
-		totalWattage: 0,
+		warnings: [],
+		wattage: null,
+		totalPrice: 0,
 		isValid: false,
 	});
 
@@ -42,7 +59,7 @@ export class BuildService {
 	checkCompatibility() {
 		const b = this.currentBuild();
 		if (!b.cpu && !b.mobo && b.ram.length === 0) {
-			this.analysis.set({ errors: [], totalWattage: 0, isValid: false });
+			this.analysis.set({ errors: [], warnings: [], wattage: null, totalPrice: 0, isValid: false });
 			return;
 		}
 
@@ -60,13 +77,18 @@ export class BuildService {
 			next: (res) => {
 				this.analysis.set({
 					errors: res.data.errors || [],
-					totalWattage: res.data.totalWattage || 0,
+					warnings: res.data.warnings || [],
+					wattage: res.data.wattage || null,
+					totalPrice: res.data.totalPrice || 0,
 					isValid: res.data.isValid ?? false,
 				});
 			},
 			error: (err) => console.error('Error en el Build Engine:', err),
 		});
 	}
+
+	readonly localWattage = computed(() => this.analysis()?.wattage?.total);
+	readonly currentPrice = computed(() => this.analysis()?.totalPrice);
 
 	addPart(type: keyof BuildState, part: any) {
 		this.currentBuild.update((state) => {
@@ -102,6 +124,8 @@ export class BuildService {
 	resetBuild() {
 		this.currentBuild.set({
 			_id: undefined,
+			name: '',
+			description: '',
 			cpu: null,
 			mobo: null,
 			ram: [],
@@ -111,20 +135,22 @@ export class BuildService {
 			psu: null,
 			os: null,
 		});
-		this.analysis.set({ errors: [], totalWattage: 0, isValid: false });
+		this.analysis.set({ errors: [], warnings: [], wattage: null, totalPrice: 0, isValid: false });
 	}
 
 	setEditBuild(build: Build) {
 		this.currentBuild.set({
 			_id: build._id, // Aquí recuperamos el ID de MongoDB
+			name: build.name,
+			description: build.description || '',
 			cpu: build.cpu,
 			mobo: build.mobo,
-			gpu: build.gpu ?? null,
-			ram: build.ram || [],
-			storage: build.storage || [],
+			gpu: build.gpu || null,
+			ram: [...(build.ram || [])],
+			storage: [...(build.storage || [])],
 			psu: build.psu,
 			case: build.case,
-			os: build.os ?? null,
+			os: build.os || null,
 		});
 		this.checkCompatibility();
 	}
