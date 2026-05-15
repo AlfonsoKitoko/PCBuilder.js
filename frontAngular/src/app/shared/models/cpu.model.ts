@@ -23,6 +23,8 @@ export interface Cpu {
 	partType: Part;
 	slug: string;
 
+	active: boolean;
+
 	createdAt?: string;
 	updatedAt?: string;
 }

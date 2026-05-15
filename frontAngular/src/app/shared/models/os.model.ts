@@ -11,6 +11,8 @@ export interface Os {
 	partType: Part;
 	slug: string;
 
+	active: boolean;
+
 	createdAt?: string;
 	updatedAt?: string;
 }

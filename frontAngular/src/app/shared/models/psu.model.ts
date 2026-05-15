@@ -14,6 +14,8 @@ export interface Psu {
 	partType: Part;
 	slug: string;
 
+	active: boolean;
+
 	createdAt?: string;
 	updatedAt?: string;
 }

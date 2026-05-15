@@ -16,6 +16,8 @@ export interface Case {
 	partType: Part;
 	slug: string;
 
+	active: boolean;
+
 	createdAt?: string;
 	updatedAt?: string;
 }
