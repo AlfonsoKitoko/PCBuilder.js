@@ -15,10 +15,14 @@ export const createBuild = async (buildData, userId) => {
 	if (!validation.isValid) throw new AppError('Build Incompatibility', 400, validation.errors)
 
 	// Calculamos el precio usando el Engine de precios
+	const powerAnalysis = calcTotalPowerConsum(newBuild)
 	newBuild.totalPrice = calcTotalPrice(newBuild)
-	newBuild.totalWattage = calcTotalPowerConsum(newBuild)
-	const savedBuild = await newBuild.save()
-	return { build: savedBuild, warnings: validation.warnings }
+	newBuild.totalWattage = powerAnalysis.total
+
+	await newBuild.save()
+	await newBuild.populate('owner', 'username')
+
+	return { build: newBuild, warnings: validation.warnings }
 }
 
 // R - Listar todas las builds
@@ -26,9 +30,9 @@ export const getAllBuilds = async () => {
 	return await Build.find()
 		.select('-__v -createdAt -updatedAt -description')
 		.populate('owner', 'username')
-		.populate('cpu gpu os case mobo storage', 'manufacturer model slug gpu_type')
-		.populate('ram', 'manufacturer model capacity speed slug')
-		.populate('psu', 'manufacturer model wattage slug')
+		.populate('cpu gpu os case mobo storage', 'manufacturer model slug gpu_type +active')
+		.populate('ram', 'manufacturer model capacity speed slug +active')
+		.populate('psu', 'manufacturer model wattage slug +active')
 		.sort({ updatedAt: -1, createdAt: -1 })
 		.lean()
 }
@@ -36,10 +40,11 @@ export const getAllBuilds = async () => {
 // R - Listar todas las builds de un usuario
 export const getBuildsByUser = async (userId) => {
 	return await Build.find({ owner: userId })
-		.select('-__v -createdAt -updatedAt -mobo -storage -case -description')
-		.populate('cpu gpu os', 'manufacturer model')
-		.populate('ram', 'manufacturer model capacity speed')
-		.populate('psu', 'manufacturer model wattage')
+		.select('-__v -createdAt -updatedAt -description')
+		.populate('owner', 'username')
+		.populate('cpu gpu os case mobo storage', 'manufacturer model slug gpu_type +active')
+		.populate('ram', 'manufacturer model capacity speed slug +active')
+		.populate('psu', 'manufacturer model wattage slug +active')
 		.sort({ updatedAt: -1, createdAt: -1 })
 		.lean()
 }
@@ -51,6 +56,7 @@ export const getBuildById = async (id) => {
 		.populate('owner', 'username')
 		.populate({
 			path: 'cpu mobo ram storage gpu psu case os',
+			select: '+active',
 			populate: {
 				path: 'partType',
 				select: 'name slug'
@@ -86,27 +92,30 @@ export const updateBuild = async (id, userId, userProfile, updateData) => {
 		throw new AppError('Update failed: Incompatibility detected', 400, validation.errors)
 	}
 
+	const powerAnalysis = calcTotalPowerConsum(build)
 	build.totalPrice = calcTotalPrice(build)	// El precio se recalcula siempre
-	build.totalWattage = calcTotalPowerConsum(build)
-	const updatedBuild = await build.save()
+	build.totalWattage = powerAnalysis.total
 
-	return { build: updatedBuild, warnings: validation.warnings }
+	await build.save()
+
+	await build.populate('owner', 'username')
+
+	return { build: build, warnings: validation.warnings }
 }
 
 export const validateBuild = async (buildData) => {
 	const tempBuild = new Build(buildData)
-
 	await tempBuild.populate(['cpu', 'mobo', 'ram', 'storage', 'gpu', 'case', 'psu', 'os'])
 
 	const validation = validateFullBuild(tempBuild)
-	const totalWattage = calcTotalPowerConsum(tempBuild)
+	const powerDetails = calcTotalPowerConsum(tempBuild)
 	const totalPrice = calcTotalPrice(tempBuild)
 
 	return {
-		isvalid: validation.isValid,
+		isValid: validation.isValid,
 		errors: validation.errors,
 		warnings: validation.warnings,
-		totalWattage,
+		wattage: powerDetails,
 		totalPrice
 	}
 }
