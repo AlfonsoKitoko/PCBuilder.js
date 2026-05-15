@@ -4,6 +4,7 @@ import { authGuard } from '../../shared/guards/auth.guard';
 export const routes: Routes = [
 	// redirige a build/all
 	{ path: '', redirectTo: 'all', pathMatch: 'full' },
+
 	// Todas las builds (público) -> /build/all
 	{ path: 'all', loadComponent: () => import('./pages/builds/builds') },
 

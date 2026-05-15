@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './shared/guards/auth.guard';
 
 export const routes: Routes = [
 	{
@@ -77,6 +78,7 @@ export const routes: Routes = [
 		path: 'user',
 		title: 'PCBuilder - Usuarios',
 		loadChildren: () => import('./features/users/users.routes').then((m) => m.routes),
+		canActivate: [authGuard],
 	},
 
 	{ path: '**', pathMatch: 'full', redirectTo: 'landing' },
