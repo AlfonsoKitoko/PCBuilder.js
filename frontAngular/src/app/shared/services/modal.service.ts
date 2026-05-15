@@ -1,22 +1,22 @@
 import { Injectable, signal } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ModalOptions } from '../models/modal.model';
+import { ModalOptions, ModalResponse } from '../models/modal.model';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ModalService {
-	private modalResult = new Subject<boolean>();
+	private modalResult = new Subject<any>();
 	private activeModalData = signal<ModalOptions | null>(null);
 
 	// El modal es de sólo lectura
 	public readonly activeModal = this.activeModalData.asReadonly();
 
 	// Abre un modal de confirmación y devuelve una promesa que se resuelve con la elección del usuario
-	public async confirm(options: ModalOptions): Promise<boolean> {
+	public async confirm(options: ModalOptions): Promise<ModalResponse> {
 		this.activeModalData.set(options);
 
-		return new Promise<boolean>((resolve) => {
+		return new Promise<ModalResponse>((resolve) => {
 			const subscription = this.modalResult.subscribe((result) => {
 				subscription.unsubscribe();
 				this.activeModalData.set(null);
@@ -26,12 +26,12 @@ export class ModalService {
 	}
 
 	// Si el usuario confirma
-	public confirmAction(): void {
-		this.modalResult.next(true);
+	public confirmAction(formData?: { name: string; description: string }): void {
+		this.modalResult.next({ confirmed: true, data: formData });
 	}
 
 	// Si el usuario cancela
 	public cancelAction(): void {
-		this.modalResult.next(false);
+		this.modalResult.next({ confirmed: false });
 	}
 }

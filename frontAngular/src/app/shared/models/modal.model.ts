@@ -4,10 +4,12 @@ export interface ModalOptions {
 	confirmLabel?: string;
 	cancelLabel?: string;
 	type?: ModalType;
+	initialData?: { name: string; description: string };
 }
 
-export type ModalType = 'confirm' | 'danger' | 'info';
+export type ModalType = 'confirm' | 'danger' | 'info' | 'build';
 
-export interface ModalResult {
+export interface ModalResponse {
 	confirmed: boolean;
+	data?: { name: string; description: string };
 }

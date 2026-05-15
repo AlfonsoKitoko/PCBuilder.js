@@ -5,8 +5,10 @@
 	<div
 		class="animate-in slide-in-from-bottom-4 bg-base-100 border-base-300 w-full max-w-md transform overflow-hidden rounded-2xl border shadow-2xl duration-300"
 	>
-		<div class="bg-base-200/50 border-base-300 flex items-center justify-between border-b px-6 py-4">
-			<h3 class="text-primary text-lg font-bold tracking-tight uppercase">{{ data().title }}</h3>
+		<div
+			class="bg-base-200/80 border-base-300 dark:bg-base-300/50 flex items-center justify-between border-b px-6 py-4"
+		>
+			<h3 class="text-primary text-lg font-black tracking-tighter uppercase">{{ data().title }}</h3>
 			<button
 				class="hover:bg-base-300 rounded-lg p-1 opacity-50 transition-colors hover:opacity-100"
 				(click)="cancel.emit()"
@@ -24,17 +26,17 @@
 		</div>
 
 		<div
-			class="bg-base-200/30 border-base-300 flex flex-col-reverse gap-3 border-t px-6 py-4 sm:flex-row sm:justify-end"
+			class="bg-base-200/50 border-base-300 dark:bg-base-300/50 flex flex-col-reverse gap-3 border-t px-6 py-4 sm:flex-row sm:justify-end"
 		>
-			<button class="btn btn-ghost btn-sm h-10 px-6 text-xs font-bold uppercase" (click)="cancel.emit()">
+			<button class="btn btn-neutral btn-sm h-10 px-6 text-xs font-bold uppercase" (click)="cancel.emit()">
 				{{ data().cancelLabel || 'Cancelar' }}
 			</button>
 
 			<button
-				class="btn-sm h-10 px-8 text-xs font-bold uppercase"
+				class="btn btn-sm h-10 px-8 text-xs font-bold uppercase"
 				[ngClass]="{
-					'btn-danger': data().type === 'danger',
-					'btn-primary': data().type !== 'danger',
+					'btn-error text-white': data().type === 'danger',
+					'btn-primary shadow-primary/20 shadow-lg': data().type !== 'danger',
 				}"
 				(click)="confirm.emit()"
 			>
