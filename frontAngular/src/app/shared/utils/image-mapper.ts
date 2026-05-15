@@ -1,6 +1,10 @@
 import { environment } from '../../../environments/environment.development';
 
-export function getImageUrl(categorySlug: string | undefined, partSlug?: string | undefined): string {
+export function getImageUrl(
+	categorySlug: string | undefined,
+	partSlug?: string | undefined,
+	fallbackToCategory: boolean = true,
+): string {
 	const apiUrl = environment.apiUrl;
 
 	if (!categorySlug || categorySlug === 'no-image') return `/default/no-image.png`;
@@ -19,11 +23,11 @@ export function getImageUrl(categorySlug: string | undefined, partSlug?: string 
 		'video-card': 'video-card.png',
 	};
 
+	if (!partSlug && !fallbackToCategory) return `/default/no-image.png`;
+
 	if (partSlug) return `${apiUrl}/public/${categorySlug}/${partSlug}.png`;
 
-	if (categorySlug === 'case' || categorySlug === 'cpu' || categorySlug === 'gpu') return '/default/no-image.png';
+	const imgName = slugMap[categorySlug];
 
-	const imgName = slugMap[categorySlug] || `${categorySlug}.png`;
-
-	return `/default/${imgName}`;
+	return imgName ? `/default/${imgName}` : `/default/no-image.png`;
 }
