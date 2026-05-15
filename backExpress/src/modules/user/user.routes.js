@@ -20,9 +20,9 @@ router.get('/:id', protect, userController.findUserById)
 router.post('/', protect, restrictTo('ADMIN'), userController.createUser)
 
 // U - Modificar User
-router.patch('/:id', protect, restrictTo('ADMIN'), userController.updateUserById)
+router.patch('/:id', protect, userController.updateUserById)
 
 // D - Eliminar User
-router.delete('/:id', protect, restrictTo('ADMIN'), userController.deleteUserById)
+router.delete('/:id', protect, userController.deleteUserById)
 
 export default router
