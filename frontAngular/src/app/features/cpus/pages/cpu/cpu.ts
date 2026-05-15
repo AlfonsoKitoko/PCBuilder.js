@@ -30,7 +30,10 @@ export default class Cpu {
 
 	managementRoles = [userProfile.ADMIN];
 
-	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
+	canManage = computed(() => {
+		const user = this.currentUser();
+		return user ? this.managementRoles.includes(user.profile as userProfile) : false;
+	});
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -80,7 +83,7 @@ export default class Cpu {
 					this.toast.show('CPU eliminada', 'success');
 					this.router.navigate(['/cpu/all']);
 				},
-				error: () => this.toast.show('Error al elminiar', 'error'),
+				error: () => this.toast.show('Error al eliminar', 'error'),
 			});
 		}
 	}

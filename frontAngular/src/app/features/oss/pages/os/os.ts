@@ -30,7 +30,10 @@ export default class Os {
 
 	managementRoles = [userProfile.ADMIN];
 
-	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
+	canManage = computed(() => {
+		const user = this.currentUser();
+		return user ? this.managementRoles.includes(user.profile as userProfile) : false;
+	});
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -79,7 +82,7 @@ export default class Os {
 					this.toast.show('Sistema operativo eliminado', 'success');
 					this.router.navigate(['/os/all']);
 				},
-				error: () => this.toast.show('Error al elminiar', 'error'),
+				error: () => this.toast.show('Error al eliminar', 'error'),
 			});
 		}
 	}

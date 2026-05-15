@@ -30,7 +30,10 @@ export default class Storage {
 
 	managementRoles = [userProfile.ADMIN];
 
-	canManage = computed(() => this.managementRoles.includes(this.currentUser()!.profile as userProfile));
+	canManage = computed(() => {
+		const user = this.currentUser();
+		return user ? this.managementRoles.includes(user.profile as userProfile) : false;
+	});
 
 	ngOnInit() {
 		const id = this.route.snapshot.paramMap.get('id');
@@ -79,7 +82,7 @@ export default class Storage {
 					this.toast.show('Disco Duro eliminado', 'success');
 					this.router.navigate(['/storage/all']);
 				},
-				error: () => this.toast.show('Error al elminiar', 'error'),
+				error: () => this.toast.show('Error al eliminar', 'error'),
 			});
 		}
 	}
