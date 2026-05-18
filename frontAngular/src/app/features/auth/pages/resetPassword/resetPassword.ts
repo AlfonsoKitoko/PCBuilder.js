@@ -16,6 +16,9 @@ export default class ResetPassword {
 	private readonly authService = inject(AuthService);
 	private readonly route = inject(ActivatedRoute);
 
+	readonly showPassword = signal(false);
+	readonly showRepeatPassword = signal(false);
+
 	isLoading = signal<boolean>(false);
 	isVerifying = signal<boolean>(true);
 	errorMessage = signal<string | null>(null);

@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../../shared/constants/patterns';
+import { EMAIL_PATTERN } from '../../../../shared/constants/patterns';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { Validator } from '../../../../shared/services/validator.service';
 
@@ -17,12 +17,13 @@ export default class Login {
 	private readonly router = inject(Router);
 	private readonly route = inject(ActivatedRoute);
 
+	protected showPassword = false;
 	isLoading = signal<boolean>(false);
 	errorMessage = signal<string | null>(null);
 
 	loginForm: FormGroup = this.fb.group({
 		email: [, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
-		password: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
+		password: [, [Validators.required]],
 	});
 
 	onLogin() {

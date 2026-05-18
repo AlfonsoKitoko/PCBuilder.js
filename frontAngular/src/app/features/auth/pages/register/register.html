@@ -19,6 +19,14 @@
 					autocomplete="username"
 					placeholder="pcejemplo123"
 				/>
+				@if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+					@if (registerForm.get('username')?.hasError('required')) {
+						<p class="text-error mt-1 text-xs font-semibold">El nombre de usuario es obligatorio</p>
+					}
+					@if (registerForm.get('username')?.hasError('minlength')) {
+						<p class="text-error mt-1 text-xs font-semibold">El nombre de usuario debe tener al menos 3 caracteres</p>
+					}
+				}
 			</div>
 
 			<div>
@@ -59,7 +67,7 @@
 					placeholder="correo@ejemplo.com"
 				/>
 				@if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-					<p class="text-error mt-1 text-xs">Introduce un email válido</p>
+					<p class="text-error mt-1 text-xs font-semibold">Introduce un correo válido</p>
 				}
 			</div>
 
@@ -72,21 +80,100 @@
 					type="date"
 					formControlName="birthDate"
 				/>
+				@if (registerForm.get('birthDate')?.invalid && registerForm.get('birthDate')?.touched) {
+					@if (registerForm.get('birthDate')?.hasError('futureDate')) {
+						<p class="text-error mt-1 text-xs font-semibold">La fecha de nacimiento no puede ser una fecha futura</p>
+					}
+					@if (registerForm.get('birthDate')?.hasError('unrealisticDate')) {
+						<p class="text-error mt-1 text-xs font-semibold">Introduce una fecha de nacimiento válida</p>
+					}
+				}
 			</div>
 
 			<div>
 				<label class="label-form text-base-content" for="password">Contraseña <span class="text-error">*</span></label>
-				<input
-					class="input-field"
-					id="password"
-					[class.input-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-					type="password"
-					formControlName="password"
-					autocomplete="new-password"
-					placeholder="••••••••"
-				/>
-				@if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-					<p class="text-error mt-1 text-[10px]">8+ carácteres (A-Z, 0-9, @#$...)</p>
+				<div class="relative w-full">
+					<input
+						class="input-field pr-12"
+						id="password"
+						[class.input-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+						[type]="showPassword() ? 'text' : 'password'"
+						formControlName="password"
+						autocomplete="new-password"
+						placeholder="••••••••"
+					/>
+					<button
+						class="text-base-content/40 hover:text-base-content absolute top-1/2 right-4 -translate-y-1/2 transition-colors"
+						(click)="showPassword.set(!showPassword())"
+						type="button"
+						title="Mostrar/Ocultar contraseña"
+					>
+						@if (showPassword()) {
+							<svg
+								class="h-5 w-5"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+								/>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+								/>
+							</svg>
+						} @else {
+							<svg
+								class="h-5 w-5"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.4M9.9 4.24a9.12 9.12 0 011.54-.18c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.4M3 3l18 18"
+								/>
+							</svg>
+						}
+					</button>
+				</div>
+				@if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+					<div class="text-error bg-error/5 border-error/10 mt-2 space-y-1 rounded-xl border p-3 text-xs font-semibold">
+						@if (registerForm.get('password')?.errors?.['required']) {
+							<p class="flex items-center gap-1.5">
+								<span class="bg-error inline-block h-1 w-1 rounded-full"></span>
+								La contraseña es obligatoria
+							</p>
+						}
+						@if (registerForm.get('password')?.errors?.['pattern']) {
+							<p class="text-base-content/70 mb-1 font-medium">La contraseña debe incluir:</p>
+							<ul class="text-error/90 space-y-1 pl-2">
+								<li class="flex items-center gap-1.5">
+									<span class="bg-error inline-block h-1 w-1 rounded-full"></span>Al menos 8 caracteres
+								</li>
+								<li class="flex items-center gap-1.5">
+									<span class="bg-error inline-block h-1 w-1 rounded-full"></span>Una letra mayúscula y una minúscula
+								</li>
+								<li class="flex items-center gap-1.5">
+									<span class="bg-error inline-block h-1 w-1 rounded-full"></span>Un número
+								</li>
+								<li class="flex items-center gap-1.5">
+									<span class="bg-error inline-block h-1 w-1 rounded-full"></span>Un carácter especial (ej: @, $, !, #,
+									_, -)
+								</li>
+							</ul>
+						}
+					</div>
 				}
 			</div>
 
@@ -94,20 +181,70 @@
 				<label class="label-form text-base-content" for="repeatPassword"
 					>Repetir contraseña <span class="text-error">*</span></label
 				>
-				<input
-					class="input-field"
-					id="repeatPassword"
-					[class.input-error]="
-						(registerForm.get('repeatPassword')?.invalid || registerForm.hasError('noMatch')) &&
-						registerForm.get('repeatPassword')?.touched
-					"
-					type="password"
-					formControlName="repeatPassword"
-					autocomplete="new-password"
-					placeholder="••••••••"
-				/>
-				@if (registerForm.hasError('noMatch') && registerForm.get('repeatPassword')?.touched) {
-					<p class="text-error mt-1 text-xs">Las contraseñas no coinciden</p>
+				<div class="relative w-full">
+					<input
+						class="input-field pr-12"
+						id="repeatPassword"
+						[class.input-error]="
+							(registerForm.get('repeatPassword')?.invalid || registerForm.hasError('noMatch')) &&
+							registerForm.get('repeatPassword')?.touched
+						"
+						[type]="showRepeatPassword() ? 'text' : 'password'"
+						formControlName="repeatPassword"
+						autocomplete="new-password"
+						placeholder="••••••••"
+					/>
+					<button
+						class="text-base-content/40 hover:text-base-content absolute top-1/2 right-4 -translate-y-1/2 transition-colors"
+						(click)="showRepeatPassword.set(!showRepeatPassword())"
+						type="button"
+						title="Mostrar/Ocultar contraseña"
+					>
+						@if (showRepeatPassword()) {
+							<svg
+								class="h-5 w-5"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+								/>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+								/>
+							</svg>
+						} @else {
+							<svg
+								class="h-5 w-5"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.4M9.9 4.24a9.12 9.12 0 011.54-.18c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.4M3 3l18 18"
+								/>
+							</svg>
+						}
+					</button>
+				</div>
+				@if (registerForm.get('repeatPassword')?.touched) {
+					@if (registerForm.get('repeatPassword')?.hasError('required')) {
+						<p class="text-error mt-1 text-xs font-semibold">Es obligatorio repetir la contraseña</p>
+					} @else if (registerForm.hasError('noMatch')) {
+						<p class="text-error mt-1 text-xs font-semibold">Las contraseñas no coinciden</p>
+					}
 				}
 			</div>
 

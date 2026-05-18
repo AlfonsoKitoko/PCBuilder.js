@@ -16,18 +16,21 @@ export default class Register {
 	protected readonly authService = inject(AuthService);
 	private readonly router = inject(Router);
 
+	readonly showPassword = signal(false);
+	readonly showRepeatPassword = signal(false);
+
 	isLoading = signal<boolean>(false);
 	errorMessage = signal<string | null>(null);
 
 	registerForm: FormGroup = this.fb.group(
 		{
-			username: [, [Validators.required]],
+			username: [, [Validators.required, Validators.minLength(3)]],
 			firstName: [, [Validators.minLength(2), Validators.maxLength(50)]],
 			lastName: [, [Validators.minLength(2), Validators.maxLength(50)]],
 			email: [, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
 			password: [, [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
 			repeatPassword: [, [Validators.required]],
-			birthDate: [, [this.validator.nofutureDateValidator]],
+			birthDate: [, [this.validator.birthDateValidator]],
 		},
 		{ validators: [this.validator.passwordMatchValidator('password', 'repeatPassword')] },
 	);

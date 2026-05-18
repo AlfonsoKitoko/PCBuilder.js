@@ -15,12 +15,20 @@ export class Validator {
 		};
 	}
 
-	nofutureDateValidator(control: AbstractControl) {
+	birthDateValidator(control: AbstractControl): ValidationErrors | null {
+		if (!control.value) return null;
+
 		const selectedDate = new Date(control.value);
 		const currentDate = new Date();
 
 		currentDate.setHours(0, 0, 0, 0);
 		selectedDate.setHours(0, 0, 0, 0);
-		return selectedDate <= currentDate ? null : { futureDate: true };
+
+		if (selectedDate > currentDate) return { futureDate: true };
+
+		const minYear = currentDate.getFullYear() - 100;
+		if (selectedDate.getFullYear() < minYear) return { unrealisticDate: true };
+
+		return null;
 	}
 }

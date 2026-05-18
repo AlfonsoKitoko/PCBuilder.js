@@ -14,18 +14,75 @@
 					formControlName="email"
 					placeholder="tu@email.com"
 				/>
+				@if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+					@if (loginForm.get('email')?.hasError('required')) {
+						<span class="text-error mt-1 text-xs font-semibold">El correo electrónico es obligatorio</span>
+					}
+					@if (loginForm.get('email')?.hasError('email')) {
+						<span class="text-error mt-1 text-xs font-semibold">Introduce un formato de correo válido</span>
+					}
+				}
 			</div>
 
-			<div>
+			<div class="flex flex-col">
 				<label class="label-form text-base-content" for="password">Contraseña</label>
-				<input
-					class="input-field"
-					id="password"
-					[class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-					type="password"
-					formControlName="password"
-					placeholder="••••••••"
-				/>
+				<div class="relative w-full">
+					<input
+						class="input-field pr-12"
+						id="password"
+						[class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+						[type]="showPassword ? 'text' : 'password'"
+						formControlName="password"
+						placeholder="••••••••"
+					/>
+					<button
+						class="text-base-content/40 hover:text-base-content absolute top-1/2 right-4 -translate-y-1/2 transition-colors"
+						(click)="showPassword = !showPassword"
+						type="button"
+						title="Mostrar/Ocultar contraseña"
+					>
+						@if (showPassword) {
+							<svg
+								class="h-5 w-5"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+								/>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+								/>
+							</svg>
+						} @else {
+							<svg
+								class="h-5 w-5"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.4M9.9 4.24a9.12 9.12 0 011.54-.18c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.4M3 3l18 18"
+								/>
+							</svg>
+						}
+					</button>
+				</div>
+				@if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+					<span class="text-error mt-1 text-xs font-semibold">Debes introducir tu contraseña</span>
+				}
 			</div>
 
 			<button
