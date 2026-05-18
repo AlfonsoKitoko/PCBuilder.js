@@ -32,7 +32,6 @@ export default class NewEdit implements OnInit {
 	isEditMode = computed(() => !!this.id());
 	selectedRam = this.ramService.selectedRam;
 
-	// Configuración de roles permitidos (igual que en tu archivo de Builds)
 	managementRoles = [userProfile.ADMIN]; //
 
 	ramTypes = Object.values(ramType);

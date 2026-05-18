@@ -32,7 +32,6 @@ export default class NewEdit implements OnInit {
 	isEditMode = computed(() => !!this.id());
 	selectedGpu = this.gpuService.selectedGpu;
 
-	// Configuración de roles permitidos (igual que en tu archivo de Builds)
 	managementRoles = [userProfile.ADMIN]; //
 
 	gpuTypes = Object.values(gpuType);

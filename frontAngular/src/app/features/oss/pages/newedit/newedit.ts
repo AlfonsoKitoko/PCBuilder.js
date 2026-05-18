@@ -32,7 +32,6 @@ export default class NewEdit implements OnInit {
 	isEditMode = computed(() => !!this.id());
 	selectedOs = this.osService.selectedOs;
 
-	// Configuración de roles permitidos (igual que en tu archivo de Builds)
 	managementRoles = [userProfile.ADMIN]; //
 
 	osModes = Object.values(osMode);

@@ -32,7 +32,6 @@ export default class NewEdit implements OnInit {
 	isEditMode = computed(() => !!this.id());
 	selectedPsu = this.psuService.selectedPsu;
 
-	// Configuración de roles permitidos (igual que en tu archivo de Builds)
 	managementRoles = [userProfile.ADMIN]; //
 
 	psuTypes = Object.values(psuType);

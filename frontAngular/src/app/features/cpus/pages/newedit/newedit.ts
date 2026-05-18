@@ -32,7 +32,6 @@ export default class NewEdit implements OnInit {
 	isEditMode = computed(() => !!this.id());
 	selectedCpu = this.cpuService.selectedCpu;
 
-	// Configuración de roles permitidos (igual que en tu archivo de Builds)
 	managementRoles = [userProfile.ADMIN]; //
 
 	cpuManufacturers = Object.values(cpuManufacturer);
