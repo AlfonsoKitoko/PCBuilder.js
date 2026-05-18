@@ -24,7 +24,7 @@ export default class Landing implements OnInit {
 		{ name: 'Almacenamiento', slug: 'storage' },
 		{ name: 'Tarjetas Gráficas', slug: 'gpu' },
 		{ name: 'Fuentes de alimentación', slug: 'psu' },
-		{ name: 'Cajas', slug: 'case' },
+		{ name: 'Cajas y Torres', slug: 'case' },
 		{ name: 'Sistemas Operativos', slug: 'os' },
 	];
 
