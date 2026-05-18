@@ -1,7 +1,7 @@
 <div class="container mx-auto max-w-7xl p-4">
 	<header class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
 		<div>
-			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Archivo de Fuentes de Alimentación</h1>
+			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Fuentes de Alimentación</h1>
 			<p class="text-base-content/50 mt-1 text-[10px] font-bold tracking-widest uppercase">
 				{{ tableHandler.filteredData().length }} resultados encontrados
 			</p>
@@ -59,6 +59,24 @@
 					</th>
 					<th
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('psu_type')"
+					>
+						Tipo
+						@if (tableHandler.sortCol() === 'psu_type') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('modular')"
+					>
+						Modularidad
+						@if (tableHandler.sortCol() === 'modular') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('wattage')"
 					>
 						Potencia
@@ -109,7 +127,13 @@
 								{{ psu.model }}
 							</a>
 						</td>
-						<td class="p-3 align-middle text-sm font-black tracking-tight">{{ psu.wattage }} W</td>
+						<td class="text-base-content/80 p-3 align-middle text-sm font-semibold uppercase">
+							{{ psu.psu_type }}
+						</td>
+						<td class="text-base-content/80 p-3 align-middle text-sm font-semibold uppercase">
+							{{ psu.modular }}
+						</td>
+						<td class="text-warning p-3 align-middle text-sm font-black tracking-tight">{{ psu.wattage }} W</td>
 						<td class="text-success p-3 align-middle text-[10px] font-black tracking-widest uppercase italic">
 							{{ psu.eff_rating }}
 						</td>
@@ -172,15 +196,20 @@
 								<span class="text-base-content/40 mr-1 text-[10px] font-black uppercase">{{ psu.manufacturer }}</span>
 								{{ psu.model }}
 							</h3>
-							<span class="text-base-content text-base font-black tracking-tighter">{{
-								psu.price / 100 | currency: 'EUR'
-							}}</span>
+							<span class="text-base-content text-base font-black tracking-tighter">
+								{{ psu.price / 100 | currency: 'EUR' }}
+							</span>
 						</div>
 
 						<div class="flex items-center justify-between">
 							<div class="text-base-content/70 flex flex-wrap items-center gap-x-3 text-[11px] font-medium">
-								<span class="font-bold uppercase">{{ psu.wattage }}W</span>
+								<span class="text-warning font-bold uppercase">{{ psu.wattage }} W</span>
+								<span>•</span>
 								<span class="text-success font-black">{{ psu.eff_rating }}</span>
+								<span>•</span>
+								<span class="text-base-content/60 uppercase">{{ psu.psu_type }}</span>
+								<span>•</span>
+								<span class="text-base-content/60 uppercase">{{ psu.modular }}</span>
 							</div>
 							<button
 								class="btn btn-primary btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
