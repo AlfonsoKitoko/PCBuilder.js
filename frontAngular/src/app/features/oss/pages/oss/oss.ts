@@ -51,7 +51,7 @@ export default class Oss {
 		if (item) {
 			this.buildService.addPart('os', item);
 
-			this.toast.show(`${item.manufacturer} ${item.model} añadido a la build`, 'success');
+			this.toast.show(`${item.manufacturer} ${item.version} ${item.edition} añadido a la build`, 'success');
 
 			const currentBuild = this.buildService.currentBuild();
 
