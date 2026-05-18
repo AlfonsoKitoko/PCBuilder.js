@@ -10,7 +10,7 @@
 		<ul class="flex flex-col gap-2.5">
 			@if (slots().cpu) {
 				<li class="flex justify-between text-xs">
-					<span class="tracking-wider uppercase opacity-50">CPU</span>
+					<span class="tracking-wider uppercase opacity-50">procesador</span>
 					<span class="font-mono font-bold">{{ wattage()?.cpu || 0 }} W</span>
 				</li>
 			}
@@ -46,7 +46,7 @@
 
 			@if (slots().gpu) {
 				<li class="flex justify-between text-xs">
-					<span class="tracking-wider uppercase opacity-50">GPU</span>
+					<span class="tracking-wider uppercase opacity-50">Tarjeta gráfica</span>
 					<span class="font-mono font-bold">{{ wattage()?.gpu || 0 }} W</span>
 				</li>
 			}

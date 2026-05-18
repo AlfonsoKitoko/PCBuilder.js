@@ -72,7 +72,7 @@
 						<li><a class="hover:text-primary" routerLink="/ram/all">Memorias RAM</a></li>
 						<li><a class="hover:text-primary" routerLink="/gpu/all">Tarjetas Gráficas</a></li>
 						<li><a class="hover:text-primary" routerLink="/storage/all">Almacenamiento</a></li>
-						<li><a class="hover:text-primary" routerLink="/case/all">Cajas</a></li>
+						<li><a class="hover:text-primary" routerLink="/case/all">Cajas y Torres</a></li>
 						<li><a class="hover:text-primary" routerLink="/psu/all">Fuentes de Alimentación</a></li>
 						<li><a class="hover:text-primary" routerLink="/os/all">Sistemas Operativos</a></li>
 						<div class="divider my-1 opacity-10"></div>
@@ -227,11 +227,75 @@
 			</button>
 
 			@if (user()) {
-				<div class="border-base-300 hidden flex-col items-end border-r pr-4 md:flex dark:border-white/10">
-					<span class="text-base-content text-sm leading-none font-bold">{{ user()?.username }}</span>
-					<span class="text-primary text-[10px] font-bold tracking-wider uppercase opacity-80">
-						{{ user()?.profile }}
-					</span>
+				<div class="dropdown dropdown-end">
+					<label
+						class="btn btn-ghost group flex h-auto flex-col items-end gap-0.5 px-3 py-1.5 normal-case"
+						tabindex="0"
+					>
+						<span class="text-base-content text-sm leading-none font-bold">
+							{{ user()?.username }}
+						</span>
+						<span class="text-primary text-[10px] leading-none font-bold tracking-wider uppercase opacity-80">
+							{{ user()?.profile }}
+						</span>
+					</label>
+
+					<ul
+						class="dropdown-content menu border-base-300 bg-base-100 z-50 mt-3 w-52 overflow-hidden rounded-xl border p-1 shadow-2xl backdrop-blur-md"
+						tabindex="0"
+					>
+						<div
+							class="bg-primary/5 pointer-events-none absolute -top-10 -right-10 h-24 w-24 rounded-full blur-xl"
+						></div>
+
+						<li>
+							<a
+								class="hover:bg-base-200 text-base-content flex items-center gap-2 rounded-lg py-2.5 text-xs font-bold tracking-wide uppercase transition-colors"
+								[routerLink]="['/user', user()?._id]"
+							>
+								<svg
+									class="h-4 w-4 opacity-70"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									stroke-width="2"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+									/>
+								</svg>
+								Mi perfil
+							</a>
+						</li>
+
+						<div class="border-base-200 my-1 border-t dark:border-white/5"></div>
+
+						<li>
+							<a
+								class="text-error hover:bg-error/10 flex items-center gap-2 rounded-lg py-2.5 text-xs font-bold tracking-wide uppercase transition-colors"
+								(click)="logout()"
+							>
+								<svg
+									class="h-4 w-4"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									stroke-width="2"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+									/>
+								</svg>
+								Cerrar Sesión
+							</a>
+						</li>
+					</ul>
 				</div>
 
 				<a

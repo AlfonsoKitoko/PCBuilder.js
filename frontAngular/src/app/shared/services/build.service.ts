@@ -203,14 +203,17 @@ export class BuildService {
 
 	getById(id: string): Observable<ApiResponse<Build>> {
 		const cachedBuild = this.builds().find((b) => b._id === id);
-		if (cachedBuild) this.selectedBuild.set(cachedBuild);
-		else this.selectedBuild.set(null);
+		if (cachedBuild) {
+			this.selectedBuild.set(cachedBuild);
+			this.setEditBuild(cachedBuild);
+		} else this.selectedBuild.set(null);
 
 		this.isLoading.set(true);
 
 		return this.http.get<ApiResponse<Build>>(`${this.apiUrl}/${id}`).pipe(
 			tap((res) => {
 				this.selectedBuild.set(res.data);
+				this.setEditBuild(res.data);
 				this.isLoading.set(false);
 			}),
 			catchError((err) => {
