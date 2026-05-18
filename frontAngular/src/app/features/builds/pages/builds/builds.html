@@ -207,9 +207,9 @@
 								</div>
 							</div>
 							<div
-								class="badge badge-outline border-base-300 group-hover:border-primary/30 text-[10px] font-bold opacity-70 transition-colors"
+								class="badge badge-outline border-base-300 group-hover:border-primary/30 text-info text-[10px] font-bold opacity-70 transition-colors"
 							>
-								{{ build.totalWattage }}W
+								{{ build.totalWattage }} W
 							</div>
 						</div>
 
@@ -228,14 +228,14 @@
 							<div class="text-xs">
 								<span class="text-base-content/40 block text-[9px] font-bold uppercase">Procesador</span>
 								<span class="text-base-content/80 font-bold">
-									{{ build.cpu?.manufacturer }} {{ build.cpu?.model || '---' }}
+									{{ build.cpu?.manufacturer }} {{ build.cpu?.model || 'No disponible' }}
 								</span>
 							</div>
 
 							<div class="text-xs">
 								<span class="text-base-content/40 block text-[9px] font-bold uppercase">Gráfica</span>
 								<span class="text-base-content/80 font-bold">
-									{{ build.gpu?.manufacturer }} {{ build.gpu?.model || '---' }}
+									{{ build.gpu?.manufacturer }} {{ build.gpu?.model || 'No disponible' }}
 								</span>
 							</div>
 						</div>

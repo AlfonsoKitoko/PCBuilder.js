@@ -14,33 +14,59 @@
 
 			<div class="flex items-center gap-6">
 				<div class="dropdown dropdown-end">
-					<label class="btn btn-ghost btn-sm hover:bg-base-200 gap-2 px-3 font-bold normal-case" tabindex="0">
-						<div class="indicator">
+					<label class="btn btn-ghost group hover:bg-base-200 flex h-auto items-center gap-3 px-3 py-2" tabindex="0">
+						<div
+							class="relative flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-200"
+							[class.bg-error/10]="analysis().errors.length > 0"
+							[class.text-error]="analysis().errors.length > 0"
+							[class.group-hover:bg-error]="analysis().errors.length > 0"
+							[class.bg-warning/10]="analysis().errors.length === 0 && analysis().warnings.length > 0"
+							[class.text-warning]="analysis().errors.length === 0 && analysis().warnings.length > 0"
+							[class.group-hover:bg-warning]="analysis().errors.length === 0 && analysis().warnings.length > 0"
+							[class.bg-success/10]="analysis().errors.length === 0 && analysis().warnings.length === 0"
+							[class.text-success]="analysis().errors.length === 0 && analysis().warnings.length === 0"
+							[class.group-hover:bg-success]="analysis().errors.length === 0 && analysis().warnings.length === 0"
+							[class.group-hover:text-white]="true"
+						>
 							@if (analysis().errors.length + analysis().warnings.length > 0) {
 								<span
-									class="indicator-item badge badge-xs font-bold"
-									[class.badge-error]="analysis().errors.length > 0"
-									[class.badge-warning]="analysis().errors.length === 0"
+									class="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-black text-white"
+									[class.bg-error]="analysis().errors.length > 0"
+									[class.bg-warning]="analysis().errors.length === 0"
 								>
 									{{ analysis().errors.length + analysis().warnings.length }}
 								</span>
 							}
+
 							<svg
-								class="h-4 w-4 opacity-70"
+								class="h-5 w-5"
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
+								stroke-width="2.5"
 							>
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
-									stroke-width="2"
 									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 								/>
 							</svg>
 						</div>
-						<span class="text-[11px] tracking-widest uppercase opacity-70">Análisis</span>
+
+						<div class="flex flex-col items-start gap-0.5">
+							<p class="text-base-content/40 text-[9px] leading-none font-bold tracking-[0.2em] uppercase">
+								Estado de la Build
+							</p>
+							<span
+								class="text-2xl leading-none font-bold tracking-tight"
+								[class.text-error]="analysis().errors.length > 0"
+								[class.text-warning]="analysis().errors.length === 0 && analysis().warnings.length > 0"
+								[class.text-success]="analysis().errors.length === 0 && analysis().warnings.length === 0"
+							>
+								{{ analysis().errors.length > 0 ? 'Error' : analysis().warnings.length > 0 ? 'Aviso' : 'Correcto' }}
+							</span>
+						</div>
 					</label>
 
 					<div
@@ -65,15 +91,20 @@
 				</div>
 
 				<div class="dropdown dropdown-end">
-					<label
-						class="btn btn-ghost group hover:bg-base-200 flex h-auto flex-col items-end gap-0 px-2 py-1"
-						tabindex="0"
-					>
-						<p class="text-base-content/40 mb-1 text-[9px] leading-none font-bold tracking-[0.2em] uppercase">
-							Consumo Estimado
-						</p>
-						<div class="flex items-center gap-1">
-							<span class="text-info text-2xl leading-none font-semibold tracking-tight">
+					<label class="btn btn-ghost group hover:bg-base-200 flex h-auto items-center gap-3 px-3 py-2" tabindex="0">
+						<div
+							class="bg-info/10 text-info group-hover:bg-info flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-200 group-hover:text-white"
+						>
+							<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+								<path d="M13 10V3L4 14h7v7l9-11h-7z" />
+							</svg>
+						</div>
+
+						<div class="flex flex-col items-start gap-0.5">
+							<p class="text-base-content/40 text-[9px] leading-none font-bold tracking-[0.2em] uppercase">
+								Consumo Estimado
+							</p>
+							<span class="text-info text-2xl leading-none font-bold tracking-tight">
 								~ {{ analysis().wattage?.total || 0 }} W
 							</span>
 						</div>
@@ -143,7 +174,7 @@
 						</div>
 					</td>
 					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
-						{{ slots().cpu ? (slots().cpu!.price / 100 | currency: 'EUR') : '---' }}
+						{{ slots().cpu ? (slots().cpu!.price / 100 | currency: 'EUR') : '0,00 €' }}
 					</td>
 					<td class="p-4 text-center align-middle">
 						<div class="flex justify-center gap-2">
@@ -179,7 +210,11 @@
 					</td>
 				</tr>
 
-				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+				<tr
+					class="group hover:bg-base-200/50 border-base-300 border-b transition-colors"
+					[class.opacity-50]="!slots().cpu"
+					[class.pointer-events-none]="!slots().cpu"
+				>
 					<td class="p-4 align-middle">
 						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Placa Base</span>
 					</td>
@@ -204,6 +239,7 @@
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									[disabled]="!slots().cpu"
 									(click)="goToSelect('motherboard')"
 								>
 									+ Seleccionar Placa
@@ -212,7 +248,7 @@
 						</div>
 					</td>
 					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
-						{{ slots().mobo ? (slots().mobo!.price / 100 | currency: 'EUR') : '---' }}
+						{{ slots().mobo ? (slots().mobo!.price / 100 | currency: 'EUR') : '0,00 €' }}
 					</td>
 					<td class="p-4 text-center align-middle">
 						<div class="flex justify-center gap-2">
@@ -311,28 +347,36 @@
 						</td>
 					</tr>
 				} @empty {
-					<tr class="border-base-300 border-b">
+					<tr
+						class="border-base-300 border-b"
+						[class.opacity-50]="!slots().mobo"
+						[class.pointer-events-none]="!slots().mobo"
+					>
 						<td class="p-4 align-middle">
 							<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Memoria Ram</span>
 						</td>
 						<td class="p-4 align-middle" colspan="3">
-							<button
-								class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
-								(click)="goToSelect('ram')"
-							>
-								+ Seleccionar RAM
-							</button>
+							<div class="flex items-center gap-4">
+								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1 opacity-40">
+									<img class="h-full w-full object-contain" [src]="getImageUrl('ram')" />
+								</div>
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									[disabled]="!slots().mobo"
+									(click)="goToSelect('ram')"
+								>
+									+ Seleccionar RAM
+								</button>
+							</div>
 						</td>
 					</tr>
 				}
-				<tr class="border-none">
+				<tr class="border-none" *ngIf="slots().ram.length > 0">
 					<td class="p-4"></td>
 					<td class="px-4 py-2" colspan="3">
-						@if (slots().ram.length > 0) {
-							<button class="btn btn-ghost btn-xs text-primary font-bold lowercase" (click)="goToSelect('ram')">
-								+ añadir otro módulo
-							</button>
-						}
+						<button class="btn btn-ghost btn-xs text-primary font-bold lowercase" (click)="goToSelect('ram')">
+							+ añadir otro módulo
+						</button>
 					</td>
 				</tr>
 
@@ -400,34 +444,46 @@
 						</td>
 					</tr>
 				} @empty {
-					<tr class="border-base-300 border-b">
+					<tr
+						class="border-base-300 border-b"
+						[class.opacity-50]="!slots().mobo"
+						[class.pointer-events-none]="!slots().mobo"
+					>
 						<td class="p-4 align-middle">
 							<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Almacenamiento</span>
 						</td>
 						<td class="p-4 align-middle" colspan="3">
-							<button
-								class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
-								(click)="goToSelect('storage')"
-							>
-								+ Seleccionar Disco
-							</button>
+							<div class="flex items-center gap-4">
+								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1 opacity-40">
+									<img class="h-full w-full object-contain" [src]="getImageUrl('storage')" />
+								</div>
+								<button
+									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									[disabled]="!slots().mobo"
+									(click)="goToSelect('storage')"
+								>
+									+ Seleccionar Disco
+								</button>
+							</div>
 						</td>
 					</tr>
 				}
-				<tr class="border-none">
+				<tr class="border-none" *ngIf="slots().storage.length > 0">
 					<td class="p-4"></td>
 					<td class="px-4 py-2" colspan="3">
-						@if (slots().storage.length > 0) {
-							<button class="btn btn-ghost btn-xs text-primary font-bold lowercase" (click)="goToSelect('storage')">
-								+ añadir otro disco
-							</button>
-						}
+						<button class="btn btn-ghost btn-xs text-primary font-bold lowercase" (click)="goToSelect('storage')">
+							+ añadir otro disco
+						</button>
 					</td>
 				</tr>
 
-				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+				<tr
+					class="group hover:bg-base-200/50 border-base-300 border-b transition-colors"
+					[class.opacity-50]="!slots().mobo"
+					[class.pointer-events-none]="!slots().mobo"
+				>
 					<td class="p-4 align-middle">
-						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Gráfica</span>
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Tarjeta Gráfica</span>
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
@@ -449,6 +505,7 @@
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									[disabled]="!slots().mobo"
 									(click)="goToSelect('gpu')"
 								>
 									+ Seleccionar GPU
@@ -457,7 +514,7 @@
 						</div>
 					</td>
 					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
-						{{ slots().gpu ? (slots().gpu!.price / 100 | currency: 'EUR') : '---' }}
+						{{ slots().gpu ? (slots().gpu!.price / 100 | currency: 'EUR') : '0,00 €' }}
 					</td>
 					<td class="p-4 text-center align-middle">
 						<div class="flex justify-center gap-2">
@@ -493,9 +550,13 @@
 					</td>
 				</tr>
 
-				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+				<tr
+					class="group hover:bg-base-200/50 border-base-300 border-b transition-colors"
+					[class.opacity-50]="!slots().mobo"
+					[class.pointer-events-none]="!slots().mobo"
+				>
 					<td class="p-4 align-middle">
-						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Chasis</span>
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Caja</span>
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
@@ -517,6 +578,7 @@
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									[disabled]="!slots().mobo"
 									(click)="goToSelect('case')"
 								>
 									+ Seleccionar Caja
@@ -525,7 +587,7 @@
 						</div>
 					</td>
 					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
-						{{ slots().case ? (slots().case!.price / 100 | currency: 'EUR') : '---' }}
+						{{ slots().case ? (slots().case!.price / 100 | currency: 'EUR') : '0,00 €' }}
 					</td>
 					<td class="p-4 text-center align-middle">
 						<div class="flex justify-center gap-2">
@@ -561,9 +623,15 @@
 					</td>
 				</tr>
 
-				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
+				<tr
+					class="group hover:bg-base-200/50 border-base-300 border-b transition-colors"
+					[class.opacity-50]="!slots().mobo"
+					[class.pointer-events-none]="!slots().mobo"
+				>
 					<td class="p-4 align-middle">
-						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Fuente</span>
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase"
+							>Fuente de alimentación</span
+						>
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
@@ -585,6 +653,7 @@
 							} @else {
 								<button
 									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									[disabled]="!slots().mobo"
 									(click)="goToSelect('psu')"
 								>
 									+ Seleccionar Fuente
@@ -593,7 +662,7 @@
 						</div>
 					</td>
 					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
-						{{ slots().psu ? (slots().psu!.price / 100 | currency: 'EUR') : '---' }}
+						{{ slots().psu ? (slots().psu!.price / 100 | currency: 'EUR') : '0,00 €' }}
 					</td>
 					<td class="p-4 text-center align-middle">
 						<div class="flex justify-center gap-2">
@@ -631,7 +700,7 @@
 
 				<tr class="group hover:bg-base-200/50 border-base-300 border-b transition-colors">
 					<td class="p-4 align-middle">
-						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">SO</span>
+						<span class="text-base-content/40 text-[10px] font-black tracking-widest uppercase">Sistema Operativo</span>
 					</td>
 					<td class="p-4 align-middle">
 						<div class="flex items-center gap-4">
@@ -661,7 +730,7 @@
 						</div>
 					</td>
 					<td class="p-4 text-right align-middle text-sm font-bold tracking-tighter">
-						{{ slots().os ? (slots().os!.price / 100 | currency: 'EUR') : '---' }}
+						{{ slots().os ? (slots().os!.price / 100 | currency: 'EUR') : '0,00 €' }}
 					</td>
 					<td class="p-4 text-center align-middle">
 						<div class="flex justify-center gap-2">
@@ -715,7 +784,7 @@
 		</button>
 		<button
 			class="btn btn-primary px-10 font-black tracking-widest uppercase shadow-lg"
-			[disabled]="analysis().errors.length > 0"
+			[disabled]="analysis().errors.length > 0 || !slots().os"
 			(click)="save()"
 		>
 			{{ id() ? 'Actualizar Build' : 'Guardar Cambios' }}
