@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { PASSWORD_PATTERN } from '../../../../shared/constants/patterns';
@@ -31,6 +31,9 @@ export default class NewEdit implements OnInit {
 
 	readonly getImageUrl = getImageUrl;
 	readonly userProfiles = Object.values(userProfile);
+
+	readonly showPassword = signal(false);
+	readonly showRepeatPassword = signal(false);
 
 	isLoading = this.userService.isLoading;
 	isEditMode = computed(() => !!this.id());
@@ -67,7 +70,7 @@ export default class NewEdit implements OnInit {
 			firstName: [],
 			lastName: [],
 			email: [, [Validators.required, Validators.email]],
-			birthDate: [, [Validators.required, this.validator.nofutureDateValidator]],
+			birthDate: [, [Validators.required, this.validator.birthDateValidator]],
 			profile: [userProfile.USER, [Validators.required]],
 		},
 		{
