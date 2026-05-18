@@ -1,7 +1,7 @@
 <div class="container mx-auto max-w-7xl p-4">
 	<header class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
 		<div>
-			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Archivo de Memorias RAM</h1>
+			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Memorias RAM</h1>
 			<p class="text-base-content/50 mt-1 text-[10px] font-bold tracking-widest uppercase">
 				{{ tableHandler.filteredData().length }} resultados encontrados
 			</p>
@@ -113,7 +113,7 @@
 						<td class="p-3 align-middle text-sm font-semibold">{{ ram.ram_type }}-{{ ram.speed }}</td>
 						<td class="p-3 align-middle text-xs font-semibold">
 							@for (mod of ram.modules; track $index) {
-								<div>{{ mod.quantity }} x {{ mod.size }}GB</div>
+								<div>{{ mod.quantity }} x {{ mod.size }}</div>
 							}
 						</td>
 						<td class="p-3 align-middle text-sm font-semibold">CL{{ ram.cas_latency }}</td>
@@ -186,7 +186,7 @@
 								<span class="uppercase">{{ ram.ram_type }}-{{ ram.speed }}</span>
 								<span class="font-bold">
 									@for (mod of ram.modules; track $index) {
-										{{ mod.quantity }}x{{ mod.size }}GB
+										{{ mod.quantity }}x{{ mod.size }}
 									}
 								</span>
 							</div>
