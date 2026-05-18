@@ -1,46 +1,20 @@
 <div class="container mx-auto p-6">
 	<header class="mb-12 text-center">
 		<h1 class="text-base-content text-4xl font-black tracking-tight lg:text-5xl">
-			Archivo de <span class="from-primary to-secondary bg-linear-to-r bg-clip-text text-transparent">Hardware</span>
+			Categorías <span class="from-primary to-secondary bg-linear-to-r bg-clip-text text-transparent">Productos</span>
 		</h1>
-		<p class="text-base-content/60 mt-4 text-lg font-medium">Gestiona las categorías de componentes</p>
-
-		<div class="mt-8 flex justify-center">
-			<div class="relative w-full max-w-md">
-				<input
-					class="input input-bordered focus:border-primary bg-base-100 w-full rounded-2xl pl-12 shadow-sm transition-all focus:shadow-md"
-					[value]="searchTerm()"
-					(input)="searchTerm.set($any($event.target).value)"
-					type="text"
-					placeholder="Buscar categorías (CPU, GPU, RAM...)"
-				/>
-				<svg
-					class="text-base-content/30 absolute top-3.5 left-4"
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="11" cy="11" r="8" />
-					<path d="m21 21-4.3-4.3" />
-				</svg>
-			</div>
-		</div>
+		<p class="text-base-content/60 mt-4 text-lg font-medium">Explora todas las categorías</p>
 	</header>
 
-	<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+	<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 		@if (isLoading() && parts().length === 0) {
 			@for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
-				<div class="border-base-300 bg-base-100 h-40 animate-pulse rounded-3xl border p-6 dark:border-white/10">
-					<div class="flex items-center gap-5">
-						<div class="bg-base-300 h-16 w-16 rounded-2xl"></div>
+				<div class="border-base-300 bg-base-100 h-44 animate-pulse rounded-3xl border p-6 dark:border-white/10">
+					<div class="flex items-start gap-5">
+						<div class="bg-base-300 h-16 w-16 shrink-0 rounded-2xl"></div>
 						<div class="flex-1 space-y-3">
 							<div class="bg-base-300 h-5 w-3/4 rounded-md"></div>
+							<div class="bg-base-300 h-3 w-full rounded-md"></div>
 							<div class="bg-base-300 h-3 w-1/2 rounded-md"></div>
 						</div>
 					</div>
@@ -48,6 +22,8 @@
 			}
 		} @else {
 			@for (category of parts(); track category._id) {
+				@let meta = getCategoryMeta(category.slug);
+
 				<a
 					class="group border-base-300 bg-base-100 dark:bg-base-100/50 hover:bg-base-200/50 hover:border-primary/40 relative overflow-hidden rounded-3xl border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:shadow-white/5"
 					[routerLink]="['/' + category.slug + '/all']"
@@ -56,47 +32,30 @@
 						class="bg-primary/5 absolute -right-4 -bottom-4 h-24 w-24 rounded-full opacity-0 blur-2xl transition-opacity group-hover:opacity-100"
 					></div>
 
-					<div class="relative z-10 flex items-center gap-5">
+					<div class="relative z-10 flex items-start gap-4">
 						<div
-							class="bg-base-200 flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl p-3 transition-transform group-hover:scale-110 dark:bg-white/5"
+							class="bg-base-200 flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl p-2.5 transition-transform group-hover:scale-105 dark:bg-white/5"
 						>
 							<img
 								class="h-full w-full object-contain drop-shadow-md transition-all group-hover:rotate-6"
 								[src]="getImageUrl(category.slug)"
-								[alt]="category.name"
+								[alt]="meta.title"
 								(error)="$any($event.target).src = getImageUrl(category.slug)"
 							/>
 						</div>
 
-						<div>
+						<div class="flex flex-col gap-1 overflow-hidden">
 							<h3
-								class="text-base-content decoration-primary text-xl leading-tight font-bold decoration-2 underline-offset-4 group-hover:underline"
+								class="text-base-content decoration-primary truncate text-lg leading-snug font-bold decoration-2 underline-offset-4 group-hover:underline"
 							>
-								{{ category.name }}
+								{{ meta.title }}
 							</h3>
-							<p class="text-base-content/50 mt-1 text-sm font-medium">Gestionar catálogo</p>
+							<p class="text-base-content/50 line-clamp-3 text-xs leading-relaxed font-medium">
+								{{ meta.description }}
+							</p>
 						</div>
 					</div>
 				</a>
-			} @empty {
-				<div class="col-span-full flex flex-col items-center py-20 opacity-40">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="64"
-						height="64"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M10 10l4 4m0-4l-4 4" />
-						<circle cx="12" cy="12" r="10" />
-					</svg>
-					<p class="mt-6 text-2xl font-bold">No se encontraron categorías</p>
-					<p class="text-sm">Prueba con un término diferente</p>
-				</div>
 			}
 		}
 	</div>
