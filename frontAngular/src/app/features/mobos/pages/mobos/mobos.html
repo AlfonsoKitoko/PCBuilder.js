@@ -1,7 +1,7 @@
 <div class="container mx-auto max-w-7xl p-4">
 	<header class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
 		<div>
-			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Archivo de Placas Base</h1>
+			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Placas Base</h1>
 			<p class="text-base-content/50 mt-1 text-[10px] font-bold tracking-widest uppercase">
 				{{ tableHandler.filteredData().length }} resultados encontrados
 			</p>
@@ -61,7 +61,7 @@
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('form_factor')"
 					>
-						Formato
+						Factor Forma
 						@if (tableHandler.sortCol() === 'form_factor') {
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
@@ -103,10 +103,21 @@
 								{{ mobo.model }}
 							</a>
 						</td>
-						<td class="text-primary/80 p-3 align-middle text-xs font-bold uppercase">{{ mobo.socket }}</td>
+						<td class="p-3 align-middle">
+							<span
+								class="bg-base-content/5 text-base-content border-base-300/50 rounded-md border px-2 py-0.5 text-xs font-bold tracking-wide uppercase"
+							>
+								{{ mobo.socket }}
+							</span>
+						</td>
 						<td class="p-3 align-middle text-xs font-medium">{{ mobo.form_factor }}</td>
 						<td class="p-3 align-middle text-xs font-medium">
-							<span class="text-base-content font-bold">{{ mobo.ram_slots }}x</span> {{ mobo.ram_type }}
+							<div class="flex items-center gap-1.5">
+								<span class="text-base-content/70 font-semibold">{{ mobo.ram_slots }}x </span>
+								<span class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[10px] font-black uppercase">
+									{{ mobo.ram_type }}
+								</span>
+							</div>
 						</td>
 						<td class="p-3 text-center align-middle text-[10px] font-black uppercase">
 							<div class="flex flex-col gap-0.5">
@@ -174,25 +185,29 @@
 						/>
 					</div>
 
-					<div class="flex flex-1 flex-col gap-1">
+					<div class="flex flex-1 flex-col gap-1.5">
 						<div class="flex items-baseline justify-between">
 							<h3 class="text-primary text-sm font-bold group-hover:underline">
 								<span class="text-base-content/60 mr-1 uppercase">{{ mobo.manufacturer }}</span>
 								{{ mobo.model }}
 							</h3>
-							<span class="text-base-content text-base font-black tracking-tighter">{{
-								mobo.price / 100 | currency: 'EUR'
-							}}</span>
+							<span class="text-base-content text-base font-black tracking-tighter">
+								{{ mobo.price / 100 | currency: 'EUR' }}
+							</span>
 						</div>
 
 						<div class="flex items-center justify-between">
-							<div class="text-base-content/70 flex flex-wrap items-center gap-x-3 text-[11px] font-medium">
-								<span class="uppercase">{{ mobo.socket }}</span>
-								<span>{{ mobo.ram_slots }}x {{ mobo.ram_type }}</span>
-								<span class="text-success font-bold">{{
-									mobo.wireless?.wifi && mobo.wireless.wifi !== 'NONE' ? 'WiFi' : ''
-								}}</span>
+							<div class="flex items-center gap-2">
+								<span
+									class="bg-base-content/5 text-base-content border-base-300/30 rounded px-1.5 py-0.5 text-[10px] font-black tracking-wide uppercase"
+								>
+									{{ mobo.socket }}
+								</span>
+								<span class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[10px] font-black uppercase">
+									{{ mobo.ram_slots }}x {{ mobo.ram_type }}
+								</span>
 							</div>
+
 							<button
 								class="btn btn-primary btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
 								(click)="$event.stopPropagation(); $event.preventDefault(); quickAddToBuild($event, mobo)"
@@ -204,10 +219,14 @@
 							</button>
 						</div>
 
-						<div class="flex items-center justify-between">
+						<div class="mt-0.5 flex items-center justify-between">
 							<div class="text-base-content/50 text-[10px] font-medium uppercase italic">
 								{{ mobo.form_factor }} • {{ mobo.chipset }}
+								@if (mobo.wireless?.wifi && mobo.wireless.wifi !== 'NONE') {
+									<span class="text-success ml-1 font-bold">• Wi-Fi</span>
+								}
 							</div>
+
 							@if (canManage()) {
 								<button
 									class="btn btn-error btn-ghost btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
