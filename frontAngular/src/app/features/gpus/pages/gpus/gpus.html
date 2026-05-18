@@ -1,7 +1,7 @@
 <div class="container mx-auto max-w-7xl p-4">
 	<header class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
 		<div>
-			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Archivo de Gráficas</h1>
+			<h1 class="text-base-content text-xl font-bold tracking-tight uppercase">Tarjetas Gráficas</h1>
 			<p class="text-base-content/50 mt-1 text-[10px] font-bold tracking-widest uppercase">
 				{{ tableHandler.filteredData().length }} resultados encontrados
 			</p>
@@ -43,7 +43,7 @@
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('gpu_type')"
 					>
-						Chipset
+						Tipo
 						@if (tableHandler.sortCol() === 'gpu_type') {
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
@@ -68,10 +68,28 @@
 					</th>
 					<th
 						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('base_freq')"
+					>
+						Base
+						@if (tableHandler.sortCol() === 'base_freq') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
 						(click)="tableHandler.toggleSort('boost_freq')"
 					>
 						Boost
 						@if (tableHandler.sortCol() === 'boost_freq') {
+							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
+						}
+					</th>
+					<th
+						class="hover:text-primary cursor-pointer p-3 text-left transition-colors"
+						(click)="tableHandler.toggleSort('tdp')"
+					>
+						TDP
+						@if (tableHandler.sortCol() === 'tdp') {
 							{{ tableHandler.isAsc() ? ' ↑' : ' ↓' }}
 						}
 					</th>
@@ -117,9 +135,13 @@
 							</a>
 						</td>
 						<td class="p-3 align-middle text-sm font-semibold">{{ gpu.memory }} GB {{ gpu.memory_type }}</td>
+						<td class="text-base-content/70 p-3 align-middle text-sm font-semibold">
+							{{ (gpu.base_freq || 0) / 1000 | number: '1.2-2' }} GHz
+						</td>
 						<td class="p-3 align-middle text-sm font-semibold">
 							{{ (gpu.boost_freq || 0) / 1000 | number: '1.2-2' }} GHz
 						</td>
+						<td class="text-info p-3 align-middle text-sm font-bold">{{ gpu.tdp || 0 }}W</td>
 						<td class="p-3 pr-6 text-right align-middle font-black tracking-tighter">
 							{{ gpu.price / 100 | currency: 'EUR' }}
 						</td>
@@ -193,8 +215,11 @@
 						<div class="flex items-center justify-between">
 							<div class="text-base-content/70 flex flex-wrap items-center gap-x-3 text-[11px] font-medium">
 								<span>{{ gpu.memory }}GB {{ gpu.memory_type }}</span>
-								<span>{{ (gpu.boost_freq || 0) / 1000 | number: '1.2-2' }}GHz</span>
-								<span>{{ gpu.tdp }}W</span>
+								<span>
+									{{ (gpu.base_freq || 0) / 1000 | number: '1.2-2' }} GHz /
+									{{ (gpu.boost_freq || 0) / 1000 | number: '1.2-2' }} GHz
+								</span>
+								<span class="text-info font-bold">{{ gpu.tdp || 0 }}W</span>
 							</div>
 							<button
 								class="btn btn-primary btn-xs h-6 min-h-6 px-2 text-[9px] font-bold tracking-tighter uppercase"
