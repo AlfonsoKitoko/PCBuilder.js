@@ -1,15 +1,15 @@
 @if (build(); as build) {
 	<div class="container mx-auto max-w-6xl p-4 pb-24 md:pb-4">
 		<header class="border-base-300 relative mb-8 border-b pb-6">
-			<div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-				<div class="w-full">
-					<div class="flex items-center gap-4">
-						<h1 class="text-primary text-2xl font-black tracking-tighter uppercase md:text-3xl">
+			<div class="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+				<div class="w-full min-w-0 flex-1">
+					<div class="flex flex-wrap items-center gap-4">
+						<h1 class="text-primary truncate text-2xl font-black tracking-tighter uppercase md:text-3xl">
 							{{ build.name }}
 						</h1>
 
 						@if (canManage() || (currentUser() && build.owner?._id === currentUser()?._id)) {
-							<div class="flex gap-2">
+							<div class="flex shrink-0 gap-2">
 								<a
 									class="btn btn-secondary btn-sm rounded-lg font-bold tracking-tight uppercase"
 									[routerLink]="['/build/edit', build._id, build.slug]"
@@ -49,22 +49,52 @@
 					<div class="mt-2 flex flex-wrap items-center gap-3">
 						<span
 							class="bg-base-200 text-base-content/60 rounded px-2 py-1 text-[10px] font-bold tracking-widest uppercase"
-							>ID: {{ build._id }}</span
 						>
+							ID: {{ build._id }}
+						</span>
 						<span class="text-base-content/50 text-xs font-medium italic">@{{ build.owner.username }}</span>
 					</div>
 				</div>
 
 				<div
-					class="border-base-300 flex w-full items-end justify-between gap-4 border-t pt-4 md:w-auto md:justify-end md:border-none md:pt-0"
+					class="border-base-300 flex w-full shrink-0 items-center justify-between gap-6 border-t pt-4 md:w-auto md:justify-end md:gap-8 md:border-none md:pt-0"
 				>
-					<div class="text-left md:text-right">
-						<p class="text-base-content/40 text-[9px] font-bold tracking-[0.2em] uppercase">Consumo</p>
-						<p class="text-info text-xl font-black tracking-tighter md:text-2xl">{{ build.totalWattage }}W</p>
+					<div class="dropdown dropdown-end text-left md:text-right">
+						<label
+							class="btn btn-ghost group hover:bg-base-200 flex h-auto items-center gap-3 px-3 py-2 normal-case"
+							tabindex="0"
+						>
+							<div
+								class="bg-info/10 text-info group-hover:bg-info flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-200 group-hover:text-white"
+							>
+								<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+									<path d="M13 10V3L4 14h7v7l9-11h-7z" />
+								</svg>
+							</div>
+
+							<div class="flex flex-col items-start gap-0.5">
+								<p
+									class="text-base-content/40 text-[9px] leading-none font-bold tracking-[0.2em] whitespace-nowrap uppercase"
+								>
+									Consumo Estimado
+								</p>
+								<span class="text-info text-2xl leading-none font-bold tracking-tight">
+									~ {{ analysis().wattage?.total || build.totalWattage || 0 }} W
+								</span>
+							</div>
+						</label>
+
+						<div
+							class="dropdown-content border-base-300 card card-compact bg-base-100 z-50 mt-3 w-64 overflow-hidden border shadow-2xl"
+							tabindex="0"
+						>
+							<app-build-wattage-details [slots]="build" [wattage]="analysis().wattage" />
+						</div>
 					</div>
+
 					<div class="text-right">
-						<p class="text-base-content/40 text-[9px] font-bold tracking-[0.2em] uppercase">Total</p>
-						<p class="text-success text-3xl font-black tracking-tighter md:text-4xl">
+						<p class="text-base-content/40 text-[9px] font-bold tracking-[0.2em] whitespace-nowrap uppercase">Total</p>
+						<p class="text-success text-3xl font-black tracking-tighter whitespace-nowrap md:text-4xl">
 							{{ build.totalPrice / 100 | currency: 'EUR' }}
 						</p>
 					</div>
@@ -119,7 +149,7 @@
 							*ngTemplateOutlet="
 								rowTemplate;
 								context: {
-									label: $first ? 'RAM' : '',
+									label: $first ? 'Memoria RAM' : '',
 									type: 'ram',
 									part: ramPart,
 									name: ramPart.manufacturer + ' ' + ramPart.model,
@@ -133,7 +163,7 @@
 							*ngTemplateOutlet="
 								rowTemplate;
 								context: {
-									label: $first ? 'Disco' : '',
+									label: $first ? 'Almacenamiento' : '',
 									type: 'storage',
 									part: disk,
 									name: disk.model,
@@ -146,10 +176,10 @@
 						*ngTemplateOutlet="
 							rowTemplate;
 							context: {
-								label: 'GPU',
+								label: 'Tarjeta Gráfica',
 								type: 'gpu',
 								part: build.gpu,
-								name: build.gpu ? build.gpu.model : '---',
+								name: build.gpu ? build.gpu.model : 'No disponible',
 								icon: 'gpu',
 							}
 						"
@@ -163,7 +193,25 @@
 					<ng-container
 						*ngTemplateOutlet="
 							rowTemplate;
-							context: { label: 'PSU', type: 'psu', part: build.psu, name: build.psu.model, icon: 'psu' }
+							context: {
+								label: 'Fuente de alimentación',
+								type: 'psu',
+								part: build.psu,
+								name: build.psu.model,
+								icon: 'psu',
+							}
+						"
+					></ng-container>
+					<ng-container
+						*ngTemplateOutlet="
+							rowTemplate;
+							context: {
+								label: 'Sistema Operativo',
+								type: 'os',
+								part: build.os,
+								name: build.os ? build.os.version : 'No disponible',
+								icon: 'os',
+							}
 						"
 					></ng-container>
 				</tbody>
@@ -228,6 +276,12 @@
 								<path d="M8 7h8M8 11h8M8 15h4" />
 							</svg>
 						}
+						@case ('os') {
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<rect x="3" y="3" width="18" height="18" rx="2" />
+								<path d="M3 9h18M9 3v18" />
+							</svg>
+						}
 					}
 				</div>
 			</td>
@@ -255,7 +309,7 @@
 				</div>
 			</td>
 			<td class="p-3 text-right align-middle text-xs font-bold tracking-tighter md:p-4 md:text-sm">
-				{{ part ? (part.price / 100 | currency: 'EUR') : '---' }}
+				{{ part ? (part.price / 100 | currency: 'EUR') : '0,00 €' }}
 			</td>
 		</tr>
 	</ng-template>

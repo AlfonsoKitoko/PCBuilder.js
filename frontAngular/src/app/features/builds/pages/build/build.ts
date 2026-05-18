@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { BuildWattageDetailsComponent } from '../../../../shared/components/build-wattage-details/build-wattage-details';
 import { userProfile } from '../../../../shared/models/user.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { BuildService } from '../../../../shared/services/build.service';
@@ -10,7 +11,7 @@ import { getImageUrl } from '../../../../shared/utils/image-mapper';
 
 @Component({
 	selector: 'app-build',
-	imports: [CommonModule, RouterModule, CurrencyPipe],
+	imports: [CommonModule, RouterModule, CurrencyPipe, BuildWattageDetailsComponent],
 	templateUrl: './build.html',
 })
 export default class Build {
@@ -25,6 +26,7 @@ export default class Build {
 	build = this.buildService.selectedBuild;
 	currentUser = computed(() => this.authService.user());
 	isLoading = this.buildService.isLoading;
+	analysis = this.buildService.analysis;
 
 	managementRoles = [userProfile.ADMIN];
 
