@@ -65,6 +65,9 @@ export const getBuildById = async (id) => {
 		.lean()
 
 	if (!build) throw new AppError('Build not found', 404)
+
+	build.wattage = calcTotalPowerConsum(build)
+
 	return build
 }
 
