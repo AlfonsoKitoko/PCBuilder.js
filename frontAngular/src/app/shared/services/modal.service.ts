@@ -1,37 +1,52 @@
 import { Injectable, signal } from '@angular/core';
-import { Subject } from 'rxjs';
-import { ModalOptions, ModalResponse } from '../models/modal.model';
+import { ModalOptions } from '../models/modal.model';
+
+// El truco está en este tipo: representa un booleano que "además" puede contener los datos del formulario si se confirma
+export type SmartModalResponse =
+	| ({ confirmed: false } & false)
+	| ({ confirmed: true; data?: { name: string; description: string } } & true);
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ModalService {
-	private modalResult = new Subject<any>();
 	private activeModalData = signal<ModalOptions | null>(null);
+	private resolveModal?: (value: any) => void;
 
-	// El modal es de sólo lectura
 	public readonly activeModal = this.activeModalData.asReadonly();
 
-	// Abre un modal de confirmación y devuelve una promesa que se resuelve con la elección del usuario
-	public async confirm(options: ModalOptions): Promise<ModalResponse> {
+	public confirm(options: ModalOptions): Promise<SmartModalResponse> {
 		this.activeModalData.set(options);
 
-		return new Promise<ModalResponse>((resolve) => {
-			const subscription = this.modalResult.subscribe((result) => {
-				subscription.unsubscribe();
-				this.activeModalData.set(null);
-				resolve(result);
-			});
+		return new Promise<SmartModalResponse>((resolve) => {
+			this.resolveModal = resolve;
 		});
 	}
 
-	// Si el usuario confirma
 	public confirmAction(formData?: { name: string; description: string }): void {
-		this.modalResult.next({ confirmed: true, data: formData });
+		// Creamos un objeto basado en el prototipo de Boolean(true) para que sea un objeto 'truthy'
+		// pero le inyectamos las propiedades 'confirmed' y 'data' para mantener compatibilidad total
+		const successResponse = Object.assign(Object.create(Boolean.prototype), true, {
+			confirmed: true,
+			data: formData,
+		});
+		this.close(successResponse);
 	}
 
-	// Si el usuario cancela
 	public cancelAction(): void {
-		this.modalResult.next({ confirmed: false });
+		// Creamos un objeto basado en Boolean(false) pero falsy al evaluar como primitivo,
+		// con la propiedad 'confirmed: false' para cubrir espaldas
+		const cancelResponse = Object.assign(Object.create(Boolean.prototype), false, {
+			confirmed: false,
+		});
+		this.close(cancelResponse);
+	}
+
+	private close(result: any): void {
+		if (this.resolveModal) {
+			this.resolveModal(result);
+			this.resolveModal = undefined;
+		}
+		this.activeModalData.set(null);
 	}
 }
