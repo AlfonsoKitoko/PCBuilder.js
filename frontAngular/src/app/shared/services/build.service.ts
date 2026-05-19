@@ -4,16 +4,7 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { BuildState } from '../models/build-state.model';
-import { Build } from '../models/build.model';
-
-interface WattageDetails {
-	cpu: number;
-	gpu: number;
-	ram: number;
-	storage: number;
-	mobo: number;
-	total: number;
-}
+import { Build, WattageDetails } from '../models/build.model';
 
 @Injectable({ providedIn: 'root' })
 export class BuildService {

@@ -129,6 +129,8 @@ export default class NewEdit implements OnInit {
 			});
 		} else {
 			// Si no hay ID, es una build nueva. Solo nos aseguramos de que el form esté limpio.
+			if (current._id) this.buildService.resetBuild();
+
 			this.fillForm();
 		}
 	}
@@ -169,6 +171,7 @@ export default class NewEdit implements OnInit {
 		});
 
 		if (res.confirmed) {
+			this.form.reset({}, { emitEvent: false });
 			this.buildService.resetBuild();
 			this.router.navigate(['build/all']);
 		}
