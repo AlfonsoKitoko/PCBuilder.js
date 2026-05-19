@@ -2,7 +2,7 @@
 	<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
 		<div class="flex flex-col">
 			<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
-				Gestión de Componentes / CPU / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
+				Procesadores / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
 			</nav>
 			<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
 				{{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Procesador</span>
@@ -11,7 +11,6 @@
 	</header>
 
 	<form class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12" [formGroup]="form" (ngSubmit)="onSubmit()">
-		<!-- COLUMNA IZQUIERDA: Imagen y Acciones -->
 		<div class="flex flex-col gap-4 lg:col-span-4">
 			<div
 				class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
@@ -34,7 +33,7 @@
 			<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
 				<button
 					class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
-					[disabled]="form.invalid || isLoading()"
+					[disabled]="isLoading()"
 					type="submit"
 				>
 					@if (isLoading()) {
@@ -42,18 +41,17 @@
 					}
 					{{ isEditMode() ? 'Guardar Cambios' : 'Crear Procesador' }}
 				</button>
-				<a
+				<button
 					class="btn btn-ghost btn-block btn-sm mt-2 text-[10px] tracking-widest uppercase opacity-50"
-					routerLink="/cpu/all"
+					(click)="onCancel()"
+					type="button"
 				>
 					Cancelar
-				</a>
+				</button>
 			</div>
 		</div>
 
-		<!-- COLUMNA DERECHA: Formulario -->
 		<div class="flex flex-col gap-4 lg:col-span-8">
-			<!-- DATOS DE IDENTIFICACIÓN -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
@@ -62,63 +60,114 @@
 				</div>
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante</span></label
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante *</span>
+						</label>
+						<select
+							class="select select-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('manufacturer')?.invalid &&
+									(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty),
+							}"
+							formControlName="manufacturer"
 						>
-						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="manufacturer">
+							<option value="" disabled selected>Selecciona fabricante</option>
 							@for (m of cpuManufacturers; track m) {
 								<option [value]="m">{{ m }}</option>
 							}
 						</select>
+						@if (
+							form.get('manufacturer')?.invalid &&
+							(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El fabricante es obligatorio</p>
+						}
 					</div>
+
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error': form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty),
+							}"
 							type="text"
 							formControlName="model"
-							placeholder="Ej: Core i9-14900K"
+							placeholder="Ej: CORE I9-14900K"
 						/>
+						@if (form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El modelo es obligatorio</p>
+						}
 					</div>
+
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Serie</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Serie *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('series')?.invalid && (form.get('series')?.touched || form.get('series')?.dirty),
+							}"
 							type="text"
 							formControlName="series"
-							placeholder="Ej: Ryzen 9 / Core i9"
+							placeholder="Ej: RYZEN 9 / CORE I9"
 						/>
+						@if (form.get('series')?.invalid && (form.get('series')?.touched || form.get('series')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">La serie es obligatoria</p>
+						}
 					</div>
+
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Familia</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Familia *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('family')?.invalid && (form.get('family')?.touched || form.get('family')?.dirty),
+							}"
 							type="text"
 							formControlName="family"
-							placeholder="Ej: Nova Lake"
+							placeholder="Ej: NOVA LAKE"
 						/>
+						@if (form.get('family')?.invalid && (form.get('family')?.touched || form.get('family')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">La familia es obligatoria</p>
+						}
 					</div>
+
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Microarquitectura</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Microarquitectura *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full font-mono text-[11px]"
+							class="input input-bordered bg-base-200/30 w-full font-mono text-[11px] uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('microarchitecture')?.invalid &&
+									(form.get('microarchitecture')?.touched || form.get('microarchitecture')?.dirty),
+							}"
 							type="text"
 							formControlName="microarchitecture"
-							placeholder="Ej: Raptor Lake / Zen 4"
+							placeholder="Ej: RAPTOR LAKE / ZEN 4"
 						/>
+						@if (
+							form.get('microarchitecture')?.invalid &&
+							(form.get('microarchitecture')?.touched || form.get('microarchitecture')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">
+								La microarquitectura es obligatoria
+							</p>
+						}
 					</div>
 				</div>
 			</section>
 
-			<!-- RENDIMIENTO NÚCLEOS -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
@@ -127,43 +176,75 @@
 				</div>
 				<div class="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Núcleos</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Núcleos *</span>
+						</label>
 						<input
 							class="input input-bordered bg-base-200/30 text-center font-bold"
+							[ngClass]="{
+								'input-error':
+									form.get('core_count')?.invalid && (form.get('core_count')?.touched || form.get('core_count')?.dirty),
+							}"
 							type="number"
 							formControlName="core_count"
+							min="1"
 						/>
+						@if (
+							form.get('core_count')?.invalid && (form.get('core_count')?.touched || form.get('core_count')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Mínimo 1 núcleo</p>
+						}
 					</div>
+
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Hilos</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Hilos *</span>
+						</label>
 						<input
 							class="input input-bordered bg-base-200/30 text-center font-bold"
+							[ngClass]="{
+								'input-error':
+									form.get('thread_count')?.invalid &&
+									(form.get('thread_count')?.touched || form.get('thread_count')?.dirty),
+							}"
 							type="number"
 							formControlName="thread_count"
+							min="1"
 						/>
+						@if (
+							form.get('thread_count')?.invalid &&
+							(form.get('thread_count')?.touched || form.get('thread_count')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Mínimo 1 hilo</p>
+						}
 					</div>
+
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Base Freq</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Base Freq *</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 w-full text-center font-mono"
+								[ngClass]="{
+									'input-error':
+										form.get('base_freq')?.invalid && (form.get('base_freq')?.touched || form.get('base_freq')?.dirty),
+								}"
 								type="number"
 								formControlName="base_freq"
 								step="0.1"
 							/>
 							<span class="absolute top-1/2 right-2 -translate-y-1/2 text-[9px] font-black opacity-20">GHZ</span>
 						</div>
+						@if (form.get('base_freq')?.invalid && (form.get('base_freq')?.touched || form.get('base_freq')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Frecuencia requerida</p>
+						}
 					</div>
+
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Boost Freq</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Boost Freq</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 text-primary w-full text-center font-mono"
@@ -177,27 +258,34 @@
 				</div>
 			</section>
 
-			<!-- CACHÉ Y SOCKET -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Memoria Caché y Socket</h2>
 				</div>
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-4">
 					<div class="form-control md:col-span-1">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Socket</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Socket *</span>
+						</label>
 						<input
 							class="input input-bordered bg-base-200/30 text-center font-bold uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('socket')?.invalid && (form.get('socket')?.touched || form.get('socket')?.dirty),
+							}"
 							type="text"
 							formControlName="socket"
 							placeholder="Ej: AM5 / LGA1700"
 						/>
+						@if (form.get('socket')?.invalid && (form.get('socket')?.touched || form.get('socket')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Socket requerido</p>
+						}
 					</div>
+
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">L1 Cache</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">L1 Cache</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 w-full text-center"
@@ -207,94 +295,111 @@
 							<span class="absolute top-1/2 right-2 -translate-y-1/2 text-[9px] opacity-20">MB</span>
 						</div>
 					</div>
+
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">L2 Cache</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">L2 Cache *</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 w-full text-center"
+								[ngClass]="{
+									'input-error':
+										form.get('l2_cache')?.invalid && (form.get('l2_cache')?.touched || form.get('l2_cache')?.dirty),
+								}"
 								type="number"
 								formControlName="l2_cache"
 							/>
 							<span class="absolute top-1/2 right-2 -translate-y-1/2 text-[9px] opacity-20">MB</span>
 						</div>
+						@if (form.get('l2_cache')?.invalid && (form.get('l2_cache')?.touched || form.get('l2_cache')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Caché L2 requerida</p>
+						}
 					</div>
+
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">L3 Cache</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">L3 Cache *</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 w-full text-center"
+								[ngClass]="{
+									'input-error':
+										form.get('l3_cache')?.invalid && (form.get('l3_cache')?.touched || form.get('l3_cache')?.dirty),
+								}"
 								type="number"
 								formControlName="l3_cache"
 							/>
 							<span class="absolute top-1/2 right-2 -translate-y-1/2 text-[9px] opacity-20">MB</span>
 						</div>
+						@if (form.get('l3_cache')?.invalid && (form.get('l3_cache')?.touched || form.get('l3_cache')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Caché L3 requerida</p>
+						}
 					</div>
 				</div>
 			</section>
 
-			<!-- ENERGÍA Y GRÁFICOS -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Energía e Integrados</h2>
 				</div>
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-3">
 					<div class="form-control">
-						<label class="label"><span class="label-text text-[10px] font-bold uppercase opacity-50">TDP</span></label>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">TDP *</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 w-full text-center font-bold"
+								[ngClass]="{
+									'input-error': form.get('tdp')?.invalid && (form.get('tdp')?.touched || form.get('tdp')?.dirty),
+								}"
 								type="number"
 								formControlName="tdp"
 							/>
 							<span class="absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold opacity-30">W</span>
 						</div>
+						@if (form.get('tdp')?.invalid && (form.get('tdp')?.touched || form.get('tdp')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">TDP requerido</p>
+						}
 					</div>
 
 					<div class="form-control md:col-span-2">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Gráficos Integrados</span></label
-						>
-						<div class="flex gap-2">
-							<div class="bg-base-200/30 border-base-300 flex shrink-0 items-center gap-2 rounded-lg border px-3">
-								<input class="checkbox checkbox-xs checkbox-primary" type="checkbox" formControlName="hasIntegrated" />
-								<span class="text-[9px] font-bold uppercase opacity-60">Tiene</span>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Gráficos Integrados</span>
+						</label>
+						<div class="flex flex-col gap-1">
+							<div class="flex gap-2">
+								<div class="bg-base-200/30 border-base-300 flex shrink-0 items-center gap-2 rounded-lg border px-3">
+									<input
+										class="checkbox checkbox-xs checkbox-primary"
+										type="checkbox"
+										formControlName="hasIntegrated"
+									/>
+									<span class="text-[9px] font-bold uppercase opacity-60">Tiene</span>
+								</div>
+								<input
+									class="input input-bordered bg-base-200/30 flex-1 uppercase"
+									[ngClass]="{
+										'input-error':
+											form.get('integrated_graphics')?.invalid &&
+											(form.get('integrated_graphics')?.touched || form.get('integrated_graphics')?.dirty),
+									}"
+									[attr.disabled]="!form.get('hasIntegrated')?.value ? '' : null"
+									type="text"
+									formControlName="integrated_graphics"
+									placeholder="Ej: UHD GRAPHICS 770"
+								/>
 							</div>
-							<input
-								class="input input-bordered bg-base-200/30 flex-1"
-								[attr.disabled]="!form.get('hasIntegrated')?.value ? '' : null"
-								type="text"
-								formControlName="integrated_graphics"
-								placeholder="Ej: UHD Graphics 770"
-							/>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- COMERCIAL -->
-			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
-				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
-					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Datos Comerciales</h2>
-				</div>
-				<div class="p-4">
-					<div class="form-control max-w-xs">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Precio</span></label
-						>
-						<div class="relative">
-							<input
-								class="input input-bordered bg-base-200/30 text-primary h-14 w-full text-xl font-bold"
-								type="number"
-								formControlName="price"
-								step="0.01"
-							/>
-							<span class="text-primary absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold opacity-30"
-								>EUR</span
-							>
+							@if (
+								form.get('integrated_graphics')?.invalid &&
+								(form.get('integrated_graphics')?.touched || form.get('integrated_graphics')?.dirty)
+							) {
+								<p class="text-error text-[10px] font-bold tracking-wider uppercase">
+									Especifica el modelo de la integrada
+								</p>
+							}
 						</div>
 					</div>
 				</div>
@@ -304,7 +409,7 @@
 				<div
 					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
 				>
-					<span>UUID: {{ id() }}</span>
+					<span>ID (MongoDB): {{ id() }}</span>
 					<span>Status: Modo Edición</span>
 				</div>
 			}
