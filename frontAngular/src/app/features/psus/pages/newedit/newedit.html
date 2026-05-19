@@ -2,7 +2,7 @@
 	<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
 		<div class="flex flex-col">
 			<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
-				Gestión de Componentes / PSU / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
+				Fuentes de Alimentación / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
 			</nav>
 			<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
 				{{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Fuente de Alimentación</span>
@@ -11,7 +11,6 @@
 	</header>
 
 	<form class="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-12" [formGroup]="form" (ngSubmit)="onSubmit()">
-		<!-- COLUMNA IZQUIERDA: Imagen y Acciones -->
 		<div class="flex flex-col gap-4 lg:col-span-4">
 			<div
 				class="ring-base-300 mx-auto flex aspect-square w-full max-w-70 items-center justify-center rounded-2xl bg-white p-6 shadow-sm ring-1 lg:max-w-none dark:ring-white/10"
@@ -34,7 +33,7 @@
 			<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
 				<button
 					class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
-					[disabled]="form.invalid || isLoading()"
+					[disabled]="isLoading()"
 					type="submit"
 				>
 					@if (isLoading()) {
@@ -42,18 +41,17 @@
 					}
 					{{ isEditMode() ? 'Guardar Cambios' : 'Crear Fuente' }}
 				</button>
-				<a
+				<button
 					class="btn btn-ghost btn-block btn-sm mt-2 text-[10px] tracking-widest uppercase opacity-50"
-					routerLink="/psu/all"
+					(click)="onCancel()"
+					type="button"
 				>
 					Cancelar
-				</a>
+				</button>
 			</div>
 		</div>
 
-		<!-- COLUMNA DERECHA: Formulario -->
 		<div class="flex flex-col gap-4 lg:col-span-8">
-			<!-- ESPECIFICACIONES TÉCNICAS -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
@@ -61,177 +59,207 @@
 					</h2>
 				</div>
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante</span></label
-						>
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full font-bold"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('manufacturer')?.invalid &&
+									(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty),
+							}"
 							type="text"
 							formControlName="manufacturer"
-							placeholder="Ej: Corsair"
+							placeholder="Ej: CORSAIR"
 						/>
+						@if (
+							form.get('manufacturer')?.invalid &&
+							(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El fabricante es obligatorio</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo</span></label
-						>
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error': form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty),
+							}"
 							type="text"
 							formControlName="model"
-							placeholder="Ej: RM850x"
+							placeholder="Ej: RM850X"
 						/>
+						@if (form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El modelo es obligatorio</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Tipo (Factor Forma)</span></label
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Tipo (Factor Forma) *</span>
+						</label>
+						<select
+							class="select select-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('psu_type')?.invalid && (form.get('psu_type')?.touched || form.get('psu_type')?.dirty),
+							}"
+							formControlName="psu_type"
 						>
-						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="psu_type">
+							<option value="" disabled selected>Selecciona factor forma</option>
 							@for (t of psuTypes; track t) {
 								<option [value]="t">{{ t }}</option>
 							}
 						</select>
+						@if (form.get('psu_type')?.invalid && (form.get('psu_type')?.touched || form.get('psu_type')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Selecciona el tipo de fuente</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Potencia (W)</span></label
-						>
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Potencia (W) *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full font-bold"
+							class="input input-bordered bg-base-200/30 w-full font-mono"
+							[ngClass]="{
+								'input-error':
+									form.get('wattage')?.invalid && (form.get('wattage')?.touched || form.get('wattage')?.dirty),
+							}"
 							type="number"
 							formControlName="wattage"
 							placeholder="Ej: 850"
 						/>
+						@if (form.get('wattage')?.invalid && (form.get('wattage')?.touched || form.get('wattage')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Potencia requerida (mín: 1)</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Eficiencia</span></label
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Eficiencia *</span>
+						</label>
+						<select
+							class="select select-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('eff_rating')?.invalid && (form.get('eff_rating')?.touched || form.get('eff_rating')?.dirty),
+							}"
+							formControlName="eff_rating"
 						>
-						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="eff_rating">
+							<option value="" disabled selected>Selecciona certificación</option>
 							@for (e of effRatings; track e) {
 								<option [value]="e">{{ e }}</option>
 							}
 						</select>
+						@if (
+							form.get('eff_rating')?.invalid && (form.get('eff_rating')?.touched || form.get('eff_rating')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Selecciona la eficiencia</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Modularidad</span></label
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Modularidad *</span>
+						</label>
+						<select
+							class="select select-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('modular')?.invalid && (form.get('modular')?.touched || form.get('modular')?.dirty),
+							}"
+							formControlName="modular"
 						>
-						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="modular">
+							<option value="" disabled selected>Selecciona modularidad</option>
 							@for (m of modulars; track m) {
 								<option [value]="m">{{ m }}</option>
 							}
 						</select>
+						@if (form.get('modular')?.invalid && (form.get('modular')?.touched || form.get('modular')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Selecciona la modularidad</p>
+						}
 					</div>
 				</div>
 			</section>
 
-			<!-- CONECTORES -->
 			<section
 				class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10"
 				formGroupName="connectors"
 			>
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
-					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Panel de Conectores</h2>
+					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">
+						Panel de Conectores (Cantidades)
+					</h2>
 				</div>
 				<div class="grid grid-cols-2 gap-x-4 gap-y-2 p-4 md:grid-cols-3">
-					<div class="form-control">
-						<label class="label py-1"
-							><span class="label-text text-[9px] font-bold uppercase opacity-50">ATX 24-Pin</span></label
-						>
-						<input
-							class="input input-bordered input-sm bg-base-200/30 text-center font-bold"
-							type="number"
-							formControlName="atx_24pin"
-						/>
-					</div>
-					<div class="form-control">
-						<label class="label py-1"
-							><span class="label-text text-[9px] font-bold uppercase opacity-50">EPS 8-Pin</span></label
-						>
-						<input
-							class="input input-bordered input-sm bg-base-200/30 text-center font-bold"
-							type="number"
-							formControlName="eps_8pin"
-						/>
-					</div>
-					<div class="form-control">
-						<label class="label py-1"
-							><span class="label-text text-[9px] font-bold uppercase opacity-50">EPS 4-Pin</span></label
-						>
-						<input
-							class="input input-bordered input-sm bg-base-200/30 text-center font-bold"
-							type="number"
-							formControlName="eps_4pin"
-						/>
-					</div>
-					<div class="form-control">
-						<label class="label py-1"
-							><span class="label-text text-primary text-[9px] font-bold uppercase opacity-50">PCIe 16-Pin</span></label
-						>
-						<input
-							class="input input-bordered input-sm border-primary/30 bg-primary/5 text-center font-bold"
-							type="number"
-							formControlName="pcie_16pin_12vhpwr"
-						/>
-					</div>
-					<div class="form-control">
-						<label class="label py-1"
-							><span class="label-text text-[9px] font-bold uppercase opacity-50">PCIe 8-Pin</span></label
-						>
-						<input
-							class="input input-bordered input-sm bg-base-200/30 text-center font-bold"
-							type="number"
-							formControlName="pcie_8pin"
-						/>
-					</div>
-					<div class="form-control">
-						<label class="label py-1"
-							><span class="label-text text-[9px] font-bold uppercase opacity-50">PCIe 6+2-Pin</span></label
-						>
-						<input
-							class="input input-bordered input-sm bg-base-200/30 text-center font-bold"
-							type="number"
-							formControlName="pcie_6plus2pin"
-						/>
-					</div>
-					<div class="form-control">
-						<label class="label py-1"
-							><span class="label-text text-[9px] font-bold uppercase opacity-50">SATA</span></label
-						>
-						<input
-							class="input input-bordered input-sm bg-base-200/30 text-center font-bold"
-							type="number"
-							formControlName="sata"
-						/>
-					</div>
-					<div class="form-control md:col-span-2">
-						<label class="label py-1"
-							><span class="label-text text-[9px] font-bold uppercase opacity-50">Molex 4-Pin</span></label
-						>
-						<input
-							class="input input-bordered input-sm bg-base-200/30 text-center font-bold"
-							type="number"
-							formControlName="molex_4pin"
-						/>
-					</div>
+					@for (
+						control of [
+							'atx_24pin',
+							'eps_8pin',
+							'eps_4pin',
+							'pcie_16pin_12vhpwr',
+							'pcie_8pin',
+							'pcie_6plus2pin',
+							'pcie_6pin',
+							'sata',
+							'molex_4pin',
+						];
+						track control
+					) {
+						<div class="form-control">
+							<label class="label py-1">
+								<span
+									class="label-text text-[9px] font-bold uppercase opacity-50"
+									[ngClass]="{ 'text-primary': control === 'pcie_16pin_12vhpwr' }"
+								>
+									{{ control.replace('_', ' ') }}
+								</span>
+							</label>
+							<input
+								class="input input-bordered input-sm bg-base-200/30 text-center font-mono font-bold"
+								[ngClass]="{
+									'border-primary/30 bg-primary/5': control === 'pcie_16pin_12vhpwr',
+									'input-error':
+										form.get('connectors.' + control)?.invalid &&
+										(form.get('connectors.' + control)?.touched || form.get('connectors.' + control)?.dirty),
+								}"
+								[formControlName]="control"
+								type="number"
+								min="0"
+							/>
+							@if (
+								form.get('connectors.' + control)?.invalid &&
+								(form.get('connectors.' + control)?.touched || form.get('connectors.' + control)?.dirty)
+							) {
+								<p class="text-error mt-0.5 text-[8px] font-bold tracking-wide uppercase">Mín: 0</p>
+							}
+						</div>
+					}
 				</div>
 			</section>
 
-			<!-- PRECIO -->
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Información Comercial</h2>
 				</div>
 				<div class="p-4">
 					<div class="form-control max-w-xs">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Precio</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Precio *</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 text-primary h-14 w-full text-xl font-bold"
+								[ngClass]="{
+									'input-error': form.get('price')?.invalid && (form.get('price')?.touched || form.get('price')?.dirty),
+								}"
 								type="number"
 								formControlName="price"
 								step="0.01"
@@ -240,6 +268,9 @@
 								>EUR</span
 							>
 						</div>
+						@if (form.get('price')?.invalid && (form.get('price')?.touched || form.get('price')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Precio requerido (mín: 0)</p>
+						}
 					</div>
 				</div>
 			</section>
@@ -248,7 +279,7 @@
 				<div
 					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
 				>
-					<span>UUID: {{ id() }}</span>
+					<span>ID (MongoDB): {{ id() }}</span>
 					<span>Status: Modo Edición</span>
 				</div>
 			}
