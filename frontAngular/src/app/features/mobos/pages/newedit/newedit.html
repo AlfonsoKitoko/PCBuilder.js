@@ -2,7 +2,7 @@
 	<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
 		<div class="flex flex-col">
 			<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
-				Gestión de Componentes / Mobo / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
+				Placas Base / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
 			</nav>
 			<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
 				{{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Placa Base</span>
@@ -33,7 +33,7 @@
 			<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
 				<button
 					class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
-					[disabled]="form.invalid || isLoading()"
+					[disabled]="isLoading()"
 					type="submit"
 				>
 					@if (isLoading()) {
@@ -43,7 +43,7 @@
 				</button>
 				<a
 					class="btn btn-ghost btn-block btn-sm mt-2 text-[10px] tracking-widest uppercase opacity-50"
-					routerLink="/motherboard/all"
+					(click)="onCancel()"
 				>
 					Cancelar
 				</a>
@@ -56,59 +56,108 @@
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Especificaciones Core</h2>
 				</div>
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante</span></label
-						>
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full font-bold"
+							class="input input-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('manufacturer')?.invalid &&
+									(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty),
+							}"
 							type="text"
 							formControlName="manufacturer"
-							placeholder="Ej: Gigabyte"
+							placeholder="Ej: GIGABYTE"
 						/>
+						@if (
+							form.get('manufacturer')?.invalid &&
+							(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El fabricante es obligatorio</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo</span></label
-						>
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error': form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty),
+							}"
 							type="text"
 							formControlName="model"
 							placeholder="Ej: Z790 AORUS ELITE"
 						/>
+						@if (form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El modelo es obligatorio</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Socket</span></label
-						>
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Socket *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full font-bold"
+							class="input input-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('socket')?.invalid && (form.get('socket')?.touched || form.get('socket')?.dirty),
+							}"
 							type="text"
 							formControlName="socket"
 							placeholder="Ej: LGA1700"
 						/>
+						@if (form.get('socket')?.invalid && (form.get('socket')?.touched || form.get('socket')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El socket es obligatorio</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Chipset</span></label
-						>
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Chipset *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('chipset')?.invalid && (form.get('chipset')?.touched || form.get('chipset')?.dirty),
+							}"
 							type="text"
 							formControlName="chipset"
 							placeholder="Ej: Z790"
 						/>
+						@if (form.get('chipset')?.invalid && (form.get('chipset')?.touched || form.get('chipset')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El chipset es obligatorio</p>
+						}
 					</div>
-					<div class="form-control md:col-span-2">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Factor Forma</span></label
+
+					<div class="form-control w-full md:col-span-2">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Factor Forma *</span>
+						</label>
+						<select
+							class="select select-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('form_factor')?.invalid &&
+									(form.get('form_factor')?.touched || form.get('form_factor')?.dirty),
+							}"
+							formControlName="form_factor"
 						>
-						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="form_factor">
+							<option value="" disabled selected>Selecciona factor forma</option>
 							@for (f of moboFormFactors; track f) {
 								<option [value]="f">{{ f }}</option>
 							}
 						</select>
+						@if (
+							form.get('form_factor')?.invalid && (form.get('form_factor')?.touched || form.get('form_factor')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Selecciona el factor forma</p>
+						}
 					</div>
 				</div>
 			</section>
@@ -118,25 +167,44 @@
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Memoria RAM</h2>
 				</div>
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Tecnología RAM</span></label
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Tecnología RAM *</span>
+						</label>
+						<select
+							class="select select-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('ram_type')?.invalid && (form.get('ram_type')?.touched || form.get('ram_type')?.dirty),
+							}"
+							formControlName="ram_type"
 						>
-						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="ram_type">
+							<option value="" disabled selected>Selecciona tecnología</option>
 							@for (r of ramTypes; track r) {
 								<option [value]="r">{{ r }}</option>
 							}
 						</select>
+						@if (form.get('ram_type')?.invalid && (form.get('ram_type')?.touched || form.get('ram_type')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Selecciona el tipo de RAM</p>
+						}
 					</div>
-					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Slots DIMM</span></label
-						>
+
+					<div class="form-control w-full">
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Slots DIMM *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full text-center font-bold"
+							class="input input-bordered bg-base-200/30 w-full text-center font-mono font-bold"
+							[ngClass]="{
+								'input-error':
+									form.get('ram_slots')?.invalid && (form.get('ram_slots')?.touched || form.get('ram_slots')?.dirty),
+							}"
 							type="number"
 							formControlName="ram_slots"
 						/>
+						@if (form.get('ram_slots')?.invalid && (form.get('ram_slots')?.touched || form.get('ram_slots')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Slots requeridos (mín: 1)</p>
+						}
 					</div>
 				</div>
 			</section>
@@ -160,7 +228,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">M.2</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="m2_slots"
 								/>
@@ -168,7 +236,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">SATA 6 Gb/s</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="sata_6gb"
 								/>
@@ -176,7 +244,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">SATA 3 Gb/s</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="sata_3gb"
 								/>
@@ -184,7 +252,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">IDE</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="ide_pata"
 								/>
@@ -192,7 +260,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">Floppy</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="floppy"
 								/>
@@ -210,7 +278,7 @@
 									><span class="label-text text-[9px] font-bold uppercase">PCIe x16</span></label
 								>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="x16"
 								/>
@@ -218,7 +286,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCIe x8</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="x8"
 								/>
@@ -226,7 +294,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCIe x4</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="x4"
 								/>
@@ -234,7 +302,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCIe x1</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="x1"
 								/>
@@ -242,7 +310,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PCI</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="pci_legacy"
 								/>
@@ -250,7 +318,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">AGP</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="agp_slot"
 								/>
@@ -266,7 +334,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 2.0</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb2"
 								/>
@@ -274,7 +342,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 1</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb3_gen1"
 								/>
@@ -282,7 +350,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 2</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb3_gen2"
 								/>
@@ -290,7 +358,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB Gen 2x2</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb3_gen2x2"
 								/>
@@ -298,7 +366,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">Serial</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="serial_header"
 								/>
@@ -324,7 +392,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 2.0</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb2"
 								/>
@@ -332,7 +400,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 1</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb3_gen1"
 								/>
@@ -340,7 +408,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB 3.2 Gen 2</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb3_gen2"
 								/>
@@ -348,7 +416,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold">USB Gen 2x2</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="usb3_gen2x2"
 								/>
@@ -356,7 +424,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">PS/2</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="ps2"
 								/>
@@ -364,7 +432,7 @@
 							<div class="form-control">
 								<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">COM</span></label>
 								<input
-									class="input input-bordered input-sm bg-base-200/30 text-center"
+									class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 									type="number"
 									formControlName="serial_com"
 								/>
@@ -381,7 +449,7 @@
 								<div class="form-control">
 									<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">HDMI</span></label>
 									<input
-										class="input input-bordered input-sm bg-base-200/30 text-center"
+										class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 										type="number"
 										formControlName="hdmi"
 									/>
@@ -391,7 +459,7 @@
 										><span class="label-text text-[9px] font-bold uppercase">DisplayPort</span></label
 									>
 									<input
-										class="input input-bordered input-sm bg-base-200/30 text-center"
+										class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 										type="number"
 										formControlName="displayport"
 									/>
@@ -399,7 +467,7 @@
 								<div class="form-control">
 									<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">VGA</span></label>
 									<input
-										class="input input-bordered input-sm bg-base-200/30 text-center"
+										class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 										type="number"
 										formControlName="vga"
 									/>
@@ -407,7 +475,7 @@
 								<div class="form-control">
 									<label class="label py-1"><span class="label-text text-[9px] font-bold uppercase">DVI</span></label>
 									<input
-										class="input input-bordered input-sm bg-base-200/30 text-center"
+										class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 										type="number"
 										formControlName="dvi"
 									/>
@@ -425,7 +493,7 @@
 											<span class="label-text text-[9px] font-bold uppercase">Puertos</span>
 										</label>
 										<input
-											class="input input-bordered input-sm bg-base-200/30 text-center"
+											class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 											type="number"
 											formControlName="quantity"
 										/>
@@ -436,7 +504,7 @@
 											<span class="label-text text-[9px] font-bold uppercase">Mbps</span>
 										</label>
 										<input
-											class="input input-bordered input-sm bg-base-200/30 text-center"
+											class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 											type="number"
 											step="0.1"
 											formControlName="speed"
@@ -452,15 +520,10 @@
 											<span class="label-text text-[9px] font-bold uppercase">Jacks 3.5mm</span>
 										</label>
 										<input
-											class="input input-bordered input-sm bg-base-200/30 text-center"
+											class="input input-bordered input-sm bg-base-200/30 text-center font-mono"
 											type="number"
 											formControlName="audio_jacks"
 										/>
-									</div>
-
-									<div class="form-control invisible mt-2">
-										<label class="label py-1"><span class="label-text text-[9px]">-</span></label>
-										<div class="h-8"></div>
 									</div>
 								</div>
 							</div>
@@ -482,7 +545,7 @@
 								<span class="label-text text-[10px] font-bold uppercase opacity-50">WiFi Standard</span>
 							</label>
 							<select
-								class="select select-bordered bg-base-200/30 h-14 w-full text-lg font-bold"
+								class="select select-bordered bg-base-200/30 h-14 w-full text-lg font-bold uppercase"
 								formControlName="wifi"
 							>
 								@for (w of wifiStandards; track w) {
@@ -504,13 +567,16 @@
 						</div>
 					</div>
 
-					<div class="form-control">
+					<div class="form-control w-full">
 						<label class="label">
-							<span class="label-text text-[10px] font-bold uppercase opacity-50">Precio</span>
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Precio *</span>
 						</label>
 						<div class="relative">
 							<input
-								class="input input-bordered bg-base-200/30 text-primary h-14 w-full text-xl font-bold"
+								class="input input-bordered bg-base-200/30 text-primary h-14 w-full font-mono text-xl font-bold"
+								[ngClass]="{
+									'input-error': form.get('price')?.invalid && (form.get('price')?.touched || form.get('price')?.dirty),
+								}"
 								type="number"
 								formControlName="price"
 								step="0.01"
@@ -519,6 +585,9 @@
 								>EUR</span
 							>
 						</div>
+						@if (form.get('price')?.invalid && (form.get('price')?.touched || form.get('price')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Precio requerido (mín: 0)</p>
+						}
 					</div>
 				</div>
 			</section>
@@ -527,7 +596,7 @@
 				<div
 					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
 				>
-					<span>UUID: {{ id() }}</span>
+					<span>MongoDB ID: {{ id() }}</span>
 					<span>Status: Modo Edición</span>
 				</div>
 			}
