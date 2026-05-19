@@ -2,10 +2,10 @@
 	<header class="mb-6 flex flex-col justify-between gap-4 text-center md:flex-row md:items-end md:text-left">
 		<div class="flex flex-col">
 			<nav class="text-base-content/40 mb-2 text-[10px] font-bold tracking-widest uppercase">
-				Gestión de Componentes / Chasis / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
+				Cajas y Torres / {{ isEditMode() ? 'Editar' : 'Nuevo' }}
 			</nav>
 			<h1 class="text-base-content text-3xl leading-none font-black tracking-tighter uppercase md:text-5xl">
-				{{ isEditMode() ? 'Modificar' : 'Registrar' }} <span class="text-primary">Chasis</span>
+				{{ isEditMode() ? 'Modificar' : 'Crear' }} <span class="text-primary">Caja</span>
 			</h1>
 		</div>
 	</header>
@@ -33,22 +33,23 @@
 			<div class="bg-base-200/50 border-base-300 rounded-xl border p-5 dark:border-white/5">
 				<button
 					class="btn btn-primary btn-block shadow-primary/20 rounded-lg font-bold tracking-wider uppercase shadow-lg"
-					[disabled]="form.invalid || isLoading()"
+					[disabled]="isLoading()"
 					type="submit"
 				>
 					@if (isLoading()) {
 						<span class="loading loading-spinner loading-xs"></span>
 					}
-					{{ isEditMode() ? 'Guardar Cambios' : 'Crear Componente' }}
+					{{ isEditMode() ? 'Guardar Cambios' : 'Crear Caja' }}
 				</button>
-				<a
+				<button
 					class="btn btn-ghost btn-block btn-sm mt-2 text-[10px] tracking-widest uppercase opacity-50"
-					routerLink="/case/all"
+					(click)="onCancel()"
 				>
 					Cancelar
-				</a>
+				</button>
 			</div>
 		</div>
+
 		<div class="flex flex-col gap-4 lg:col-span-8">
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
@@ -57,91 +58,144 @@
 
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Fabricante *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error':
+									form.get('manufacturer')?.invalid &&
+									(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty),
+							}"
 							type="text"
 							formControlName="manufacturer"
-							placeholder="Ej: Lian Li"
+							placeholder="Ej: LIAN LI"
 						/>
+						@if (
+							form.get('manufacturer')?.invalid &&
+							(form.get('manufacturer')?.touched || form.get('manufacturer')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El fabricante es obligatorio</p>
+						}
 					</div>
+
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Modelo *</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30 w-full"
+							class="input input-bordered bg-base-200/30 w-full uppercase"
+							[ngClass]="{
+								'input-error': form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty),
+							}"
 							type="text"
 							formControlName="model"
-							placeholder="Ej: O11 Dynamic"
+							placeholder="Ej: O11 DYNAMIC"
 						/>
+						@if (form.get('model')?.invalid && (form.get('model')?.touched || form.get('model')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">El modelo es obligatorio</p>
+						}
 					</div>
+
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Tipo de Caja</span></label
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Tipo de Caja *</span>
+						</label>
+						<select
+							class="select select-bordered bg-base-200/30 w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('case_type')?.invalid && (form.get('case_type')?.touched || form.get('case_type')?.dirty),
+							}"
+							formControlName="case_type"
 						>
-						<select class="select select-bordered bg-base-200/30 w-full font-bold" formControlName="case_type">
+							<option value="" disabled selected>Selecciona un tipo</option>
 							@for (type of caseTypes; track type) {
 								<option [value]="type">{{ type }}</option>
 							}
 						</select>
+						@if (form.get('case_type')?.invalid && (form.get('case_type')?.touched || form.get('case_type')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Selecciona un tipo de caja</p>
+						}
 					</div>
+
 					<div class="form-control w-full">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Factor de Forma</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Factor Forma *</span>
+						</label>
 						<select
 							class="select select-bordered bg-base-200/30 text-primary w-full font-bold uppercase"
+							[ngClass]="{
+								'select-error':
+									form.get('form_factor')?.invalid &&
+									(form.get('form_factor')?.touched || form.get('form_factor')?.dirty),
+							}"
 							formControlName="form_factor"
 						>
+							<option value="" disabled selected>Selecciona factor forma</option>
 							@for (factor of formFactors; track factor) {
 								<option [value]="factor">{{ factor }}</option>
 							}
 						</select>
+						@if (
+							form.get('form_factor')?.invalid && (form.get('form_factor')?.touched || form.get('form_factor')?.dirty)
+						) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Selecciona el factor forma</p>
+						}
 					</div>
 				</div>
 			</section>
+
 			<section class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10">
 				<div class="bg-base-200/50 border-base-300 border-b px-4 py-2 dark:border-white/10">
 					<h2 class="text-base-content/60 text-[10px] font-black tracking-widest uppercase">Físico y Comercial</h2>
 				</div>
 				<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-3">
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Volumen</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Volumen *</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 w-full font-mono"
+								[ngClass]="{
+									'input-error':
+										form.get('volume')?.invalid && (form.get('volume')?.touched || form.get('volume')?.dirty),
+								}"
 								type="number"
 								formControlName="volume"
 								step="0.1"
 							/>
 							<span class="absolute top-1/2 right-4 -translate-y-1/2 text-[10px] font-bold opacity-30">L</span>
 						</div>
+						@if (form.get('volume')?.invalid && (form.get('volume')?.touched || form.get('volume')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Volumen requerido (mín: 0)</p>
+						}
 					</div>
 
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Color</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Color</span>
+						</label>
 						<input
-							class="input input-bordered bg-base-200/30"
+							class="input input-bordered bg-base-200/30 uppercase"
 							type="text"
 							formControlName="color"
-							placeholder="Ej: Blanco"
+							placeholder="Ej: BLANCO"
 						/>
 					</div>
 
 					<div class="form-control">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase opacity-50">Precio</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase opacity-50">Precio *</span>
+						</label>
 						<div class="relative">
 							<input
 								class="input input-bordered bg-base-200/30 text-primary w-full font-bold"
+								[ngClass]="{
+									'input-error': form.get('price')?.invalid && (form.get('price')?.touched || form.get('price')?.dirty),
+								}"
 								type="number"
 								formControlName="price"
 								step="0.01"
@@ -150,14 +204,18 @@
 								>EUR</span
 							>
 						</div>
+						@if (form.get('price')?.invalid && (form.get('price')?.touched || form.get('price')?.dirty)) {
+							<p class="text-error mt-1 text-[10px] font-bold tracking-wider uppercase">Precio requerido (mín: 0)</p>
+						}
 					</div>
 
 					<div class="bg-base-200/30 border-base-300 col-span-full flex items-center gap-4 rounded-lg border p-3">
 						<input class="checkbox checkbox-primary" type="checkbox" formControlName="power_supply" />
-						<span class="text-[10px] font-bold uppercase opacity-70">Incluye Fuente de Alimentación</span>
+						<span class="text-[10px] font-bold uppercase opacity-70">Incluye Fuente de Alimentación *</span>
 					</div>
 				</div>
 			</section>
+
 			<section
 				class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10"
 				formGroupName="front_panel"
@@ -170,18 +228,25 @@
 				<div class="grid grid-cols-2 gap-3 p-4 md:grid-cols-5">
 					@for (control of ['usb2TypA', 'usb3gen1A', 'usb32gen2x2C', 'usb3gen2C', 'usb3gen1C']; track control) {
 						<div class="form-control">
-							<label class="label py-1"
-								><span class="label-text text-[9px] font-bold uppercase opacity-40">{{ control }}</span></label
-							>
+							<label class="label py-1">
+								<span class="label-text text-[9px] font-bold uppercase opacity-40">{{ control }}</span>
+							</label>
 							<input
 								class="input input-sm input-bordered bg-base-200/30 text-center font-mono"
+								[ngClass]="{
+									'input-error':
+										form.get('front_panel.' + control)?.invalid &&
+										(form.get('front_panel.' + control)?.touched || form.get('front_panel.' + control)?.dirty),
+								}"
 								[formControlName]="control"
 								type="number"
+								min="0"
 							/>
 						</div>
 					}
 				</div>
 			</section>
+
 			<section
 				class="bg-base-100 border-base-300 overflow-hidden rounded-xl border dark:border-white/10"
 				formGroupName="internal_bays"
@@ -193,23 +258,35 @@
 				</div>
 				<div class="flex gap-6 p-4">
 					<div class="form-control flex-1">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase italic opacity-50">Internas 3.5"</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase italic opacity-50">Internas 3.5"</span>
+						</label>
 						<input
 							class="input input-bordered bg-base-200/30 text-center font-mono"
+							[ngClass]="{
+								'input-error':
+									form.get('internal_bays.int35')?.invalid &&
+									(form.get('internal_bays.int35')?.touched || form.get('internal_bays.int35')?.dirty),
+							}"
 							type="number"
 							formControlName="int35"
+							min="0"
 						/>
 					</div>
 					<div class="form-control flex-1">
-						<label class="label"
-							><span class="label-text text-[10px] font-bold uppercase italic opacity-50">Internas 2.5"</span></label
-						>
+						<label class="label">
+							<span class="label-text text-[10px] font-bold uppercase italic opacity-50">Internas 2.5"</span>
+						</label>
 						<input
 							class="input input-bordered bg-base-200/30 text-center font-mono"
+							[ngClass]="{
+								'input-error':
+									form.get('internal_bays.int25')?.invalid &&
+									(form.get('internal_bays.int25')?.touched || form.get('internal_bays.int25')?.dirty),
+							}"
 							type="number"
 							formControlName="int25"
+							min="0"
 						/>
 					</div>
 				</div>
@@ -219,7 +296,7 @@
 				<div
 					class="border-base-300 mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t p-4 text-[9px] font-bold tracking-[0.2em] uppercase opacity-30 dark:border-white/5"
 				>
-					<span>UUID: {{ id() }}</span>
+					<span>ID (UUID): {{ id() }}</span>
 					<span>Status: Modo Edición</span>
 				</div>
 			}

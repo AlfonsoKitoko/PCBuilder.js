@@ -93,10 +93,13 @@ export default class NewEdit implements OnInit {
 	}
 
 	async onSubmit() {
-		if (this.form.invalid || !this.canManage()) {
+		if (this.form.invalid) {
 			this.form.markAllAsTouched();
+			this.toast.show('Por favor, rellena los campos obligatorios', 'error');
 			return;
 		}
+
+		if (!this.canManage()) return;
 
 		const action = this.isEditMode() ? 'actualizar' : 'crear';
 
@@ -131,6 +134,22 @@ export default class NewEdit implements OnInit {
 					this.toast.show(err.error?.message || 'Error en la operación', 'error');
 				},
 			});
+		}
+	}
+
+	async onCancel() {
+		if (this.form.pristine) {
+			this.router.navigate(['/case/all']);
+			return;
+		}
+
+		const response = await this.modal.confirm({
+			title: `¿Descartar cambios?`,
+			message: `¿Estás seguro de que deseas salir sin guardar?`,
+		});
+
+		if (response && response.confirmed) {
+			this.router.navigate(['/case/all']);
 		}
 	}
 }
