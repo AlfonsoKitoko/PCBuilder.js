@@ -8,6 +8,15 @@ import { Ram } from './ram.model';
 import { Storage } from './storage.model';
 import { User } from './user.model';
 
+export interface WattageDetails {
+	cpu: number;
+	gpu: number;
+	ram: number;
+	storage: number;
+	mobo: number;
+	total: number;
+}
+
 export interface Build {
 	_id?: string;
 	name: string;
@@ -24,6 +33,8 @@ export interface Build {
 	totalWattage: number;
 	totalPrice: number;
 	slug: string;
+
+	wattage?: WattageDetails;
 
 	createdAt?: string;
 	updatedAt?: string;
