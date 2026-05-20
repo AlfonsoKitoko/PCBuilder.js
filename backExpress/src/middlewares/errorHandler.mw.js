@@ -6,6 +6,10 @@ export const errorHandler = (err, req, res, next) => {
 	let message = err.message || 'Internal Servitor Error'
 	let errors = err.errors || []
 
+	const path = req.originalUrl || ''
+
+	const isImageRequest = path.startsWith('/img/') || /\.(jpg|jpeg|png|gif|webp|svg)$/.test(path)
+
 	// 1. Errores de Validación de Mongoose (como el Regex del Email)
 	if (err.name === 'ValidationError') {
 		status = 400
@@ -30,8 +34,12 @@ export const errorHandler = (err, req, res, next) => {
 		}
 	}
 
-	// 3. Registro en logs
-	logger.err.error(`Error Handler(${status}): ${message} - Path: ${req.originalUrl}`)
+	// 3. Registro en logs condicional para imágenes
+	if (isImageRequest && status === 404) {
+		logger.assets.info(`Imagen no encontrada (404): ${path}`)
+	} else {
+		logger.err.error(`Error Handler(${status}): ${message} - Path: ${req.originalUrl}`)
+	}
 
 	// 4. Manejo de errores críticos en Producción
 	if (status === 500) {

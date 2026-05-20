@@ -48,13 +48,22 @@ if (logsActive && env === 'development') {
 			console: {
 				type: 'console',
 				layout: consoleLayout
+			},
+			// ASSETS.LOG
+			assets: {
+				type: 'dateFile',
+				filename: `${path}assets.log`,
+				pattern: '-yyyy-MM-dd',
+				keepFileExt: true,
+				layout: fileLayout
 			}
 		},
 		categories: {
 			default: { appenders: ['console'], level: 'info' },
 			access: { appenders: ['access', 'console'], level: 'info' },
 			error: { appenders: ['error', 'console'], level: 'error' },
-			app: { appenders: ['app', 'console'], level: 'info' }
+			app: { appenders: ['app', 'console'], level: 'info' },
+			assets: { appenders: ['assets'], level: 'info' }
 		}
 	})
 } else {
@@ -72,6 +81,7 @@ if (logsActive && env === 'development') {
 export const access = log4js.getLogger('access')
 export const err = log4js.getLogger('error')
 export const appLogger = log4js.getLogger('app')
+export const assets = log4js.getLogger('assets')
 export const expressLogger = log4js.connectLogger(access, { level: 'info' })
 
 // Exportación por defecto para tener todo agrupado
@@ -79,5 +89,6 @@ export default {
 	access,
 	err,
 	app: appLogger,
+	assets,
 	express: expressLogger
 }
