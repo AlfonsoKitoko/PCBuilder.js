@@ -19,43 +19,51 @@
 									<tr
 										class="bg-base-200/50 text-base-content/40 border-base-300 border-b text-[10px] font-black tracking-widest uppercase dark:border-white/10"
 									>
-										<th class="px-6 py-4">Nombre</th>
-										<th>CPU</th>
-										<th>GPU</th>
-										<th class="text-right">TDP</th>
-										<th class="text-right">Total</th>
+										<th class="border-base-300 border-r px-6 py-4 dark:border-white/10">Nombre</th>
+										<th class="border-base-300 border-r px-4 py-4 dark:border-white/10">CPU</th>
+										<th class="border-base-300 border-r px-4 py-4 dark:border-white/10">GPU</th>
+										<th class="border-base-300 border-r px-4 py-4 text-right dark:border-white/10">TDP</th>
+										<th class="border-base-300 border-r px-4 py-4 text-right dark:border-white/10">Total</th>
 										<th class="px-6 text-right">Acción</th>
 									</tr>
 								</thead>
 								<tbody class="divide-base-300 divide-y dark:divide-white/5">
 									@if (buildService.isLoading()) {
 										<tr>
-											<td class="py-12 text-center opacity-50" colspan="5">Cargando builds...</td>
+											<td class="py-12 text-center opacity-50" colspan="6">Cargando builds...</td>
 										</tr>
 									} @else {
 										@for (build of buildService.builds(); track build._id) {
 											@let identity = getBuildIdentity(build);
 
 											<tr class="hover:bg-primary/5 transition-colors">
-												<td class="px-6 py-5 font-bold tracking-tight uppercase">{{ build.name }}</td>
+												<td
+													class="border-base-300 border-r px-6 py-5 font-bold tracking-tight uppercase dark:border-white/5"
+												>
+													{{ build.name }}
+												</td>
 
-												<td class="text-xs">
+												<td class="border-base-300 border-r px-4 text-xs dark:border-white/5">
 													<span class="font-bold" [class]="identity.cpuClass">
 														{{ build.cpu?.model || 'N/D' }}
 													</span>
 												</td>
 
-												<td class="text-xs">
+												<td class="border-base-300 border-r px-4 text-xs dark:border-white/5">
 													<span class="font-bold" [class]="identity.gpuClass">
 														{{ build.gpu?.model || 'N/D' }}
 													</span>
 												</td>
 
-												<td class="text-info text-right text-xs font-bold opacity-70">
+												<td
+													class="border-base-300 text-info border-r px-4 text-right text-xs font-bold opacity-70 dark:border-white/5"
+												>
 													{{ build.totalWattage || 0 }} W
 												</td>
 
-												<td class="text-success text-right text-xs font-bold opacity-70">
+												<td
+													class="border-base-300 text-success border-r px-4 text-right text-xs font-bold opacity-70 dark:border-white/5"
+												>
 													{{ build.totalPrice / 100 | currency: 'EUR' }}
 												</td>
 
