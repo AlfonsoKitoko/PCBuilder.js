@@ -150,7 +150,7 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().cpu?.active === false"
-								[class.border-error]="slots().cpu?.active === false"
+								[class.border-error]="slots().cpu?.active === false || form.get('cpu')?.invalid"
 								[routerLink]="slots().cpu ? ['/cpu', slots().cpu?._id, slots().cpu?.slug] : null"
 								(click)="!slots().cpu ? goToSelect('cpu') : null"
 							>
@@ -223,7 +223,7 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().mobo?.active === false"
-								[class.border-error]="slots().mobo?.active === false"
+								[class.border-error]="slots().mobo?.active === false || form.get('motherboard')?.invalid"
 								[routerLink]="slots().mobo ? ['/motherboard', slots().mobo?._id, slots().mobo?.slug] : null"
 								(click)="!slots().mobo ? goToSelect('motherboard') : null"
 							>
@@ -319,7 +319,7 @@
 							<div class="flex justify-center gap-2">
 								<button
 									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
-									(click)="goToSelect('ram')"
+									(click)="goToSelect('ram', $index)"
 									title="Sustituir"
 								>
 									<svg
@@ -357,7 +357,7 @@
 						</td>
 						<td class="p-4 align-middle" colspan="3">
 							<div class="flex items-center gap-4">
-								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1 opacity-40">
+								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
 									<img class="h-full w-full object-contain" [src]="getImageUrl('ram')" />
 								</div>
 								<button
@@ -416,7 +416,7 @@
 							<div class="flex justify-center gap-2">
 								<button
 									class="btn btn-ghost btn-circle btn-xs text-info/50 hover:text-info"
-									(click)="goToSelect('storage')"
+									(click)="goToSelect('storage', $index)"
 									title="Sustituir"
 								>
 									<svg
@@ -454,7 +454,7 @@
 						</td>
 						<td class="p-4 align-middle" colspan="3">
 							<div class="flex items-center gap-4">
-								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1 opacity-40">
+								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
 									<img class="h-full w-full object-contain" [src]="getImageUrl('storage')" />
 								</div>
 								<button
@@ -490,7 +490,7 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().gpu?.active === false"
-								[class.border-error]="slots().gpu?.active === false"
+								[class.border-error]="slots().gpu?.active === false || form.get('gpu')?.invalid"
 								[routerLink]="slots().gpu ? ['/gpu', slots().gpu?._id, slots().gpu?.slug] : null"
 								(click)="!slots().gpu ? goToSelect('gpu') : null"
 							>
@@ -563,7 +563,7 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().case?.active === false"
-								[class.border-error]="slots().case?.active === false"
+								[class.border-error]="slots().case?.active === false || form.get('case')?.invalid"
 								[routerLink]="slots().case ? ['/case', slots().case?._id, slots().case?.slug] : null"
 								(click)="!slots().case ? goToSelect('case') : null"
 							>
@@ -638,7 +638,7 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().psu?.active === false"
-								[class.border-error]="slots().psu?.active === false"
+								[class.border-error]="slots().psu?.active === false || form.get('psu')?.invalid"
 								[routerLink]="slots().psu ? ['/psu', slots().psu?._id, slots().psu?.slug] : null"
 								(click)="!slots().psu ? goToSelect('psu') : null"
 							>
@@ -707,7 +707,7 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().os?.active === false"
-								[class.border-error]="slots().os?.active === false"
+								[class.border-error]="slots().os?.active === false || form.get('os')?.invalid"
 								[routerLink]="slots().os ? ['/os', slots().os?._id, slots().os?.slug] : null"
 								(click)="!slots().os ? goToSelect('os') : null"
 							>
@@ -784,7 +784,7 @@
 		</button>
 		<button
 			class="btn btn-primary px-10 font-black tracking-widest uppercase shadow-lg"
-			[disabled]="analysis().errors.length > 0 || !slots().os"
+			[disabled]="analysis().errors.length > 0"
 			(click)="save()"
 		>
 			{{ id() ? 'Actualizar Build' : 'Guardar Cambios' }}

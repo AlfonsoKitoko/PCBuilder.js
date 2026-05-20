@@ -154,8 +154,12 @@ export default class NewEdit implements OnInit {
 		return items.reduce((acc, item) => acc + (item?.price || 0), 0);
 	}
 
-	goToSelect(type: string) {
-		this.router.navigate([type, 'all']);
+	goToSelect(type: string, index?: number) {
+		this.buildService.editIndex = index;
+
+		const extras: any = {};
+		if (index !== undefined) extras.queryParams = { editIndex: index };
+		this.router.navigate([type, 'all'], extras);
 	}
 
 	resetBuild() {

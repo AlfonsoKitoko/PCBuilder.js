@@ -15,6 +15,8 @@ export class BuildService {
 	selectedBuild = signal<Build | null>(null);
 	isLoading = signal(false);
 
+	editIndex: number | undefined = undefined;
+
 	currentBuild = signal<BuildState & { name?: string; description?: string }>({
 		_id: undefined,
 		name: '',
@@ -86,6 +88,18 @@ export class BuildService {
 			const currentValue = state[type];
 
 			if (Array.isArray(currentValue)) {
+				if (this.editIndex !== undefined) {
+					const updatedArray = [...currentValue];
+					updatedArray[this.editIndex] = part;
+
+					this.editIndex = undefined;
+
+					return {
+						...state,
+						[type]: updatedArray,
+					};
+				}
+
 				return {
 					...state,
 					[type]: [...currentValue, part],
