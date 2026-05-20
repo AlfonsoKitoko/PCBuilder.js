@@ -107,7 +107,7 @@ export const psus = [
 		eff_rating: '80+ GOLD',
 		modular: 'FULL',
 		connectors: {
-			atx_24pin: 0,
+			atx_24pin: 1,
 			eps_8pin: 2,
 			eps_4pin: 0,
 			pcie_16pin_12vhpwr: 1,
@@ -250,7 +250,7 @@ export const psus = [
 		eff_rating: '',
 		modular: '',
 		connectors: {
-			atx_24pin: 0,
+			atx_24pin: 1,
 			eps_8pin: 0,
 			eps_4pin: 0,
 			pcie_16pin_12vhpwr: 0,
