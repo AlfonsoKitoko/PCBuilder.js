@@ -239,6 +239,174 @@ export const psus = [
 		},
 		price: 5999
 	},
+
+	// // // // // // // // // // // // // // // //
+	// serginho // // // // // // // // // // // //
+	// // // // // // // // // // // // // // // //
+
+	{ // MSI MAG A650BN
+		manufacturer: 'MSI',
+		model: 'MAG A650BN',
+		psu_type: 'ATX',
+		wattage: 650,
+		eff_rating: '80+ BRONZE',
+		modular: 'No',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 1,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 2,
+			pcie_6pin: 0,
+			sata: 5,
+			molex_4pin: 2
+		},
+		price: 5999
+	},
+
+	{ // ASRock Steel Legend SL-650G
+		manufacturer: 'ASRock',
+		model: 'Steel Legend SL-650G',
+		psu_type: 'ATX',
+		wattage: 650,
+		eff_rating: '80+ GOLD',
+		modular: 'FULL',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 2,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 2,
+			pcie_6pin: 0,
+			sata: 6,
+			molex_4pin: 3
+		},
+		price: 6499
+	},
+
+	{ // MSI MAG A550BN
+		manufacturer: 'MSI',
+		model: 'MAG A550BN',
+		psu_type: 'ATX',
+		wattage: 550,
+		eff_rating: '80+ BRONZE',
+		modular: 'No',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 1,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 2,
+			pcie_6pin: 0,
+			sata: 5,
+			molex_4pin: 2
+		},
+		price: 5499
+	},
+
+	{ // EVGA 400 N1
+		manufacturer: 'EVGA',
+		model: '400 N1',
+		psu_type: 'ATX',
+		wattage: 400,
+		eff_rating: 'None',
+		modular: 'No',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 1,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 1,
+			pcie_6pin: 1,
+			sata: 4,
+			molex_4pin: 3
+		},
+		price: 4499
+	},
+	{ // Thermaltake Smart RGB
+		manufacturer: 'Thermaltake',
+		model: 'Smart RGB',
+		psu_type: 'ATX',
+		wattage: 500,
+		eff_rating: '80+',
+		modular: 'NO',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 1,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 2,
+			pcie_6pin: 0,
+			sata: 6,
+			molex_4pin: 3
+		},
+		price: 4499
+	},
+	{ // Thermaltake Smart
+		manufacturer: 'Thermaltake',
+		model: 'Smart',
+		psu_type: 'ATX',
+		wattage: 600,
+		eff_rating: '80+',
+		modular: 'NO',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 1,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 2,
+			pcie_6pin: 0,
+			sata: 6,
+			molex_4pin: 3
+		},
+		price: 4299
+	},
+	{ // ENDORFY Vero L5
+		manufacturer: 'ENDORFY',
+		model: 'Vero L5',
+		psu_type: 'ATX',
+		wattage: 500,
+		eff_rating: '80+ BRONZE',
+		modular: 'NO',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 1,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 2,
+			pcie_6pin: 0,
+			sata: 5,
+			molex_4pin: 1
+		},
+		price: 9599
+	},
+	{ // MSI MAG A650GL
+		manufacturer: 'MSI',
+		model: 'MAG A650GL',
+		psu_type: 'ATX',
+		wattage: 650,
+		eff_rating: '80+ GOLD',
+		modular: 'FULL',
+		connectors: {
+			atx_24pin: 1,
+			eps_8pin: 2,
+			eps_4pin: 0, // Requerido por esquema
+			pcie_16pin_12vhpwr: 0,
+			pcie_8pin: 0,
+			pcie_6plus2pin: 4,
+			pcie_6pin: 0,
+			sata: 6,
+			molex_4pin: 4
+		},
+		price: 8999
+	}
 ]
 
 /* Plantilla PSU

@@ -272,6 +272,183 @@ export const cases = [
 		color: 'Black',
 		price: 8499
 	},
+
+	// // // // // // // // // // // // // // // //
+	// serginho // // // // // // // // // // // //
+	// // // // // // // // // // // // // // // //
+
+	{ // NZXT H3 Flow
+		manufacturer: 'NZXT',
+		model: 'H3 Flow',
+		case_type: 'MID-TOWER',
+		volume: 3501,
+		form_factor: 'Micro-ATX',
+		front_panel: {
+			usb2TypA: 0,
+			usb3gen1A: 1,
+			usb32gen2x2C: 1,
+			usb3gen2C: 0,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 1,
+			int35: 1
+		},
+		power_supply: false,
+		color: 'WHITE',
+		price: 4999
+	},
+
+	{ // Fractal Design Meshify 3
+		manufacturer: 'Fractal Design',
+		model: 'Meshify 3',
+		case_type: 'MID-TOWER',
+		volume: 5027,
+		form_factor: 'ATX',
+		front_panel: {
+			usb2TypA: 0,
+			usb3gen1A: 1,
+			usb32gen2x2C: 1,
+			usb3gen2C: 0,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 2,
+			int35: 2
+		},
+		power_supply: false,
+		color: 'BLACK',
+		price: 15499
+	},
+
+	{ // Montech X3 Mesh
+		manufacturer: 'Montech',
+		model: 'X3 Mesh',
+		case_type: 'MID-TOWER',
+		volume: 5027,
+		form_factor: 'ATX',
+		front_panel: {
+			usb2TypA: 1,
+			usb3gen1A: 1,
+			usb32gen2x2C: 0,
+			usb3gen2C: 0,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 2,
+			int35: 2
+		},
+		power_supply: false,
+		color: 'BLACK',
+		price: 6999
+	},
+
+
+	{ // Antec NX200M
+		manufacturer: 'Antec',
+		model: 'NX200M',
+		case_type: 'MID-TOWER',
+		volume: 5027,
+		form_factor: 'Micro-ATX',
+		front_panel: {
+			usb2TypA: 1,
+			usb3gen1A: 1,
+			usb32gen2x2C: 0,
+			usb3gen2C: 0,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 1,
+			int35: 2
+		},
+		power_supply: false,
+		color: 'BLACK',
+		price: 3999
+	},
+	{ // darkFlash DB330M MicroATX
+		manufacturer: 'darkFlash ',
+		model: 'DB330M',
+		case_type: 'MINI-TOWER',
+		volume: 2903,
+		form_factor: 'Micro-ATX',
+		front_panel: {
+			usb2TypA: 1,
+			usb3gen1A: 1,
+			usb32gen2x2C: 0,
+			usb3gen2C: 0,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 2,
+			int35: 1
+		},
+		power_supply: false,
+		color: 'BLACK',
+		price: 6699
+	},
+	{ // Okinos Air Cross
+		manufacturer: 'Okinos ',
+		model: 'Air Cross',
+		case_type: 'MID-TOWER',
+		volume: 5146,
+		form_factor: 'ATX',
+		front_panel: {
+			usb2TypA: 1,
+			usb3gen1A: 0,
+			usb32gen2x2C: 0,
+			usb3gen2C: 1,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 2,
+			int35: 1
+		},
+		power_supply: false,
+		color: 'BLACK',
+		price: 8699
+	},
+	{ // Fractal Design Core 1000
+		manufacturer: 'Fractal ',
+		model: 'Design Core 1000',
+		case_type: 'MID-TOWER',
+		volume: 2581,
+		form_factor: 'Micro-ATX',
+		front_panel: {
+			usb2TypA: 1,
+			usb3gen1A: 1,
+			usb32gen2x2C: 0,
+			usb3gen2C: 0,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 0,
+			int35: 2
+		},
+		power_supply: false,
+		color: 'BLACK',
+		price: 8699
+	},
+	{ // ARCTIC Xtender Mirror
+		manufacturer: 'ARCTIC ',
+		model: 'Xtender Mirror',
+		case_type: 'MID-TOWER',
+		volume: 6464,
+		form_factor: 'ATX',
+		front_panel: {
+			usb2TypA: 0,
+			usb3gen1A: 1,
+			usb32gen2x2C: 0,
+			usb3gen2C: 1,
+			usb3gen1C: 0
+		},
+		internal_bays: {
+			int25: 3,
+			int35: 1
+		},
+		power_supply: false,
+		color: 'BLACK',
+		price: 11999
+	},
 ]
 
 /* Plantilla Case

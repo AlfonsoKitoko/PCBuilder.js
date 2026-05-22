@@ -119,6 +119,91 @@ export const rams = [
 		voltage: 135,
 		price: 36999
 	},
+
+	// // // // // // // // // // // // // // // //
+	// serginho // // // // // // // // // // // //
+	// // // // // // // // // // // // // // // //
+
+	{ // Corsair Vengeance LPX 32 GB (2 x 16 GB)
+		manufacturer: 'CORSAIR',
+		model: 'Vengeance LPX 32 GB (2 x 16 GB) DDR4-3200',
+		ram_type: 'DDR4',
+		modules: [{ size: '16GB', quantity: 2 }],
+		speed: 3200,
+		cas_latency: 16,
+		voltage: 135,
+		price: 21999
+	},
+	{ // Crucial CT8G4DFS824A 8 GB (1 x 8 GB)
+		manufacturer: 'Crucial',
+		model: 'CT8G4DFS824A 8 GB (1 x 8 GB) DDR4-2400',
+		ram_type: 'DDR4',
+		modules: [{ size: '8GB', quantity: 1 }],
+		speed: 2400,
+		cas_latency: 17,
+		voltage: 120,
+		price: 6200
+	},
+	{ // G.Skill Ripjaws X 8 GB (2 x 4 GB)
+		manufacturer: 'G.Skill',
+		model: 'Ripjaws X 8 GB (2 x 4 GB) DDR3-1600',
+		ram_type: 'DDR3',
+		modules: [{ size: '4GB', quantity: 2 }],
+		speed: 1600,
+		cas_latency: 9,
+		voltage: 150,
+		price: 5700
+	},
+	{ // Kingston KVR13N9S6/2 2 GB (1 x 2 GB)
+		manufacturer: 'Kingston',
+		model: 'KVR13N9S6/2 2 GB (1 x 2 GB) DDR3-1333',
+		ram_type: 'DDR3',
+		modules: [{ size: '2GB', quantity: 1 }],
+		speed: 1333,
+		cas_latency: 9,
+		voltage: 150,
+		price: 1680
+	},
+	{ // Silicon Power GAMING 16 GB (2 x 8 GB)
+		manufacturer: 'Silicon Power',
+		model: 'GAMING 16 GB (2 x 8 GB)',
+		ram_type: 'DDR4',
+		modules: [{ size: '8GB', quantity: 2 }],
+		speed: 3200,
+		cas_latency: 16,
+		voltage: 135,
+		price: 11997
+	},
+	{ // G.Skill Trident Z Neo 16 GB (2 x 8 GB)
+		manufacturer: 'G.Skill',
+		model: 'Trident Z Neo 16 GB (2 x 8 GB)',
+		ram_type: 'DDR4',
+		modules: [{ size: '8GB', quantity: 2 }],
+		speed: 3600,
+		cas_latency: 16,
+		voltage: 135,
+		price: 17800
+	},
+	{ // Crucial Ballistix Sport 8 GB (1 x 8 GB)
+		manufacturer: 'Crucial',
+		model: 'Ballistix Sport 8 GB (1 x 8 GB)',
+		ram_type: 'DDR3',
+		modules: [{ size: '8GB', quantity: 1 }],
+		speed: 1600,
+		cas_latency: 9,
+		voltage: 150,
+		price: 5800
+	},
+	{ // TEAMGROUP T-Create Expert 32 GB (2 x 16 GB)
+		manufacturer: 'TEAMGROUP',
+		model: 'T-Create Expert 32 GB (2 x 16 GB)',
+		ram_type: 'DDR4',
+		modules: [{ size: '16GB', quantity: 2 }],
+		speed: 3200,
+		cas_latency: 16,
+		voltage: 135,
+		price: 23999
+	},
 ]
 
 /* Plantilla RAM
