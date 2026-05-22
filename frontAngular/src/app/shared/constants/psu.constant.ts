@@ -13,6 +13,7 @@ export enum effRating {
 	'80+ SILVER' = '80+ SILVER',
 	'80+ BRONZE' = '80+ BRONZE',
 	'80+' = '80+',
+	'NONE' = 'NONE',
 }
 
 export enum modular {

@@ -1,6 +1,7 @@
 export enum caseType {
 	SFF = 'SFF',
 	MICRO_TOWER = 'MICRO-TOWER',
+	MINI_TOWER = 'MINI-TOWER',
 	MID_TOWER = 'MID-TOWER',
 	FULL_TOWER = 'FULL-TOWER',
 }
