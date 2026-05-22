@@ -42,7 +42,7 @@ export interface RearIO {
 }
 
 export interface Ethernet {
-	speed: number;
+	speed: number[];
 	quantity: number;
 }
 
