@@ -135,13 +135,22 @@
 								@for (io of item.rear_io | keyvalue; track io.key) {
 									<div class="text-[11px] leading-tight">
 										<div class="mb-0.5 font-bold uppercase opacity-40">{{ io.key.replace('_', ' ') }}</div>
+
 										@if (io.key === 'audio_jacks') {
 											<span class="font-bold">{{ io.value }}</span>
+										} @else if (io.key === 'ethernet') {
+											<div class="font-bold">
+												<span class="text-primary">{{ $any(io.value).quantity }}x </span>
+												@for (spd of $any(io.value).speed; track spd; let last = $last) {
+													<span>{{ spd >= 1000 ? spd / 1000 + ' Gbps' : spd + ' Mbps' }}</span
+													>{{ !last ? ', ' : '' }}
+												}
+											</div>
 										} @else {
 											@for (sub of $any(io.value) | keyvalue; track sub.key) {
 												@if (sub.value) {
 													<div class="font-bold">
-														<span class="text-primary">{{ sub.value }}x</span> {{ sub.key }}
+														<span class="text-primary">{{ sub.value }}x</span> {{ $any(sub.key).replace('_', ' ') }}
 													</div>
 												}
 											}
