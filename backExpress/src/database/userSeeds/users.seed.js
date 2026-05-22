@@ -73,7 +73,16 @@ const seedUsers = async () => {
 				email: 'sara@test.com',
 				birthDate: new Date('2000-01-01'),
 				profile: 'USER'
-			}
+			},
+			{
+				username: 'alakazam',
+				password: commonPassword,
+				firstName: 'alaka',
+				lastName: 'zam',
+				email: 'alakazam951@gmail.com',
+				birthDate: new Date('1984-4-11'),
+				profile: 'USER'
+			},
 		]
 
 		// 4. Insertar en la base de datos
