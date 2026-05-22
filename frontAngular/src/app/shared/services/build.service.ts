@@ -5,10 +5,12 @@ import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { BuildState } from '../models/build-state.model';
 import { Build, WattageDetails } from '../models/build.model';
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class BuildService {
 	private http = inject(HttpClient);
+	private authService = inject(AuthService);
 	private apiUrl = `${environment.apiUrl}/builds`;
 
 	builds = signal<Build[]>([]);
@@ -53,6 +55,82 @@ export class BuildService {
 		const b = this.currentBuild();
 		if (!b.cpu && !b.mobo && b.ram.length === 0) {
 			this.analysis.set({ errors: [], warnings: [], wattage: null, totalPrice: 0, isValid: false });
+			return;
+		}
+
+		if (!this.authService.user()) {
+			// 1. Inicializamos los detalles del consumo calcados de tu power.engine
+			const wattage = {
+				cpu: b.cpu?.tdp || 0,
+				gpu: b.gpu?.tdp || 0,
+				mobo: b.mobo ? 50 : 0, // Margen placa/ventiladores si hay placa seleccionada
+				ram: 0,
+				storage: 0,
+				total: 0,
+			};
+
+			// 2. Cálculo exacto de la Memoria RAM
+			if (b.ram) {
+				b.ram.forEach((kit) => {
+					const sticks = kit.modules?.reduce((acc: number, m: any) => acc + (m.quantity || 0), 0) || 1;
+					const v = (kit.voltage || 0) / 100;
+					const watts = (Math.round(v * 3) || 4) * sticks;
+					wattage.ram += watts;
+				});
+			}
+
+			// 3. Cálculo exacto del Almacenamiento (Diferenciando NVMe vs SATA vs RPMs)
+			if (b.storage) {
+				b.storage.forEach((s) => {
+					const type = s.type || '';
+					let watts = 0;
+
+					if (type === 'SSD') watts = s.nvme ? 5 : 3;
+					else if (type.includes('HDD 10000') || type.includes('15000')) watts = 12;
+					else if (type.includes('HDD 7200')) watts = 9;
+					else if (type.includes('HDD')) watts = 6;
+					else watts = 5;
+
+					wattage.storage += watts;
+				});
+			}
+
+			// 4. Sumamos el total idéntico a tu motor
+			wattage.total = wattage.cpu + wattage.gpu + wattage.mobo + wattage.ram + wattage.storage;
+
+			// 5. Validamos las alertas de la fuente de alimentación de forma local (checkPSUPower)
+			const errors: string[] = [];
+			const warnings: string[] = [];
+
+			if (b.psu) {
+				const safetyMargin = 1.2;
+				if (b.psu.wattage < wattage.total) {
+					errors.push(
+						`Critical PSU Error: Total consumption is ${wattage.total} W, but PSU only provides ${b.psu.wattage} W.`,
+					);
+				} else if (b.psu.wattage < Math.ceil(wattage.total * safetyMargin)) {
+					warnings.push(`PSU Warning: Power is tight. Recommended: ${Math.ceil(wattage.total * safetyMargin)} W.`);
+				}
+			}
+
+			// 6. Calculamos el precio total acumulado en caliente en la interfaz
+			const calculatedPrice =
+				(b.cpu?.price || 0) +
+				(b.mobo?.price || 0) +
+				(b.gpu?.price || 0) +
+				(b.psu?.price || 0) +
+				(b.case?.price || 0) +
+				(b.os?.price || 0) +
+				(b.ram?.reduce((acc, r) => acc + (r.price || 0), 0) || 0) +
+				(b.storage?.reduce((acc, s) => acc + (s.price || 0), 0) || 0);
+
+			this.analysis.set({
+				errors,
+				warnings,
+				wattage,
+				totalPrice: calculatedPrice,
+				isValid: errors.length === 0,
+			});
 			return;
 		}
 
