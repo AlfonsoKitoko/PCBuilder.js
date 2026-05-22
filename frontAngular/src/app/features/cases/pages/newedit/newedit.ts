@@ -41,22 +41,22 @@ export default class NewEdit implements OnInit {
 		manufacturer: ['', [Validators.required]],
 		model: ['', [Validators.required]],
 		case_type: ['', [Validators.required]],
-		volume: [0, [Validators.required, Validators.min(0)]],
+		volume: ['', [Validators.required, Validators.min(0)]],
 		form_factor: ['', [Validators.required]],
 		front_panel: this.fb.group({
-			usb2TypA: [0],
-			usb3gen1A: [0],
-			usb32gen2x2C: [0],
-			usb3gen2C: [0],
-			usb3gen1C: [0],
+			usb2TypA: [''],
+			usb3gen1A: [''],
+			usb32gen2x2C: [''],
+			usb3gen2C: [''],
+			usb3gen1C: [''],
 		}),
 		internal_bays: this.fb.group({
-			int35: [0],
-			int25: [0],
+			int35: [''],
+			int25: [''],
 		}),
 		power_supply: [false, [Validators.required]],
 		color: ['', [Validators.required]],
-		price: [0, [Validators.required, Validators.min(0)]],
+		price: ['', [Validators.required, Validators.min(0)]],
 	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva

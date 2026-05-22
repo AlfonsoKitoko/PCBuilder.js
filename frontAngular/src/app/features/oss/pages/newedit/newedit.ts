@@ -40,8 +40,8 @@ export default class NewEdit implements OnInit {
 		manufacturer: ['', [Validators.required]],
 		version: ['', [Validators.required]],
 		edition: ['', [Validators.required]],
-		mode: [0, [Validators.required]],
-		price: [0, [Validators.required, Validators.min(0)]],
+		mode: ['', [Validators.required]],
+		price: ['', [Validators.required, Validators.min(0)]],
 	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva

@@ -39,15 +39,15 @@ export default class NewEdit implements OnInit {
 	storageInterfaces = Object.values(storageInterface);
 
 	form: FormGroup = this.fb.group({
-		manufacturer: [, [Validators.required]],
-		model: [, [Validators.required]],
-		capacity: [, [Validators.required]],
-		type: [, [Validators.required]],
-		form_factor: [, [Validators.required]],
-		interface: [, [Validators.required]],
-		cache: [, [Validators.required]],
-		nvme: [, [Validators.required]],
-		price: [, [Validators.required, Validators.min(0)]],
+		manufacturer: ['', [Validators.required]],
+		model: ['', [Validators.required]],
+		capacity: ['', [Validators.required]],
+		type: ['', [Validators.required]],
+		form_factor: ['', [Validators.required]],
+		interface: ['', [Validators.required]],
+		cache: ['', [Validators.required]],
+		nvme: ['', [Validators.required]],
+		price: ['', [Validators.required, Validators.min(0)]],
 	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva

@@ -42,13 +42,13 @@ export default class NewEdit implements OnInit {
 		model: ['', [Validators.required]],
 		ram_type: ['', [Validators.required]],
 		modules: this.fb.group({
-			size: [0, [Validators.required]],
-			quantity: [0, [Validators.required, Validators.min(1)]],
+			size: ['', [Validators.required]],
+			quantity: ['', [Validators.required, Validators.min(1)]],
 		}),
-		speed: [0, [Validators.required]],
-		cas_latency: [0, [Validators.required]],
-		voltage: [0, [Validators.required]],
-		price: [0, [Validators.required, Validators.min(0)]],
+		speed: ['', [Validators.required]],
+		cas_latency: ['', [Validators.required]],
+		voltage: ['', [Validators.required]],
+		price: ['', [Validators.required, Validators.min(0)]],
 	});
 
 	// Propiedad computada para verificar el permiso de forma reactiva
