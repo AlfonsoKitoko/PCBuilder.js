@@ -21,7 +21,7 @@ export const checkCompatibility = (build) => {
 		}
 
 		const totalModules = ram.reduce((acc, kit) => {
-			const sticksPerKit = kit.modules?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
+			const sticksPerKit = kit.modules?.reduce((sum, m) => sum + (+m.quantity || 0), 0) || 0
 			return acc + sticksPerKit
 		}, 0)
 
@@ -36,23 +36,66 @@ export const checkCompatibility = (build) => {
 
 	// 3. Storage: Cantidad de discos
 	if (storage && storage.length > 0) {
+		// A. Validación contra la Placa Base (Mobo)
 		if (mobo) {
-			// CORRECCIÓN: Acceso a rutas anidadas en el objeto Mobo
 			const storageInfo = mobo.internal_connectors?.storage
-			const sataSlots = storageInfo?.sata_6gb || 0
+			let sata30Slots = storageInfo?.sata_3gb || 0
+			let sata60Slots = storageInfo?.sata_6gb || 0
+			const totalSataSlots = sata30Slots + sata60Slots
 			const nvmeSlots = storageInfo?.m2_slots || 0
 
-			const requiredSata = storage.filter(s => s.interface?.includes('SATA')).length
+			const requiredSata30 = storage.filter(s => s.interface?.includes('SATA 3.0 GB/S') || s.interface?.includes('SATA II')).length
+			const requiredSata60 = storage.filter(s => s.interface?.includes('SATA 6.0 GB/S') || s.interface?.includes('SATA III') || (s.interface?.includes('SATA') && !s.interface?.includes('3.0') && !s.interface?.includes('II'))).length
+			const totalRequiredSata = requiredSata30 + requiredSata60
+
 			const requiredNvme = storage.filter(s => s.nvme === true).length
 
-			if (requiredSata > sataSlots) {
-				report.errors.push(`Not enough SATA ports: Need ${requiredSata}, Mobo has ${sataSlots}`)
+			// Verificación de límites físicos absolutos (Errores)
+			if (totalRequiredSata > totalSataSlots) {
+				report.errors.push(`Not enough SATA ports: Need ${totalRequiredSata}, Mobo has ${totalSataSlots}`)
 			}
 			if (requiredNvme > nvmeSlots) {
 				report.errors.push(`Not enough M.2 slots: Need ${requiredNvme}, Mobo has ${nvmeSlots}`)
 			}
+
+			// Simulación de reparto de puertos en cascada para calcular Warnings
+			if (totalRequiredSata <= totalSataSlots) {
+				let degradedTo30 = 0
+				let underutilizedPorts = 0
+
+				// Distribuir discos de 6.0 Gbps (SATA III)
+				let rem60Drives = requiredSata60
+				const used60_on_60 = Math.min(rem60Drives, sata60Slots)
+				rem60Drives -= used60_on_60
+				sata60Slots -= used60_on_60
+
+				const used60_on_30 = Math.min(rem60Drives, sata30Slots)
+				rem60Drives -= used60_on_30
+				sata30Slots -= used60_on_30
+				degradedTo30 += used60_on_30
+
+				// Distribuir discos de 3.0 Gbps (SATA II)
+				let rem30Drives = requiredSata30
+				const used30_on_30 = Math.min(rem30Drives, sata30Slots)
+				rem30Drives -= used30_on_30
+				sata30Slots -= used30_on_30
+
+				const used30_on_60 = Math.min(rem30Drives, sata60Slots)
+				rem30Drives -= used30_on_60
+				sata60Slots -= used30_on_60
+				if (used30_on_60 > 0) underutilizedPorts += used30_on_60
+
+				// Alertas de rendimiento
+				if (degradedTo30 > 0) {
+					report.warnings.push(`Performance degradation: ${degradedTo30} drive(s) specified as SATA 6.0 GB/S will run at SATA 3.0 GB/S speed due to motherboard limitations`)
+				}
+				if (underutilizedPorts > 0) {
+					report.warnings.push(`Port underutilization: ${underutilizedPorts} older SATA 3.0 GB/S drive(s) will be connected to faster SATA 6.0 GB/S ports, wasting interface bandwidth`)
+				}
+			}
 		}
 
+		// B. Validación contra la Caja (pcCase) -> Reintroducido en su sitio idóneo
 		if (pcCase) {
 			const bays35 = pcCase.internal_bays?.int35 || 0
 			const bays25 = pcCase.internal_bays?.int25 || 0
