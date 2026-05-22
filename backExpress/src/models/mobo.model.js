@@ -30,11 +30,11 @@ const usbHeaderesSchema = new mongoose.Schema({
 }, { _id: false })
 
 const storageConnectorsSchema = new mongoose.Schema({
-	sata_3gb: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
+	sata_3gb: { type: Number, min: 0, default: 0, required: true, validate: positiveIntegerValidator },
 	sata_6gb: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
 	m2_slots: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
-	ide_pata: { type: Number, min: 0, required: true, validate: positiveIntegerValidator },
-	floppy: { type: Number, min: 0, required: true, validate: positiveIntegerValidator }
+	ide_pata: { type: Number, min: 0, default: 0, required: true, validate: positiveIntegerValidator },
+	floppy: { type: Number, min: 0, default: 0, required: true, validate: positiveIntegerValidator }
 }, { _id: false })
 
 const videoSchema = new mongoose.Schema({
@@ -63,7 +63,7 @@ const moboSchema = new mongoose.Schema(
 			usb_ports: rearIOSchema,
 			ethernet: {
 				_id: false,
-				speed: { type: Number, required: true, validate: positiveIntegerValidator },
+				speed: [{ type: Number, required: true, validate: positiveIntegerValidator }],
 				quantity: { type: Number, min: 1, required: true, validate: positiveIntegerValidator }
 			},
 			video: videoSchema,
