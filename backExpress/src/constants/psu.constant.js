@@ -13,6 +13,7 @@ export const EFF_RATING = [
 	'80+ SILVER',
 	'80+ BRONZE',
 	'80+',
+	'NONE'
 ]
 
 export const MODULAR = [
