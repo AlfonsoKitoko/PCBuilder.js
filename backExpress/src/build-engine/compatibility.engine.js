@@ -10,14 +10,16 @@ export const checkCompatibility = (build) => {
 
 	// 1. Socket CPU vs Motherboard
 	if (cpu && mobo && cpu.socket !== mobo.socket) {
-		report.errors.push(`Incompatible Socket: CPU is ${cpu.socket} but Motherboard is ${mobo.socket}`)
+		// report.errors.push(`Incompatible Socket: CPU is ${cpu.socket} but Motherboard is ${mobo.socket}`)
+		report.errors.push(`Zócalo incompatible: la CPU es ${cpu.socket} pero la placa base es ${mobo.socket}`)
 	}
 
 	// 2. RAM: Tipo y Cantidad de Módulos
 	if (ram && ram.length > 0 && mobo) {
 		const wrongType = ram.some(r => r.ram_type !== mobo.ram_type)
 		if (wrongType) {
-			report.errors.push(`RAM type mismatch: Motherboard requires ${mobo.ram_type}`)
+			// report.errors.push(`RAM type mismatch: Motherboard requires ${mobo.ram_type}`)
+			report.errors.push(`Tipo de RAM distinto: la placa base requiere ${mobo.ram_type}`)
 		}
 
 		const totalModules = ram.reduce((acc, kit) => {
@@ -26,11 +28,13 @@ export const checkCompatibility = (build) => {
 		}, 0)
 
 		if (totalModules > mobo.ram_slots) {
-			report.errors.push(`Too many RAM modules: ${totalModules} installed, but Mobo only has ${mobo.ram_slots} slots`)
+			// report.errors.push(`Too many RAM modules: ${totalModules} installed, but Mobo only has ${mobo.ram_slots} slots`)
+			report.errors.push(`Demasiados módulos de RAM: ${totalModules} instalados, pero la placa base solo tiene ${mobo.ram_slots} ranuras`)
 		}
 
 		if (totalModules === 1) {
-			report.warnings.push("Only one RAM module detected. For better performance, consider using dual-channel with 2 modules.")
+			// report.warnings.push("Only one RAM module detected. For better performance, consider using dual-channel with 2 modules.")
+			report.warnings.push("Un único módulo de RAM detectado. Para un mejor rendimiento, considera usar dual-channel con 2 módulos.")
 		}
 	}
 
@@ -52,10 +56,12 @@ export const checkCompatibility = (build) => {
 
 			// Verificación de límites físicos absolutos (Errores)
 			if (totalRequiredSata > totalSataSlots) {
-				report.errors.push(`Not enough SATA ports: Need ${totalRequiredSata}, Mobo has ${totalSataSlots}`)
+				// report.errors.push(`Not enough SATA ports: Need ${totalRequiredSata}, Mobo has ${totalSataSlots}`)
+				report.errors.push(`Not hay suficientes puertos SATA: Need ${totalRequiredSata}, Mobo has ${totalSataSlots}`)
 			}
 			if (requiredNvme > nvmeSlots) {
-				report.errors.push(`Not enough M.2 slots: Need ${requiredNvme}, Mobo has ${nvmeSlots}`)
+				// report.errors.push(`Not enough M.2 slots: Need ${requiredNvme}, Mobo has ${nvmeSlots}`)
+				report.errors.push(`Not hay suficientes ranuras M.2: se necesitan ${requiredNvme}, la placa base tiene ${nvmeSlots}`)
 			}
 
 			// Simulación de reparto de puertos en cascada para calcular Warnings
@@ -87,10 +93,12 @@ export const checkCompatibility = (build) => {
 
 				// Alertas de rendimiento
 				if (degradedTo30 > 0) {
-					report.warnings.push(`Performance degradation: ${degradedTo30} drive(s) specified as SATA 6.0 GB/S will run at SATA 3.0 GB/S speed due to motherboard limitations`)
+					// report.warnings.push(`Performance degradation: ${degradedTo30} drive(s) specified as SATA 6.0 GB/S will run at SATA 3.0 GB/S speed due to motherboard limitations`)
+					report.warnings.push(`Rendimiento degradado: las unidades ${degradedTo30} son SATA 6.0 GB/s irán a velocidad de SATA 3.0 GB/Sdebido a lmitaciones de la placa base`)
 				}
 				if (underutilizedPorts > 0) {
-					report.warnings.push(`Port underutilization: ${underutilizedPorts} older SATA 3.0 GB/S drive(s) will be connected to faster SATA 6.0 GB/S ports, wasting interface bandwidth`)
+					// report.warnings.push(`Port underutilization: ${underutilizedPorts} older SATA 3.0 GB/S drive(s) will be connected to faster SATA 6.0 GB/S ports, wasting interface bandwidth`)
+					report.warnings.push(`Desaprovechamiento de puertos: ${underutilizedPorts} las unidades SATA 3.0 GB/s serán conectadas a puertos SATA 6.0 GB/S, desperdiciando ancho de banda`)
 				}
 			}
 		}
@@ -103,14 +111,16 @@ export const checkCompatibility = (build) => {
 			const required25 = storage.filter(s => s.form_factor === '2.5"').length
 
 			if (required35 > bays35) {
-				report.errors.push(`Not enough 3.5" bays: Need ${required35}, Case has ${bays35}`)
+				// report.errors.push(`Not enough 3.5" bays: Need ${required35}, Case has ${bays35}`)
+				report.errors.push(`No hay suficientes bahías de 3.5": Requiere ${required35}, la Torre tiene ${bays35}`)
 			}
 
 			const remainingAfter35 = bays35 - required35
 			const availableFor25 = bays25 + (remainingAfter35 > 0 ? remainingAfter35 : 0)
 
 			if (required25 > availableFor25) {
-				report.errors.push(`Not enough physical space for 2.5" drives: Need ${required25}, Case only has ${availableFor25} spots left`)
+				// report.errors.push(`Not enough physical space for 2.5" drives: Need ${required25}, Case only has ${availableFor25} spots left`)
+				report.errors.push(`No hay suficiente espacio físico para unidades de 2.5": Requiere ${required25}, la Torre solo tiene ${availableFor25} espacios disponibles`)
 			}
 		}
 	}
@@ -121,7 +131,8 @@ export const checkCompatibility = (build) => {
 		const availableIde = mobo.internal_connectors?.legacy?.ide || 0
 
 		if (requiredIde > availableIde) {
-			report.errors.push(`Legacy Error: Need ${requiredIde} IDE port(s), but Motherboard only has ${availableIde}`)
+			//report.errors.push(`Legacy Error: Need ${requiredIde} IDE port(s), but Motherboard only has ${availableIde}`)
+			report.errors.push(`Error legacy: Se necesitan ${requiredIde} puerto(s) IDE, pero la placa base solo tiene ${availableIde}`)
 		}
 
 		const requiredSata3 = storage.filter(s => s.interface === 'SATA 3GB/S').length
@@ -130,9 +141,11 @@ export const checkCompatibility = (build) => {
 
 		if (requiredSata3 > availableSata3) {
 			if (requiredSata3 > (availableSata3 + availableSata6)) {
-				report.errors.push(`SATA Error: Not enough ports for your SATA 3GB/s drives`)
+				// report.errors.push(`SATA Error: Not enough ports for your SATA 3GB/s drives`)
+				report.errors.push(`Error SATA: No hay suficientes puertos para sus unidades SATA 3GB/s`)
 			} else {
-				report.warnings.push(`SATA Note: Your SATA 3GB/s drive will be connected to a SATA 6GB/s port`)
+				// report.warnings.push(`SATA Note: Your SATA 3GB/s drive will be connected to a SATA 6GB/s port`)
+				report.warnings.push(`Nota SATA: Su unidad SATA 3GB/s será conectada a un puerto SATA 6GB/s`)
 			}
 		}
 	}
@@ -143,7 +156,8 @@ export const checkCompatibility = (build) => {
 		const moboIndex = MOBO_FORM_FACTOR.indexOf(mobo.form_factor)
 
 		if (moboIndex > caseIndex) {
-			report.errors.push(`Case (${pcCase.form_factor}) is too small for Motherboard (${mobo.form_factor})`)
+			// report.errors.push(`Case (${pcCase.form_factor}) is too small for Motherboard (${mobo.form_factor})`)
+			report.errors.push(`La caja (${pcCase.form_factor}) es demasiado pequeña para la placa base (${mobo.form_factor})`)
 		}
 	}
 
@@ -153,7 +167,8 @@ export const checkCompatibility = (build) => {
 		const totalConsumption = powerAnalysis.total
 
 		if (psu.wattage < totalConsumption) {
-			report.errors.push(`PSU wattage too low: Total consumption is ${totalConsumption} W, but PSU only provides ${psu.wattage} W`)
+			// report.errors.push(`PSU wattage too low: Total consumption is ${totalConsumption} W, but PSU only provides ${psu.wattage} W`)
+			report.errors.push(`La potencia de la fuente de alimentación es insuficiente: El consumo total es ${totalConsumption} W, pero la fuente de alimentación solo proporciona ${psu.wattage} W`)
 		}
 	}
 
@@ -161,9 +176,11 @@ export const checkCompatibility = (build) => {
 	const hasIGP = cpu?.hasIntegrated === true
 
 	if (cpu && !hasIGP && !gpu) {
-		report.errors.push("No video output: CPU has no integrated graphics and no GPU is selected.")
+		// report.errors.push("No video output: CPU has no integrated graphics and no GPU is selected.")
+		report.errors.push("No hay salida de video: La CPU no tiene gráficos integrados y no se ha seleccionado un GPU.")
 	} else if (cpu && hasIGP && !gpu) {
-		report.warnings.push("Integrated graphics only: This build might struggle with gaming or heavy 3D tasks.")
+		// report.warnings.push("Integrated graphics only: This build might struggle with gaming or heavy 3D tasks.")
+		report.warnings.push("Solo gráfica integrada: Esta configuración podría tener problemas con juegos o tareas 3D pesadas.")
 	}
 
 	// Validación de puertos físicos en la placa si se usa la integrada
@@ -172,7 +189,8 @@ export const checkCompatibility = (build) => {
 		const totalPorts = (video?.vga || 0) + (video?.dvi || 0) + (video?.hdmi || 0) + (video?.displayport || 0)
 
 		if (totalPorts === 0) {
-			report.errors.push("No video output: CPU has integrated graphics but Motherboard has no video ports.")
+			// report.errors.push("No video output: CPU has integrated graphics but Motherboard has no video ports.")
+			report.errors.push("No hay salida de video: La CPU tiene gráficos integrados pero la placa base no tiene puertos de video.")
 		}
 	}
 

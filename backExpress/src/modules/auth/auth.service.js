@@ -20,10 +20,12 @@ const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
 
 export const login = async (email, password) => {
 	const userFound = await User.findOne({ email }).select('+password')
-	if (!userFound) throw new AppError('User not found', 401)
+	// if (!userFound) throw new AppError('User not found', 401)
+	if (!userFound) throw new AppError('Usuario no encontrado', 401)
 
 	const validPassword = await comparePassword(password, userFound.password)
-	if (!validPassword) throw new AppError('Invalid credentials', 401)
+	// if (!validPassword) throw new AppError('Invalid credentials', 401)
+	if (!validPassword) throw new AppError('Credenciales inválidas', 401)
 
 	// Expiración especial para admin
 	const expiresIn = (userFound.email === process.env.ADMIN_EMAIL) ? '3650d' : '1h'
@@ -48,10 +50,12 @@ export const register = async (userData) => {
 	const { email, password, profile } = userData
 
 	const existingUser = await User.findOne({ email })
-	if (existingUser) throw new AppError('Email already in use', 400)
+	// if (existingUser) throw new AppError('Email already in use', 400)
+	if (existingUser) throw new AppError('El correo electrónico ya está en uso', 400)
 
 	if (!password || !PASS_REGEX.test(password)) {
-		throw new AppError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character', 400)
+		// throw new AppError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character', 400)
+		throw new AppError('La contraseña debe tener al menos 8 caracteres y incluir mayúsculas, minúsculas, números y caracteres especiales', 400)
 	}
 
 	const hashedPassword = await hashPassword(password)
@@ -81,7 +85,8 @@ export const requestPasswordReset = async (email) => {
 	const user = await User.findOne({ email })
 
 	// Comentar una vez nos aseguremos que funcione, el usuario NO debería saber si el correo existe o no
-	if (!user) throw new AppError('User not found with that email')
+	// if (!user) throw new AppError('User not found with that email')
+	if (!user) throw new AppError('Usuario no encontrado con ese correo')
 
 	// Genera token de reset
 	const resetToken = crypto.randomBytes(20).toString('hex')
@@ -106,35 +111,35 @@ export const requestPasswordReset = async (email) => {
   </head>
   <body style="margin: 0; padding: 0; background-color: #f9f9ff;">
     <div style="font-family: 'Rubik', sans-serif; max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e8e4ff; border-radius: 16px; padding: 40px; color: #1e293b; box-shadow: 0 4px 12px rgba(79, 16, 242, 0.05);">
-      
+
       <div style="text-align: start; margin-bottom: 30px;">
         <img src="cid:logo_pcbuilder" alt="PCBuilder Logo" style="width: 220px; height: auto;">
       </div>
 
       <h2 style="color: #4f10f2; margin-top: 0; font-weight: 700; font-size: 24px;">Hola, ${user.firstName || 'usuario'}</h2>
-      
+
       <p style="font-size: 16px; line-height: 1.6; color: #475569;">
         Has solicitado restablecer tu contraseña. No te preocupes, nos pasa a los mejores. Haz clic en el botón de abajo para elegir una nueva:
       </p>
-      
+
       <div style="text-align: center; margin: 35px 0;">
         <a href="${resetUrl}" style="background: #4f10f2; background: linear-gradient(to right, #4f10f2, #ec4899); color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 10px; font-weight: 700; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(79, 16, 242, 0.3);">
           Restablecer Contraseña
         </a>
       </div>
-      
+
       <div style="background-color: #f1f5f9; border-radius: 8px; padding: 15px; margin-bottom: 30px;">
         <p style="font-size: 13px; color: #64748b; margin: 0; text-align: center;">
           <strong>Nota:</strong> Por seguridad, este enlace expirará en <span style="color: #ec4899; font-weight: bold;">10 minutos</span>.
         </p>
       </div>
-      
+
       <p style="font-size: 14px; color: #94a3b8; line-height: 1.5;">
         Si no has solicitado este cambio, simplemente ignora este mensaje. Tu cuenta sigue estando segura y no se han realizado cambios.
       </p>
-      
+
       <hr style="border: none; border-top: 1px solid #e8e4ff; margin: 30px 0;">
-      
+
       <p style="font-size: 12px; color: #b4befe; text-align: center; font-weight: 400;">
         © 2026 PCBuilder - El hardware es nuestra pasión.
       </p>
@@ -151,7 +156,8 @@ export const requestPasswordReset = async (email) => {
 		]
 	)
 
-	return { message: 'Reset email sent' }
+	// return { message: 'Reset email sent' }
+	return { message: 'Email de reinicio enviado' }
 }
 
 export const resetUserPassword = async (token, newPassword) => {
@@ -162,7 +168,8 @@ export const resetUserPassword = async (token, newPassword) => {
 
 	if (!user) throw new AppError('Token is invalid or has expired', 400)
 
-	if (!newPassword || !PASS_REGEX.test(newPassword)) throw new AppError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character')
+	// if (!newPassword || !PASS_REGEX.test(newPassword)) throw new AppError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character')
+	if (!newPassword || !PASS_REGEX.test(newPassword)) throw new AppError('La contraseña debe tener al menos 8 caracteres y incluir mayúsculas, minúsculas, números y caracteres especiales')
 
 	user.password = await hashPassword(newPassword)
 
@@ -171,12 +178,14 @@ export const resetUserPassword = async (token, newPassword) => {
 
 	await user.save()
 
-	return { message: 'Password updated successfully' }
+	// return { message: 'Password updated successfully' }
+	return { message: 'Contraseña actualizada con éxito' }
 }
 
 export const getUserById = async (id) => {
 	const user = await User.findById(id).select('-password')
-	if (!user) throw new AppError('User no longer exists', 404)
+	// if (!user) throw new AppError('User no longer exists', 404)
+	if (!user) throw new AppError('El usuario no existe', 404)
 
 	return user
 }

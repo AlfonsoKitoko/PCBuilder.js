@@ -12,7 +12,8 @@ export const validateFullBuild = (build) => {
 	if (psuStatus) {
 		if (psuStatus.isCritical) {
 			report.errors.push(psuStatus.message)
-		} else if (psuStatus.message !== 'PSU OK') {
+			// } else if (psuStatus.message !== 'PSU OK') {
+		} else if (psuStatus.message !== 'Fuente de alimentación OK') {
 			report.warnings.push(psuStatus.message)
 		}
 	}

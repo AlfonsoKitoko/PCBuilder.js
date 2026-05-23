@@ -41,7 +41,8 @@ export const calcTotalPowerConsum = (build) => {
 export const checkPSUPower = (build) => {
 	const powerDetails = calcTotalPowerConsum(build)
 
-	if (!build.psu) return { isCritical: false, message: 'No PSU selected', wattageDetails: powerDetails }
+	// if (!build.psu) return { isCritical: false, message: 'No PSU selected', wattageDetails: powerDetails }
+	if (!build.psu) return { isCritical: false, message: 'No hay Fuente de alimentación seleccionada', wattageDetails: powerDetails }
 	const powerTotal = powerDetails.total
 	const safetyMargin = 1.2 // 20% de margen recomendado
 
@@ -54,12 +55,14 @@ export const checkPSUPower = (build) => {
 	// Caso 1: ERROR CRÍTICO (La fuente ni siquiera llega al consumo base)
 	if (build.psu.wattage < powerTotal) {
 		status.isCritical = true
-		status.message = `Critical PSU Error: Total consumption is ${powerTotal} W, but PSU only provides ${build.psu.wattage} W.`
+		// status.message = `Critical PSU Error: Total consumption is ${powerTotal} W, but PSU only provides ${build.psu.wattage} W.`
+		status.message = `Error de fuente de alimentación: El consumo total es ${powerTotal} W, pero la fuente solo proporciona ${build.psu.wattage} W.`
 	}
 	// Caso 2: WARNING (Funciona, pero por debajo del margen de seguridad del 20%)
 	else if (build.psu.wattage < Math.ceil(powerTotal * safetyMargin)) {
 		status.isCritical = false
-		status.message = `PSU Warning: Power is tight. Recommended: ${Math.ceil(powerTotal * safetyMargin)} W.`
+		// status.message = `PSU Warning: Power is tight. Recommended: ${Math.ceil(powerTotal * safetyMargin)} W.`
+		status.message = `Alerta de fuente de alimentación: El poder es limitado. Recomendado: ${Math.ceil(powerTotal * safetyMargin)} W.`
 	} else return { ...status, message: 'PSU OK', isCritical: false }
 
 	return status
