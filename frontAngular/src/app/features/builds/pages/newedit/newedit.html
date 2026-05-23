@@ -150,7 +150,10 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().cpu?.active === false"
-								[class.border-error]="slots().cpu?.active === false || form.get('cpu')?.invalid"
+								[class.border-error]="
+									slots().cpu?.active === false ||
+									(form.get('cpu')?.invalid && (form.get('cpu')?.touched || form.get('cpu')?.dirty))
+								"
 								[routerLink]="slots().cpu ? ['/cpu', slots().cpu?._id, slots().cpu?.slug] : null"
 								(click)="!slots().cpu ? goToSelect('cpu') : null"
 							>
@@ -165,7 +168,11 @@
 								</span>
 							} @else {
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="
+										!(form.get('cpu')?.invalid && (form.get('cpu')?.touched || form.get('cpu')?.dirty))
+									"
+									[class.btn-error]="form.get('cpu')?.invalid && (form.get('cpu')?.touched || form.get('cpu')?.dirty)"
 									(click)="goToSelect('cpu')"
 								>
 									+ Seleccionar CPU
@@ -223,7 +230,11 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().mobo?.active === false"
-								[class.border-error]="slots().mobo?.active === false || form.get('motherboard')?.invalid"
+								[class.border-error]="
+									slots().mobo?.active === false ||
+									(form.get('motherboard')?.invalid &&
+										(form.get('motherboard')?.touched || form.get('motherboard')?.dirty))
+								"
 								[routerLink]="slots().mobo ? ['/motherboard', slots().mobo?._id, slots().mobo?.slug] : null"
 								(click)="!slots().mobo ? goToSelect('motherboard') : null"
 							>
@@ -238,7 +249,17 @@
 								</span>
 							} @else {
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="
+										!(
+											form.get('motherboard')?.invalid &&
+											(form.get('motherboard')?.touched || form.get('motherboard')?.dirty)
+										)
+									"
+									[class.btn-error]="
+										form.get('motherboard')?.invalid &&
+										(form.get('motherboard')?.touched || form.get('motherboard')?.dirty)
+									"
 									[disabled]="!slots().cpu"
 									(click)="goToSelect('motherboard')"
 								>
@@ -357,11 +378,20 @@
 						</td>
 						<td class="p-4 align-middle" colspan="3">
 							<div class="flex items-center gap-4">
-								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<div
+									class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1"
+									[class.border-error]="
+										form.get('ram')?.invalid && (form.get('ram')?.touched || form.get('ram')?.dirty)
+									"
+								>
 									<img class="h-full w-full object-contain" [src]="getImageUrl('ram')" />
 								</div>
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="
+										!(form.get('ram')?.invalid && (form.get('ram')?.touched || form.get('ram')?.dirty))
+									"
+									[class.btn-error]="form.get('ram')?.invalid && (form.get('ram')?.touched || form.get('ram')?.dirty)"
 									[disabled]="!slots().mobo"
 									(click)="goToSelect('ram')"
 								>
@@ -454,11 +484,22 @@
 						</td>
 						<td class="p-4 align-middle" colspan="3">
 							<div class="flex items-center gap-4">
-								<div class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1">
+								<div
+									class="border-base-300 h-12 w-12 shrink-0 rounded border bg-white p-1"
+									[class.border-error]="
+										form.get('storage')?.invalid && (form.get('storage')?.touched || form.get('storage')?.dirty)
+									"
+								>
 									<img class="h-full w-full object-contain" [src]="getImageUrl('storage')" />
 								</div>
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="
+										!(form.get('storage')?.invalid && (form.get('storage')?.touched || form.get('storage')?.dirty))
+									"
+									[class.btn-error]="
+										form.get('storage')?.invalid && (form.get('storage')?.touched || form.get('storage')?.dirty)
+									"
 									[disabled]="!slots().mobo"
 									(click)="goToSelect('storage')"
 								>
@@ -490,7 +531,10 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().gpu?.active === false"
-								[class.border-error]="slots().gpu?.active === false || form.get('gpu')?.invalid"
+								[class.border-error]="
+									slots().gpu?.active === false ||
+									(form.get('gpu')?.invalid && (form.get('gpu')?.touched || form.get('gpu')?.dirty))
+								"
 								[routerLink]="slots().gpu ? ['/gpu', slots().gpu?._id, slots().gpu?.slug] : null"
 								(click)="!slots().gpu ? goToSelect('gpu') : null"
 							>
@@ -504,7 +548,11 @@
 								>
 							} @else {
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="
+										!(form.get('gpu')?.invalid && (form.get('gpu')?.touched || form.get('gpu')?.dirty))
+									"
+									[class.btn-error]="form.get('gpu')?.invalid && (form.get('gpu')?.touched || form.get('gpu')?.dirty)"
 									[disabled]="!slots().mobo"
 									(click)="goToSelect('gpu')"
 								>
@@ -563,7 +611,10 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().case?.active === false"
-								[class.border-error]="slots().case?.active === false || form.get('case')?.invalid"
+								[class.border-error]="
+									slots().case?.active === false ||
+									(form.get('case')?.invalid && (form.get('case')?.touched || form.get('case')?.dirty))
+								"
 								[routerLink]="slots().case ? ['/case', slots().case?._id, slots().case?.slug] : null"
 								(click)="!slots().case ? goToSelect('case') : null"
 							>
@@ -577,7 +628,13 @@
 								>
 							} @else {
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="
+										!(form.get('case')?.invalid && (form.get('case')?.touched || form.get('case')?.dirty))
+									"
+									[class.btn-error]="
+										form.get('case')?.invalid && (form.get('case')?.touched || form.get('case')?.dirty)
+									"
 									[disabled]="!slots().mobo"
 									(click)="goToSelect('case')"
 								>
@@ -638,7 +695,10 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().psu?.active === false"
-								[class.border-error]="slots().psu?.active === false || form.get('psu')?.invalid"
+								[class.border-error]="
+									slots().psu?.active === false ||
+									(form.get('psu')?.invalid && (form.get('psu')?.touched || form.get('psu')?.dirty))
+								"
 								[routerLink]="slots().psu ? ['/psu', slots().psu?._id, slots().psu?.slug] : null"
 								(click)="!slots().psu ? goToSelect('psu') : null"
 							>
@@ -652,7 +712,11 @@
 								>
 							} @else {
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="
+										!(form.get('psu')?.invalid && (form.get('psu')?.touched || form.get('psu')?.dirty))
+									"
+									[class.btn-error]="form.get('psu')?.invalid && (form.get('psu')?.touched || form.get('psu')?.dirty)"
 									[disabled]="!slots().mobo"
 									(click)="goToSelect('psu')"
 								>
@@ -707,7 +771,10 @@
 							<div
 								class="border-base-300 hover:border-primary h-12 w-12 shrink-0 cursor-pointer rounded border bg-white p-1 transition-all"
 								[class.grayscale]="slots().os?.active === false"
-								[class.border-error]="slots().os?.active === false || form.get('os')?.invalid"
+								[class.border-error]="
+									slots().os?.active === false ||
+									(form.get('os')?.invalid && (form.get('os')?.touched || form.get('os')?.dirty))
+								"
 								[routerLink]="slots().os ? ['/os', slots().os?._id, slots().os?.slug] : null"
 								(click)="!slots().os ? goToSelect('os') : null"
 							>
@@ -721,7 +788,9 @@
 								>
 							} @else {
 								<button
-									class="btn btn-outline btn-primary btn-xs font-bold tracking-tighter uppercase"
+									class="btn btn-outline btn-xs font-bold tracking-tighter uppercase"
+									[class.btn-primary]="!(form.get('os')?.invalid && (form.get('os')?.touched || form.get('os')?.dirty))"
+									[class.btn-error]="form.get('os')?.invalid && (form.get('os')?.touched || form.get('os')?.dirty)"
 									(click)="goToSelect('os')"
 								>
 									+ Seleccionar SO
@@ -782,11 +851,7 @@
 		<button class="btn btn-ghost btn-sm text-error font-bold tracking-widest uppercase" (click)="discardBuild()">
 			Descartar
 		</button>
-		<button
-			class="btn btn-primary px-10 font-black tracking-widest uppercase shadow-lg"
-			[disabled]="analysis().errors.length > 0"
-			(click)="save()"
-		>
+		<button class="btn btn-primary px-10 font-black tracking-widest uppercase shadow-lg" (click)="save()">
 			{{ id() ? 'Actualizar Build' : 'Guardar Cambios' }}
 		</button>
 	</div>

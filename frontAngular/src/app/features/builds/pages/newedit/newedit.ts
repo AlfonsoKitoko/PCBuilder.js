@@ -48,6 +48,14 @@ export default class NewEdit implements OnInit {
 	form: FormGroup = this.fb.group({
 		name: ['', [Validators.required]],
 		description: ['', [Validators.maxLength(500)]],
+		cpu: [null, [Validators.required]],
+		mobo: [null, [Validators.required]],
+		ram: [null, [Validators.required]],
+		storage: [null, [Validators.required]],
+		gpu: [null],
+		case: [null, [Validators.required]],
+		psu: [null, [Validators.required]],
+		os: [null],
 	});
 
 	constructor() {
@@ -59,8 +67,28 @@ export default class NewEdit implements OnInit {
 		// CHIVATO: Monitoriza el estado actual de la build y el análisis del backend
 		effect(() => {
 			const currentSlots = this.slots();
-			console.log('--- BUILD UPDATE ---');
-			console.log('Slots actuales:', currentSlots);
+
+			this.form.patchValue(
+				{
+					cpu: currentSlots.cpu?._id || null,
+					mobo: currentSlots.mobo?._id || null,
+					ram: currentSlots.ram.length > 0 ? currentSlots.ram.map((r) => r._id) : null,
+					storage: currentSlots.storage.length > 0 ? currentSlots.storage.map((s) => s._id) : null,
+					gpu: currentSlots.gpu?._id || null,
+					case: currentSlots.case?._id || null,
+					psu: currentSlots.psu?._id || null,
+					os: currentSlots.os?._id || null,
+				},
+				{ emitEvent: false },
+			);
+
+			Object.keys(this.form.controls).forEach((key) => {
+				const control = this.form.get(key);
+				if (control && control.value !== null && control.value !== '') {
+					control.markAsDirty();
+					control.markAsTouched();
+				}
+			});
 
 			// LOG DE VOLTAJES ESPECÍFICO
 			if (currentSlots.ram && currentSlots.ram.length > 0) {
@@ -80,6 +108,7 @@ export default class NewEdit implements OnInit {
 			console.log('--------------------');
 		});
 	}
+
 	currentUser = computed(() => this.authService.user());
 	managementRoles = [userProfile.ADMIN];
 
@@ -89,29 +118,23 @@ export default class NewEdit implements OnInit {
 	});
 
 	async ngOnInit() {
-		// 1. Obtenemos el estado actual del servicio
 		const current = this.buildService.currentBuild();
 		const routeId = this.id();
 
 		console.log('Verificando estado de edición:', { routeId, currentId: current._id });
 
-		// 2. Si ya estamos editando esta build, NO cargamos de la API.
-		// Esto permite que al volver de "seleccionar componente", los cambios sigan ahí.
 		if (routeId && current._id === routeId) {
 			console.log('Persistiendo cambios temporales de la build:', routeId);
 			this.fillForm();
 			return;
 		}
 
-		// 3. Si hay un ID en la ruta pero no coincide con lo que hay en el servicio,
-		// entonces sí es una carga limpia (el usuario entró desde el listado).
 		if (routeId) {
 			this.buildService.getById(routeId).subscribe({
 				next: (res) => {
 					const build = res.data;
 					const user = this.currentUser();
 
-					// Validación de seguridad (Dueño o Admin)
 					const isOwner = user && build.owner._id === user._id;
 					if (!isOwner && !this.canManage()) {
 						this.toast.show('No tienes permiso para editar esta build', 'error');
@@ -122,13 +145,14 @@ export default class NewEdit implements OnInit {
 					this.buildService.setEditBuild(build);
 					this.fillForm();
 				},
-				error: () => {
-					this.toast.show('Error al cargar la build', 'error');
+				error: (err) => {
+					const serverMessage = err?.error?.message || err?.message || 'Error desconocido al cargar la build';
+
+					this.toast.show(serverMessage, 'error');
 					this.router.navigate(['/build/all']);
 				},
 			});
 		} else {
-			// Si no hay ID, es una build nueva. Solo nos aseguramos de que el form esté limpio.
 			if (current._id) this.buildService.resetBuild();
 
 			this.fillForm();
@@ -148,6 +172,12 @@ export default class NewEdit implements OnInit {
 
 	onRemove(type: keyof BuildState, index?: number) {
 		this.buildService.removePart(type, index);
+		const controlName = type === 'mobo' ? 'motherboard' : (type as string);
+		const control = this.form.get(controlName);
+		if (control) {
+			control.markAsTouched();
+			control.markAsDirty();
+		}
 	}
 
 	calculateSubtotal(items: any[]): number {
@@ -156,6 +186,12 @@ export default class NewEdit implements OnInit {
 
 	goToSelect(type: string, index?: number) {
 		this.buildService.editIndex = index;
+		const controlName = type === 'mobo' ? 'motherboard' : type;
+		const control = this.form.get(controlName);
+		if (control) {
+			control.markAsTouched();
+			control.markAsDirty();
+		}
 
 		const extras: any = {};
 		if (index !== undefined) extras.queryParams = { editIndex: index };
@@ -182,24 +218,49 @@ export default class NewEdit implements OnInit {
 	}
 
 	async save() {
-		const s = this.slots();
+		// 1. Forzamos de forma visual que la tabla pinte los errores en rojo
+		this.form.markAllAsTouched();
+		Object.keys(this.form.controls).forEach((key) => {
+			this.form.get(key)?.markAsDirty();
+		});
 
-		const requiredParts = [
-			{ field: s.cpu, label: 'Procesador (CPU)' },
-			{ field: s.mobo, label: 'Placa base' },
-			{ field: s.ram.length > 0 ? true : null, label: 'Memoria RAM' },
-			{ field: s.storage.length > 0 ? true : null, label: 'Almacenamiento' },
-			{ field: s.case, label: 'Caja' },
-			{ field: s.psu, label: 'Fuente de alimentación (PSU)' },
-		];
+		// ==========================================
+		// CONTROL 1: EVALUAR COMPONENTES FALTANTES
+		// ==========================================
+		const componentLabels: Record<string, string> = {
+			cpu: 'Procesador (CPU)',
+			motherboard: 'Placa base',
+			ram: 'Memoria RAM',
+			storage: 'Almacenamiento',
+			case: 'Caja',
+			psu: 'Fuente de alimentación (PSU)',
+		};
 
-		const missing = requiredParts.filter((p) => !p.field).map((p) => p.label);
+		const missingComponents = Object.keys(componentLabels)
+			.filter((key) => this.form.get(key)?.invalid)
+			.map((key) => componentLabels[key]);
 
-		if (missing.length > 0) {
-			this.toast.show(`Faltan componentes: ${missing.join(', ')}`, 'error');
+		if (missingComponents.length > 0) {
+			this.toast.show(`Faltan componentes obligatorios: ${missingComponents.join(', ')}`, 'error');
 			return;
 		}
 
+		// ==========================================
+		// CONTROL 2: EVALUAR INCOMPATIBILIDADES (ANÁLISIS)
+		// ==========================================
+		const buildAnalysis = this.analysis();
+
+		if (buildAnalysis.errors && buildAnalysis.errors.length > 0) {
+			this.toast.show(
+				'La configuración actual contiene errores de compatibilidad. Por favor, revisa los detalles del análisis arriba.',
+				'error',
+			);
+			return; // Bloquea el flujo (los warnings se ignoran y permiten pasar)
+		}
+
+		// ==========================================
+		// PASO FINAL: APERTURA DEL MODAL (BUILD VÁLIDA)
+		// ==========================================
 		const result = await this.modal.confirm({
 			title: this.id() ? 'Actualizar Build' : 'Finalizar Build',
 			message: 'Introduce el nombre y la descripción de tu build',
@@ -215,10 +276,17 @@ export default class NewEdit implements OnInit {
 
 		this.form.patchValue(result.data);
 
+		if (this.form.get('name')?.invalid) {
+			this.toast.show('El nombre de la build es obligatorio.', 'error');
+			return;
+		}
+
+		// Construimos el payload de guardado
+		const s = this.slots();
 		const payload = {
 			...this.form.getRawValue(),
 			cpu: s.cpu?._id,
-			mobo: s.mobo?._id,
+			motherboard: s.mobo?._id,
 			ram: s.ram.map((r) => r._id),
 			storage: s.storage.map((st) => st._id),
 			gpu: s.gpu?._id,
@@ -227,7 +295,6 @@ export default class NewEdit implements OnInit {
 			os: s.os?._id,
 		};
 
-		// CHIVATO: Ver qué enviamos exactamente al servidor
 		console.log('Enviando Payload Final:', payload);
 
 		const request$ = this.id() ? this.buildService.update(this.id()!, payload) : this.buildService.create(payload);
@@ -239,7 +306,8 @@ export default class NewEdit implements OnInit {
 			},
 			error: (error) => {
 				console.error('Error en el guardado:', error);
-				this.toast.show('Error al crear Build', 'error');
+				const errMsg = error?.error?.message || error?.message || 'Error al crear Build';
+				this.toast.show(errMsg, 'error');
 			},
 		});
 	}
