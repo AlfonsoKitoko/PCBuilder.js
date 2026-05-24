@@ -63,7 +63,8 @@ export const checkPSUPower = (build) => {
 		status.isCritical = false
 		// status.message = `PSU Warning: Power is tight. Recommended: ${Math.ceil(powerTotal * safetyMargin)} W.`
 		status.message = `Alerta de fuente de alimentación: El poder es limitado. Recomendado: ${Math.ceil(powerTotal * safetyMargin)} W.`
-	} else return { ...status, message: 'PSU OK', isCritical: false }
+		// } else return { ...status, message: 'PSU OK', isCritical: false }
+	} else return { ...status, message: 'Fuente de alimentación OK', isCritical: false }
 
 	return status
 }
