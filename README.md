@@ -1,10 +1,10 @@
-# 💻 PCBUILDER
+# PCBUILDER
 
 > **PCBUILDER** es una aplicación web pensada para ayudar a usuarios con poca o nula experiencia en el montaje de ordenadores, facilitando la creación de presupuestos personalizados y asegurando la compatibilidad de hardware en tiempo real.
 
 ---
 
-## 🚀 Características Principales
+## Características Principales
 
 * **Configurador de Builds Guiado:** Permite al usuario seleccionar componentes de hardware de manera intuitiva.
 * **Build Engine (Motor de Validación):**
@@ -13,14 +13,14 @@
   * **Cálculo de Precio:** Cálculo del presupuesto total en tiempo real.
   * **Alertas Inteligentes:** Clasificación entre errores críticos (que bloquean la selección) y advertencias de rendimiento óptimo.
 * **Control de Accesos por Roles (RBAC):**
-  * 👁️ **Invitado:** Consulta del catálogo de piezas, especificaciones y builds públicas de la comunidad.
-  * 👤 **Usuario Registrado:** Gestión de builds propias (crear, editar, eliminar), vista de usuarios específicos y edición de perfil.
-  * 👑 **Administrador:** CRUD completo de piezas y categorías, gestión de usuarios y asignación de roles.
+  * **Invitado:** Consulta del catálogo de piezas, especificaciones y builds públicas de la comunidad.
+  * **Usuario Registrado:** Gestión de builds propias (crear, editar, eliminar), vista de usuarios específicos y edición de perfil.
+  * **Administrador:** CRUD completo de piezas y categorías, gestión de usuarios y asignación de roles.
 * **Seguridad:** Comunicaciones encriptadas bajo el protocolo seguro **HTTPS**, autenticación basada en **JWT** y encriptación de contraseñas con **BCrypt**.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 | Capa / Ámbito | Tecnología / Herramienta |
 | :--- | :--- |
@@ -35,7 +35,7 @@
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 El proyecto está completamente desacoplado en dos grandes directorios independientes:
 
@@ -51,7 +51,7 @@ PcBuilder/
 │   │   ├── docs/       # Especificaciones de la API en Swagger
 │   │   ├── middlewares/# JWT, RBAC, Morgan y controlador central de errores
 │   │   ├── models/     # Esquemas de Mongoose para MongoDB Atlas
-│   │   ├── modules/    # API por dominios (Routes ➔ Controller ➔ Service)
+│   │   ├── modules/    # API por dominios (Routes -> Controller -> Service)
 │   │   ├── routes/     # Índice unificado de rutas del backend
 │   │   ├── utils/      # Respuestas estándar, AppError, BCrypt, NodeMailer
 │   │   └── validators/ # Validadores de formato para datos de entrada
