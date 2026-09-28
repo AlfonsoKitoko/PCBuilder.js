@@ -1,270 +1,71 @@
-```mermaid
-classDiagram
-    direction LR
+# 💻 PCBUILDER
 
-    class User {
-        +String username
-        +String email
-        +String profile
-        +Date birthDate
-        +Boolean active
-    }
+> **PCBUILDER** es una aplicación web pensada para ayudar a usuarios con poca o nula experiencia en el montaje de ordenadores, facilitando la creación de presupuestos personalizados y asegurando la compatibilidad de hardware en tiempo real.
 
-    class Build {
-        +String name
-        +String description
-        +Number totalPrice
-        +Boolean active
-        +Date createdAt
-    }
+---
 
-    class Part {
-        +String name (PC_PARTS)
-    }
+## 🚀 Características Principales
 
-    class CPU {
-        +String manufacturer
-        +String socket
-        +Number tdp
-        +Boolean hasIntegrated
-        +Number price
-    }
+* **Configurador de Builds Guiado:** Permite al usuario seleccionar componentes de hardware de manera intuitiva.
+* **Build Engine (Motor de Validación):**
+  * **Compatibilidad:** Validación física y lógica (sockets de CPU/Mobo, módulos de RAM, factor de forma de caja/Mobo, puertos de vídeo y consumo energético frente a la PSU).
+  * **Consumo Estimado:** Cálculo dinámico de vatios acumulados.
+  * **Cálculo de Precio:** Cálculo del presupuesto total en tiempo real.
+  * **Alertas Inteligentes:** Clasificación entre errores críticos (que bloquean la selección) y advertencias de rendimiento óptimo.
+* **Control de Accesos por Roles (RBAC):**
+  * 👁️ **Invitado:** Consulta del catálogo de piezas, especificaciones y builds públicas de la comunidad.
+  * 👤 **Usuario Registrado:** Gestión de builds propias (crear, editar, eliminar), vista de usuarios específicos y edición de perfil.
+  * 👑 **Administrador:** CRUD completo de piezas y categorías, gestión de usuarios y asignación de roles.
+* **Seguridad:** Comunicaciones encriptadas bajo el protocolo seguro **HTTPS**, autenticación basada en **JWT** y encriptación de contraseñas con **BCrypt**.
 
-    class Mobo {
-        +String manufacturer
-        +String socket
-        +String form_factor
-        +String ram_type
-        +Number price
-    }
+---
 
-    class GPU {
-        +String series
-        +String gpu_type
-        +Number tdp
-        +Number price
-    }
+## 🛠️ Stack Tecnológico
 
-    class RAM {
-        +String manufacturer
-        +String ram_type
-        +Object modules
-        +Number price
-    }
+| Capa / Ámbito | Tecnología / Herramienta |
+| :--- | :--- |
+| **Arquitectura General** | Stack **MEAN** (*MongoDB, Express, Angular, Node.js*) |
+| **Base de Datos** | MongoDB Atlas (NoSQL) con Mongoose |
+| **Backend** | Node.js + Express (JavaScript, ES Modules) |
+| **Frontend** | Angular (TypeScript) - *Single Page Application (SPA)* |
+| **Runtime & Gestor** | **Bun** (Velocidad optimizada de despliegue) |
+| **Diseño y Estilos** | Tailwind CSS + daisyUI (Soporte modo Claro / Oscuro) |
+| **Seguridad** | JWT, BCrypt, HTTPS (Certificados SSL) |
+| **Documentación API** | Swagger (OpenAPI en formato YAML) |
 
-    class Storage {
-        +String capacity
-        +String type
-        +String interface
-        +Number price
-    }
+---
 
-    class PSU {
-        +String manufacturer
-        +String eff_rating
-        +Number wattage
-        +Number price
-    }
+## 📁 Estructura del Proyecto
 
-    class Case {
-        +String manufacturer
-        +String case_type
-        +String form_factor
-        +Number price
-    }
+El proyecto está completamente desacoplado en dos grandes directorios independientes:
 
-    class OS {
-        +String manufacturer
-        +String version
-        +String edition
-        +Number price
-    }
-
-    %% Relaciones de Propiedad
-    User "1" -- "*" Build : owner
-
-    %% Relaciones de la Build
-    Build "1" --> "1" CPU : cpu
-    Build "1" --> "1" Mobo : mobo
-    Build "1" --> "1" PSU : psu
-    Build "1" --> "1" Case : case
-    Build "1" --> "1..*" RAM : ram
-    Build "1" --> "1..*" Storage : storage
-    Build "1" --> "0..1" GPU : gpu
-    Build "1" --> "0..1" OS : os
-
-    %% Relación con PartType (Herencia lógica)
-    CPU ..> Part : partType
-    Mobo ..> Part : partType
-    GPU ..> Part : partType
-    RAM ..> Part : partType
-    Storage ..> Part : partType
-    PSU ..> Part : partType
-    Case ..> Part : partType
-    OS ..> Part : partType
-```
-
-```mermaid
-graph TD
-    subgraph Cliente [Capa de Presentación - Frontend]
-        U[Usuario] --> A[Navegador Web]
-        A --> B["App Angular :4200"]
-    end
-
-    subgraph Servidor [Capa de Lógica - Backend]
-        B -- "HTTP /api/v1 (env: 3010)" --> C["API REST - Express (Bun)"]
-        C --> D[Middlewares / Validaciones]
-        D --> E[Controladores / Engines de Compatibilidad]
-    end
-
-    subgraph Datos [Capa de Persistencia]
-        E --> F[Mongoose ODM]
-        F --> G[(MongoDB Atlas)]
-    end
-
-    %% --- ESTILOS DE COLORES ---
-    style U fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style B fill:#e91e63,stroke:#fff,stroke-width:2px,color:#fff
-    style C fill:#00bcd4,stroke:#fff,stroke-width:2px,color:#fff
-    style G fill:#4caf50,stroke:#fff,stroke-width:2px,color:#fff
-
-    %% Estilos de los subgraphs
-    style Cliente fill:#fff0f5,stroke:#e91e63,stroke-dasharray: 5 5
-    style Servidor fill:#e0f7fa,stroke:#00bcd4,stroke-dasharray: 5 5
-    style Datos fill:#f1f8e9,stroke:#4caf50,stroke-dasharray: 5 5
-```
-
-```bash
-npx tree-node-cli -I "node_modules|tmp"
-tree -I 'node_modules'
-
-backExpress
-├── package-lock.json
-├── package.json
-└── src
-    ├── build-engine
-    │   ├── compatibility.engine.js
-    │   ├── power.engine.js
-    │   ├── price.engine.js
-    │   └── validation.engine.js
-    ├── config
-    │   ├── logger.config.js
-    │   ├── mongodb.config.js
-    │   └── swagger.config.js
-    ├── constants
-    │   ├── case_type.constant.js
-    │   ├── gpu.constant.js
-    │   ├── index.constant.js
-    │   ├── manufacturer.constant.js
-    │   ├── mobo_form_factor.constant.js    │   ├── os.constant.js
-    │   ├── pc_parts.constant.js
-    │   ├── psu.constant.js
-    │   ├── ram.constant.js
-    │   ├── storage.constant.js
-    │   └── wireless.constant.js
-    ├── database
-    │   ├── buildSeeds
-    │   │   └── builds.seed.js
-    │   ├── seeds
-    │   │   ├── partTypes.seed.js
-    │   │   └── parts.seed.js
-    │   └── userSeeds
-    │       └── users.seed.js
-    ├── docs
-    │   ├── _responses.yaml
-    │   ├── auth.docs.yaml
-    │   ├── build.docs.yaml
-    │   ├── case.docs.yaml
-    │   ├── cpu.docs.yaml
-    │   ├── gpu.docs.yaml
-    │   ├── home.docs.yaml
-    │   ├── mobo.docs.yaml
-    │   ├── os.docs.yaml
-    │   ├── part.docs.yaml
-    │   ├── psu.docs.yaml
-    │   ├── ram.docs.yaml
-    │   ├── storage.docs.yaml
-    │   └── user.docs.yaml
-    ├── index.js
-    ├── middlewares
-    │   ├── errorHandler.mw.js
-    │   ├── jwt.mw.js
-    │   ├── morgan.mw.js
-    │   └── profile.mw.js
-    ├── models
-    │   ├── build.model.js
-    │   ├── case.model.js
-    │   ├── cpu.model.js
-    │   ├── gpu.model.js
-    │   ├── mobo.model.js
-    │   ├── os.model.js
-    │   ├── part.model.js
-    │   ├── psu.model.js
-    │   ├── ram.model.js
-    │   ├── storage.model.js
-    │   └── user.model.js
-    ├── modules
-    │   ├── auth
-    │   │   ├── auth.controller.js
-    │   │   ├── auth.routes.js
-    │   │   └── auth.service.js
-    │   ├── build
-    │   │   ├── build.controller.js
-    │   │   ├── build.routes.js
-    │   │   └── build.service.js
-    │   ├── case
-    │   │   ├── case.controller.js
-    │   │   ├── case.routes.js
-    │   │   └── case.service.js
-    │   ├── cpu
-    │   │   ├── cpu.controller.js
-    │   │   ├── cpu.routes.js
-    │   │   └── cpu.service.js
-    │   ├── gpu
-    │   │   ├── gpu.controller.js
-    │   │   ├── gpu.routes.js
-    │   │   └── gpu.service.js
-    │   ├── mobo
-    │   │   ├── mobo.controller.js
-    │   │   ├── mobo.routes.js
-    │   │   └── mobo.service.js
-    │   ├── os
-    │   │   ├── os.controller.js
-    │   │   ├── os.routes.js
-    │   │   └── os.service.js
-    │   ├── part
-    │   │   ├── part.controller.js
-    │   │   ├── part.routes.js
-    │   │   └── part.service.js
-    │   ├── psu
-    │   │   ├── psu.controller.js
-    │   │   ├── psu.routes.js
-    │   │   └── psu.service.js
-    │   ├── ram
-    │   │   ├── ram.controller.js
-    │   │   ├── ram.routes.js
-    │   │   └── ram.service.js
-    │   ├── storage
-    │   │   ├── storage.controller.js
-    │   │   ├── storage.routes.js
-    │   │   └── storage.service.js
-    │   └── user
-    │       ├── user.controller.js
-    │       ├── user.routes.js
-    │       └── user.service.js
-    ├── public
-    │   └── favicon.ico
-    ├── routes
-    │   └── index.routes.js
-    ├── tests
-    │   └── pcbuilder.echoapi.json
-    ├── utils
-    │   ├── AppError.js
-    │   ├── apiResponse.js
-    │   ├── asyncHandler.js
-    │   └── bcrypt.js
-    ├── validators
-    │   ├── array.validator.js
-    │   └── integer.validator.js
-    └── views
-```
+```text
+PcBuilder/
+├── backExpress/        # Servidor Express (Arquitectura Modular Orientada a Dominios)
+│   ├── src/
+│   │   ├── certs/      # Credenciales y certificados SSL para HTTPS
+│   │   ├── build-engine/ # Motor centralizado de compatibilidad y validación
+│   │   ├── config/     # Configuraciones globales (DB, Logger, Swagger)
+│   │   ├── constants/  # Diccionarios fijos de especificaciones de hardware
+│   │   ├── database/   # Seeds automatizados para poblar la DB
+│   │   ├── docs/       # Especificaciones de la API en Swagger
+│   │   ├── middlewares/# JWT, RBAC, Morgan y controlador central de errores
+│   │   ├── models/     # Esquemas de Mongoose para MongoDB Atlas
+│   │   ├── modules/    # API por dominios (Routes ➔ Controller ➔ Service)
+│   │   ├── routes/     # Índice unificado de rutas del backend
+│   │   ├── utils/      # Respuestas estándar, AppError, BCrypt, NodeMailer
+│   │   └── validators/ # Validadores de formato para datos de entrada
+│   └── .env            # Variables de entorno del backend
+│
+└── frontAngular/       # Cliente Angular (Feature-Based Architecture)
+    ├── src/app/
+    │   ├── features/   # Módulos funcionales (auth, builds, cpus, etc.)
+    │   └── shared/     # Infraestructura común reutilizable
+    │       ├── components/  # Navbar, Footer, Toast, Modales
+    │       ├── constants/   # Diccionarios de hardware sincronizados con el Back
+    │       ├── guards/      # Control de rutas y permisos de usuario
+    │       ├── interceptors/# Inyección automática del Token JWT en peticiones
+    │       ├── models/      # Interfaces de TypeScript para tipado fuerte
+    │       ├── services/    # Consumo asíncrono HTTP mediante RxJS Observables
+    │       └── utils/       # Paleta de marca, mapeadores de imagen y buscador
+    └── environments/   # Configuración de URLs y variables de entorno del cliente
