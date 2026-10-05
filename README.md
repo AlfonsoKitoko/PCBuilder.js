@@ -243,54 +243,6 @@ PCBUILDER nace como un Proyecto Final de Ciclo (PFC) orientado a resolver la com
 
 ---
 
-## Licencia
-
-Este proyecto está distribuido bajo la licencia **MIT**. Consulte el archivo `LICENSE` en la raíz del repositorio para obtener más información.
-
-```text
-MIT License
-
-Copyright (c) 2026 Alfonso Martínez Kitoko
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction rights, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom it is furnished to do so.
-
-```
-
----
-
-## Licencias de Terceros y Créditos
-
-Este desarrollo hace uso de bibliotecas, frameworks y herramientas de código abierto bajo sus respectivas licencias:
-
-* **Frameworks y Core:**
-* **Angular** (MIT License) - Google LLC.
-* **Express** (MIT License) - OpenJS Foundation.
-* **Node.js** (OpenJS Foundation) / **Bun** (MIT License).
-* **Mongoose / MongoDB** (Apache 2.0 / SSPL).
-
-
-* **Interfaz y Estilos:**
-* **Tailwind CSS** (MIT License) - Tailwind Labs Inc.
-* **daisyUI** (MIT License) - Pouya Saadeghi.
-
-
-* **Seguridad y Utilidades:**
-* **jsonwebtoken (JWT)** (MIT License) - Auth0 / Okta.
-* **bcryptjs** (MIT License).
-* **Morgan & Winston** (MIT License).
-
-
-* **Recursos Multimedia:**
-* Las imágenes, logotipos y nombres comerciales de marcas de hardware utilizados en el catálogo pertenecen a sus respectivos fabricantes y se emplean exclusivamente con fines académicos y de demostración técnica.
-
-
-
----
-
 ## Contribuciones
 
 Este proyecto ha sido desarrollado como un trabajo académico individual. Sin embargo, las sugerencias, reporte de errores o propuestas de mejora son bienvenidas mediante el uso de *Issues* o *Pull Requests* en el repositorio oficial.
