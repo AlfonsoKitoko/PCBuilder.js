@@ -246,11 +246,3 @@ PCBUILDER nace como un Proyecto Final de Ciclo (PFC) orientado a resolver la com
 ## Contribuciones
 
 Este proyecto ha sido desarrollado como un trabajo académico individual. Sin embargo, las sugerencias, reporte de errores o propuestas de mejora son bienvenidas mediante el uso de *Issues* o *Pull Requests* en el repositorio oficial.
-
----
-
-## Contacto y Entrega
-
-* **Autor:** Alfonso Martínez Kitoko
-* **Repositorio del Proyecto:** [https://github.com/AlfonsoKitoko/PcBuilder.js](https://github.com/AlfonsoKitoko/PcBuilder.js)
-* **Entorno Académico:** Proyecto Final de Ciclo
